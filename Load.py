@@ -60,7 +60,15 @@ class Load:
         self._abbrev = abbrev
 
     def __repr__(self):
-        return f"Load('{self.load}', '{self.abbrev}')"
+
+        #Using {type(self).__name} to allow this method to be inherited by
+        #sub-classes without having to override it unless additional properties
+        #have to go into this method.
+        return f"{type(self).__name__}('{self.load}', '{self.abbrev}')"
 
     def __str__(self):
-        return f'Load: {self.load}'
+
+        #Using {type(self).__name} to allow this method to be inherited by
+        #sub-classes without having to override it unless additional properties
+        #have to go into this method.
+        return f'{type(self).__name__}: {self.load}'
