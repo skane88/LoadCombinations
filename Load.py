@@ -60,7 +60,7 @@ class Load:
         self._abbrev = abbrev
 
     def __repr__(self):
-        return f'Load({self.load}, {self.abbrev})'
+        return f"Load('{self.load}', '{self.abbrev}')"
 
     def __str__(self):
         return f'Load: {self.load}'
