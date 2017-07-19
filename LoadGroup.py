@@ -3,6 +3,13 @@ Creates a LoadGroup class, that stores multiple Loads and can generate an
 appropriate list of loads through an iterator method.
 """
 
+from typing import List
+from collections import namedtuple
+from Load import Load, ScalableLoad
+
+# define a named tuple for returning results.
+LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
+
 
 class LoadGroup:
     """
@@ -15,7 +22,7 @@ class LoadGroup:
     valued iterator.
     """
 
-    def __init__(self, *, group_name, loads):
+    def __init__(self, *, group_name, loads: List(Load)):
         """
         Creates a LoadGroup object.mro
 
@@ -66,35 +73,36 @@ class LoadGroup:
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
 
-        :return: returns a generator which will create a tuple of load cases:
-            ((load case, load factor), (load case, load factor), ...)
+        :return: returns a generator which will create a tuple of load factors:
+            each of them in their own named tuple:
+            ((load, load_factor, add_info),
+            (load, load_factor, add_info), ...)
         """
 
         # need to check on what sort of group this is.
         results = []
         for l in self.loads:
-            results.append((l, 1.0))
+            lf = LoadFactor(load = l, load_factor = 1.0, add_info = '')
+            results.append(lf)
 
         results = tuple(results)
 
         yield (results,)
 
     def __repr__(self):
-
-        #use the {type(self).__name__} call to get the exact class name. This
-        #should allow the __repr__ method to be accepted for subclasses of
-        #LoadGroup without change.
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __repr__ method to be accepted for subclasses of
+        # LoadGroup without change.
         return f"{type(self).__name__}('{self.group_name}', {repr(self.loads)})"
 
     def __str__(self):
-
-        #use the {type(self).__name__} call to get the exact class name. This
-        #should allow the __str__ method to be accepted for subclasses of
-        #LoadGroup without change.
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __str__ method to be accepted for subclasses of
+        # LoadGroup without change.
         return f'{type(self).__name__}: {self.group_name}, loads: {self.loads}'
 
 
-#next define more complex load groups as subclasses.
+# next define more complex load groups as subclasses.
 class FactoredGroup(LoadGroup):
     """
     A subclass of LoadGroup. In a FactoredGroup the loads are treated as a group
@@ -102,7 +110,7 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads, load_factors = (1.0)):
+    def __init__(self, *, group_name, loads: List(Load), load_factors = 1.0):
         """
         Creates a LoadGroup object.mro
 
@@ -136,16 +144,21 @@ class FactoredGroup(LoadGroup):
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
 
-        :return: returns a generator which will create a tuple of load cases:
-            ((load case, load factor), (load case, load factor), ...)
+        :return: returns a generator which will create a tuple of load factors,
+            each of them in their own namedtuple:
+            ((load, load_factor, add_info),
+            (load, load_factor, add_info), ...)
         """
 
         for f in self.load_factors:
-            #first iterate through the load_factors
+            # first iterate through the load_factors
 
             results = []
             for l in self.loads:
-                results.append((l, f))
+                # then iterate through the loads
+
+                lf = LoadFactor(load = l, load_factor = f, add_info = '')
+                results.append(lf)
 
             results = tuple(results)
 
@@ -153,25 +166,25 @@ class FactoredGroup(LoadGroup):
 
     def __repr__(self):
 
-        #use the {type(self).__name__} call to get the exact class name. This
-        #should allow the __repr__ method to be accepted for subclasses of
-        #LoadGroup without change.
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __repr__ method to be accepted for subclasses of
+        # LoadGroup without change.
         return (f"{type(self).__name__}(group_name='{self.group_name}', "
                 + f"loads={repr(self.loads)}, "
                 + f"load_factors={repr(self.load_factors)})")
 
     def __str__(self):
 
-        #use the {type(self).__name__} call to get the exact class name. This
-        #should allow the __str__ method to be accepted for subclasses of
-        #LoadGroup without change.
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __str__ method to be accepted for subclasses of
+        # LoadGroup without change.
         return (f'{type(self).__name__}: {self.group_name}, '
                 + f'loads: {self.loads}, load_factors: {self.load_factors}')
 
 
 class ScaledGroup(FactoredGroup):
-
-    def __init__(self, *, group_name, loads, load_factors, scale_to):
+    def __init__(self, *, group_name, loads: List(ScalableLoad), load_factors,
+                 scale_to):
         super().__init__(group_name = group_name, loads = loads,
                          load_factors = load_factors)
 
@@ -186,13 +199,29 @@ class ScaledGroup(FactoredGroup):
         self._scale_to = scale_to
 
     def generate_cases(self):
-        raise NotImplementedError
+
+        # first iterate through the load factors
+        for f in self.load_factors:
+
+            results = []
+
+            for l in self.loads:
+                # then iterate through the loads
+
+                scale_factor = self.scale_to / l.load_value
+                lf = LoadFactor(load = l, load_factor = scale_factor * f,
+                                add_info = f'(scaled: {self.scale_to})')
+                results.append(lf)
+
+            results = tuple(results)
+
+            yield results
 
     def __repr__(self):
 
-        #use the {type(self).__name__} call to get the exact class name. This
-        #should allow the __repr__ method to be accepted for subclasses of
-        #LoadGroup without change.
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __repr__ method to be accepted for subclasses of
+        # LoadGroup without change.
         return (f"{type(self).__name__}(group_name='{self.group_name}', "
                 + f"loads={repr(self.loads)}, "
                 + f"load_factors={repr(self.load_factors)}, scale_to="
@@ -200,9 +229,9 @@ class ScaledGroup(FactoredGroup):
 
     def __str__(self):
 
-        #use the {type(self).__name__} call to get the exact class name. This
-        #should allow the __str__ method to be accepted for subclasses of
-        #LoadGroup without change.
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __str__ method to be accepted for subclasses of
+        # LoadGroup without change.
         return (f'{type(self).__name__}: {self.group_name}, '
                 + f'loads: {self.loads}, load_factors: {self.load_factors}, '
                 + f'scale_to:  {self.scale_to}')
@@ -225,10 +254,9 @@ class WindGroup(ScaledGroup):
     pass
 
 
-def ReversedGroup():
+def reversed_group():
     pass
 
 
-def WindGroup3():
+def wind_group_3():
     pass
-

@@ -122,8 +122,78 @@ class ScalableLoad(Load):
 
 
 class RotatableLoad(ScalableLoad):
-    pass
+
+    def __init__(self, *, load, load_no, load_value, angle, abbrev = ''):
+        super().__init__(load = load, load_no = load_no,
+                         load_value = load_value, abbrev = abbrev)
+        self.angle = angle
+
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, angle):
+        self._angle = angle
+
+    def __repr__(self):
+
+        #Using {type(self).__name} to allow this method to be inherited by
+        #sub-classes without having to override it unless additional properties
+        #have to go into this method.
+        return (f"{type(self).__name__}(load={repr(self.load)}, "
+                + f"load_no={repr(self.load_no)}, "
+                + f"load_value={repr(self.load_value)}, "
+                + f"angle={repr(self.angle)}, "
+                + f"abbrev={repr(self.abbrev)})")
+
+    def __str__(self):
+
+        #Using {type(self).__name} to allow this method to be inherited by
+        #sub-classes without having to override it unless additional properties
+        #have to go into this method.
+        return (f'{type(self).__name__}: {self.load}, no. {self.load_no}, '
+                + f'load value: {self.load_value}, initial angle: {self.angle}')
 
 
 class WindLoad(Load):
-    pass
+
+    def __init__(self, *, load, load_no, wind_speed, angle, abbrev = ''):
+        super().__init__(load = load, load_no = load_no, abbrev = abbrev)
+        self.wind_speed = wind_speed
+        self.angle = angle
+
+    @property
+    def wind_speed(self):
+        return self._wind_speed
+
+    @wind_speed.setter
+    def wind_speed(self, wind_speed):
+        self._wind_speed = wind_speed
+
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, angle):
+        self._angle = angle
+
+    def __repr__(self):
+
+        #Using {type(self).__name} to allow this method to be inherited by
+        #sub-classes without having to override it unless additional properties
+        #have to go into this method.
+        return (f"{type(self).__name__}(load={repr(self.load)}, "
+                + f"load_no={repr(self.load_no)}, "
+                + f"wind_speed = {repr(self.wind_speed)}, "
+                + f"angle = {repr(self.angle)}, "
+                + f"abbrev={repr(self.abbrev)})")
+
+    def __str__(self):
+
+        #Using {type(self).__name} to allow this method to be inherited by
+        #sub-classes without having to override it unless additional properties
+        #have to go into this method.
+        return (f'{type(self).__name__}: {self.load}, '
+                + f'no. {self.load_no}, wind_speed: {self.wind_speed}')
