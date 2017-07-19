@@ -93,6 +93,7 @@ class LoadGroup:
         #LoadGroup without change.
         return f'{type(self).__name__}: {self.group_name}, loads: {self.loads}'
 
+
 #next define more complex load groups as subclasses.
 class FactoredGroup(LoadGroup):
     """
@@ -101,7 +102,7 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads, load_factors):
+    def __init__(self, *, group_name, loads, load_factors = (1.0)):
         """
         Creates a LoadGroup object.mro
 
@@ -109,8 +110,7 @@ class FactoredGroup(LoadGroup):
         :param loads: The list of loads.
         :param load_factors: the list of load factors.
         """
-        self.group_name = group_name
-        self.loads = loads
+        super().__init__(group_name = group_name, loads = loads)
         self.load_factors = load_factors
 
     @property
@@ -168,7 +168,47 @@ class FactoredGroup(LoadGroup):
         return (f'{type(self).__name__}: {self.group_name}, '
                 + f'loads: {self.loads}, load_factors: {self.load_factors}')
 
-class ExclusiveGroup(LoadGroup):
+
+class ScaledGroup(FactoredGroup):
+
+    def __init__(self, *, group_name, loads, load_factors, scale_to):
+        super().__init__(group_name = group_name, loads = loads,
+                         load_factors = load_factors)
+
+        self.scale_to = scale_to
+
+    @property
+    def scale_to(self):
+        return self._scale_to
+
+    @scale_to.setter
+    def scale_to(self, scale_to):
+        self._scale_to = scale_to
+
+    def generate_cases(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+
+        #use the {type(self).__name__} call to get the exact class name. This
+        #should allow the __repr__ method to be accepted for subclasses of
+        #LoadGroup without change.
+        return (f"{type(self).__name__}(group_name='{self.group_name}', "
+                + f"loads={repr(self.loads)}, "
+                + f"load_factors={repr(self.load_factors)}, scale_to="
+                + f"{repr(self.scale_to)})")
+
+    def __str__(self):
+
+        #use the {type(self).__name__} call to get the exact class name. This
+        #should allow the __str__ method to be accepted for subclasses of
+        #LoadGroup without change.
+        return (f'{type(self).__name__}: {self.group_name}, '
+                + f'loads: {self.loads}, load_factors: {self.load_factors}, '
+                + f'scale_to:  {self.scale_to}')
+
+
+class ExclusiveGroup(ScaledGroup):
     """
     A subclass of LoadGroup. In an ExclusiveGroup only 1x load case will be
     reported at any time.
@@ -176,12 +216,19 @@ class ExclusiveGroup(LoadGroup):
 
     pass
 
-class RotationalGroup(LoadGroup):
+
+class RotationalGroup(ScaledGroup):
     pass
 
-class WindGroup(LoadGroup):
+
+class WindGroup(ScaledGroup):
     pass
 
-class WindGroup3(WindGroup):
+
+def ReversedGroup():
+    pass
+
+
+def WindGroup3():
     pass
 
