@@ -102,6 +102,25 @@ class ScalableLoad(Load):
     def load_value(self, load_value):
         self._load_value = load_value
 
+    def scale_factor(self, *, scale_to, scale: bool = True) -> float:
+        '''
+        Determines the scale factor required to scale the load to a given value.
+
+        :param scale_to: The load to scale to.
+        :param scale: Should the load be scaled? If False returns 1.0. By
+            default this is True.
+        :return: Returns a float which is the factor which will scale this load
+            to the scale_to load.
+        '''
+
+        scale_factor = 1.0 #default value
+
+        if scale:
+            #if the load needs to scale
+            scale_factor = scale_to / self.load_value
+
+        return scale_factor
+
     def __repr__(self):
 
         #Using {type(self).__name} to allow this method to be inherited by
@@ -134,7 +153,8 @@ class RotatableLoad(ScalableLoad):
 
     @angle.setter
     def angle(self, angle):
-        self._angle = angle
+
+        self._angle = angle % 360.0
 
     def __repr__(self):
 
@@ -177,7 +197,19 @@ class WindLoad(Load):
 
     @angle.setter
     def angle(self, angle):
-        self._angle = angle
+
+        self._angle = angle % 360.0
+
+    def scale_speed(self, *, wind_speed_to, scale: bool = True) -> float:
+
+        scale_speed = 1.0 # default value
+
+        if scale:
+            #if the load needs to be scaled
+            scale_speed = ((wind_speed_to * wind_speed_to) /
+                            (self.wind_speed * self.wind_speed))
+
+        return scale_speed
 
     def __repr__(self):
 
