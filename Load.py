@@ -13,11 +13,12 @@ class Load:
     classes, but will be acceptable for simple load cases.
     """
 
-    def __init__(self, *, load, load_no, abbrev=''):
+    def __init__(self, *, load: str, load_no, abbrev: str =''):
         """
         Create a Load object.mro
 
         :param load: The name of the load case.
+        :param load_no: The load case no.
         :param abbrev: an abbreviation for the load case.
         """
 
@@ -26,7 +27,7 @@ class Load:
         self.abbrev = abbrev
 
     @property
-    def load(self):
+    def load(self) -> str:
         """
         The name of the load case.
         """
@@ -34,7 +35,7 @@ class Load:
         return self._load
 
     @load.setter
-    def load(self, load):
+    def load(self, load: str):
         """
         The name of the load case.
 
@@ -45,14 +46,26 @@ class Load:
 
     @property
     def load_no(self):
+        """
+        The load case no.
+
+        :return: Returns the load case number.
+        """
+
         return self._load_no
 
     @load_no.setter
     def load_no(self, load_no):
+        """
+        Setter for the load case no.
+
+        :param load_no: The load case no.
+        """
+
         self._load_no = load_no
 
     @property
-    def abbrev(self):
+    def abbrev(self) -> str:
         """
         An abbreviation for the load case
         """
@@ -60,7 +73,7 @@ class Load:
         return self._abbrev
 
     @abbrev.setter
-    def abbrev(self, abbrev):
+    def abbrev(self, abbrev: str):
         """
         An abbreviation for the load case
 
@@ -89,21 +102,42 @@ class Load:
 
 class ScalableLoad(Load):
 
-    def __init__(self, *, load, load_no, load_value, abbrev = ''):
+    def __init__(self, *, load: str, load_no, load_value: float,
+                 abbrev: str = ''):
+        """
+        Constructor for a ScalableLoad object.
+
+        :param load: The name of the load case.
+        :param load_no: The load case no.
+        :param load_value: The load value that the loads will be scaled to.
+        :param abbrev: an abbreviation for the load case.
+        """
         super().__init__(load = load, load_no = load_no, abbrev = abbrev)
 
         self.load_value = load_value
 
     @property
-    def load_value(self):
+    def load_value(self) -> float:
+        """
+        The load value that the loads will be scaled to.
+
+        :return: The load value.
+        """
+
         return self._load_value
 
     @load_value.setter
-    def load_value(self, load_value):
+    def load_value(self, load_value: float):
+        """
+        The load value that the loads will be scaled to.
+
+        :param load_value: The load value that the loads will be scaled to.
+        """
+
         self._load_value = load_value
 
-    def scale_factor(self, *, scale_to, scale: bool = True) -> float:
-        '''
+    def scale_factor(self, *, scale_to: float, scale: bool = True) -> float:
+        """
         Determines the scale factor required to scale the load to a given value.
 
         :param scale_to: The load to scale to.
@@ -111,7 +145,7 @@ class ScalableLoad(Load):
             default this is True.
         :return: Returns a float which is the factor which will scale this load
             to the scale_to load.
-        '''
+        """
 
         scale_factor = 1.0 #default value
 
