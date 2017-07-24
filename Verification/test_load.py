@@ -20,6 +20,7 @@ class TestLoad(TestCase):
 
         #does printing work?
         print(l)
+        print(l2)
 
         #are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))

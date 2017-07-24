@@ -1,3 +1,7 @@
+"""
+Unittests for the ScalableLoad class.
+"""
+
 from unittest import TestCase
 from Load import ScalableLoad
 
@@ -23,6 +27,7 @@ class TestScalableLoad(TestCase):
 
         # does printing work?
         print(l)
+        print(l2)
 
         # are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))
