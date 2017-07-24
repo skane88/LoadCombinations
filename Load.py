@@ -157,9 +157,6 @@ class ScalableLoad(Load):
 
     def __repr__(self):
 
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
         return (f"{type(self).__name__}(load={repr(self.load)}, "
                 + f"load_no={repr(self.load_no)}, "
                 + f"load_value={repr(self.load_value)}, "
@@ -167,9 +164,6 @@ class ScalableLoad(Load):
 
     def __str__(self):
 
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
         return (super(ScalableLoad, self).__str__()
                 + f', load value: {self.load_value}')
 
@@ -192,9 +186,6 @@ class RotatableLoad(ScalableLoad):
 
     def __repr__(self):
 
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
         return (f"{type(self).__name__}(load={repr(self.load)}, "
                 + f"load_no={repr(self.load_no)}, "
                 + f"load_value={repr(self.load_value)}, "
@@ -203,9 +194,6 @@ class RotatableLoad(ScalableLoad):
 
     def __str__(self):
 
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
         return (super(RotatableLoad, self).__str__()
                 + f', angle: {self.angle}')
 
@@ -247,9 +235,6 @@ class WindLoad(Load):
 
     def __repr__(self):
 
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
         return (f"{type(self).__name__}(load={repr(self.load)}, "
                 + f"load_no={repr(self.load_no)}, "
                 + f"wind_speed = {repr(self.wind_speed)}, "
@@ -258,9 +243,6 @@ class WindLoad(Load):
 
     def __str__(self):
 
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
         return (super(WindLoad, self).__str__()
                 + f', wind_speed: {self.wind_speed}'
                 + f', angle: {self.angle}')

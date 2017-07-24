@@ -57,7 +57,7 @@ class TestScalableLoad(TestCase):
 
     def test_scale_factor(self):
         """
-        Test the scale_factor function.
+        Test the scale_factor method.
         """
 
         load_title = 'G1 - Dead Load'
