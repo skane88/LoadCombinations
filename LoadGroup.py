@@ -12,8 +12,9 @@ from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
 
-#define a named tuple for interpolation results
+# define a named tuple for interpolation results
 InterpResults = namedtuple('InterpResults', ['left', 'right'])
+
 
 class LoadGroup:
     """
@@ -261,12 +262,12 @@ class ExclusiveGroup(ScaledGroup):
     generate_cases returns exclusive results.
     """
 
-    #no need to call __init__ as it shares all the same properties as a scaled
-    #group, only calls the generate_cases method differently.
+    # no need to call __init__ as it shares all the same properties as a scaled
+    # group, only calls the generate_cases method differently.
 
     def generate_cases(self):
 
-        #first iterate through the loads
+        # first iterate through the loads
         for l in self.loads:
 
             # call the load's scale_factor method to determine the scale
@@ -276,11 +277,10 @@ class ExclusiveGroup(ScaledGroup):
 
             # then iterate through the load_factors and get a return.
             for f in self.load_factors:
-
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
 
-                #yield at this level so each load is yielded exclusively.
+                # yield at this level so each load is yielded exclusively.
                 yield (lf,)
 
 
@@ -289,7 +289,6 @@ class RotationalGroup(ScaledGroup):
     A subclass of a ScaledGroup. in a RotationalGroup the loads are scaled by
     load factors corresponding to an interpolation
     """
-
 
     def __init__(self, *, group_name, loads: List(RotatableLoad), load_factors,
                  scale_to, scale: bool, half_list: bool, req_angles,
@@ -310,7 +309,7 @@ class RotationalGroup(ScaledGroup):
         :param loads: The loads that form part of the group.
         """
 
-        #check angles in each load are less than 180 if half_list:
+        # check angles in each load are less than 180 if half_list:
         if self.half_list:
             for l in loads:
                 if l.angle >= 180.0:
@@ -318,6 +317,7 @@ class RotationalGroup(ScaledGroup):
                                      + ' <180.0 degrees. Load ' + l.abbrev
                                      + ' has an angle of ' + l.angle + '°.')
 
+        #store loads as a sorted list
         self._loads = loads.sort(key = lambda x: x.angle)
 
     @property
@@ -351,7 +351,7 @@ class RotationalGroup(ScaledGroup):
                                  + 'list of integers. Value was: '
                                  + f'{repr(req_angles)}')
         else:
-            #assume a list or iterable and sort them.
+            # assume a list or iterable and sort them.
             self._req_angles = sorted(req_angles)
 
     def generate_angle_list(self):
@@ -363,8 +363,6 @@ class RotationalGroup(ScaledGroup):
             factors for.
         """
 
-        angle_list = []
-
         if isinstance(self.req_angles, int):
             angle_list = [i * 360.0 / self.req_angles
                           for i in range(self.req_angles)]
@@ -375,40 +373,39 @@ class RotationalGroup(ScaledGroup):
 
     def generate_cases(self):
 
-        #first build a list of loads and rotation factors:
+        # first build a list of loads and rotation factors:
         load_list = self.loads
-        rotation_factor = [1.0 for l in load_list]
-        angle_mod = [0.0 for i in rotation_factor]
+        rotation_factor = [1.0] * len(load_list)
+        angle_mod = [0.0] * len(load_list)
 
-        #If the loads only form half the circle then need to wrap them around:
+        # If the loads only form half the circle then need to wrap them around:
         if self.half_list:
-            loads = loads + loads
-            rotation_factor = rotation_factor + [-1 for i in rotation_factor]
-            angle_mod = angle_mod + [180.0 for i in angle_mod]
+            load_list = load_list + load_list
+            rotation_factor = rotation_factor + [-1] * len(rotation_factor)
+            angle_mod = angle_mod + [180.0] * len(angle_mod)
 
-        #append the first load to the end of the list of loads to get a full
-        #360 degree array that wraps around
+        # append the first load to the end of the list of loads to get a full
+        # 360 degree array that wraps around
         load_list = load_list + load_list[:1]
         rotation_factor = rotation_factor + [1]
         angle_mod = angle_mod + [0]
 
-        #zip the load & rotation lists for ease of use later.
+        # zip the load & rotation lists for ease of use later.
         zip_loads = list(zip(load_list, rotation_factor, angle_mod))
 
         angles_req = self.generate_angle_list()
 
-        #next we need to iterate through the load factors:
+        # next we need to iterate through the load factors:
         for f in self.load_factors:
 
-            #next iterate through the angles that loads are required from
+            # next iterate through the angles that loads are required from
             for a in angles_req:
-
-                l_min, rf_min = [t for t in zip_loads if (t[0].angle + t[2]) <= a]
-                l_min = l_min[-1]
-                rf_min = rf_min[-1]
-                l_max, rf_max = [t for t in zip_loads if (t[0].angle + t[2]) >= a]
-                l_max = l_max[0]
-                rf_max = rf_max[0]
+                list_min = [t for t in zip_loads if (t[0].angle + t[2]) <= a]
+                l_min = list_min[-1][0]
+                rf_min = list_min[-1][1]
+                list_max = [t for t in zip_loads if (t[0].angle + t[2]) >= a]
+                l_max = list_max[0][0]
+                rf_max = list_max[0][1]
 
                 gap = l_max.angle - l_min.angle
                 x = a - l_min.angle
@@ -426,20 +423,17 @@ class RotationalGroup(ScaledGroup):
 
 
 class WindGroup(FactoredGroup):
-
     def generate_cases(self):
         raise NotImplementedError()
 
 
 def linear_interp(gap, x):
-
     a = (gap - x) / gap
     b = 1 - a
     return InterpResults(left = a, right = b)
 
 
 def sine_interp_90(gap, x):
-
     if gap < 0 or gap > 90:
         raise ValueError('Gap expected to be within 90 degrees.')
 
@@ -447,7 +441,6 @@ def sine_interp_90(gap, x):
 
 
 def sine_interp(gap, x):
-
     return sine_interp_90(gap * 90.0 / gap, x * 90.0 / gap)
 
 

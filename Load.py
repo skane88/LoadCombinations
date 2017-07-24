@@ -82,7 +82,7 @@ class Load:
         #Using {type(self).__name} to allow this method to be inherited by
         #sub-classes without having to override it unless additional properties
         #have to go into this method.
-        return f'{type(self).__name__}: {self.load}, no. {self.load_no}'
+        return f'{type(self).__name__}: {self.load}, load no: {self.load_no}'
 
 
 #now create subclasses of more specialised loads
@@ -136,8 +136,8 @@ class ScalableLoad(Load):
         #Using {type(self).__name} to allow this method to be inherited by
         #sub-classes without having to override it unless additional properties
         #have to go into this method.
-        return (f'{type(self).__name__}: {self.load}, no. {self.load_no}, '
-                + f'load value: {self.load_value}')
+        return (super(ScalableLoad, self).__str__()
+                + f', load value: {self.load_value}')
 
 
 class RotatableLoad(ScalableLoad):
@@ -172,8 +172,8 @@ class RotatableLoad(ScalableLoad):
         #Using {type(self).__name} to allow this method to be inherited by
         #sub-classes without having to override it unless additional properties
         #have to go into this method.
-        return (f'{type(self).__name__}: {self.load}, no. {self.load_no}, '
-                + f'load value: {self.load_value}, initial angle: {self.angle}')
+        return (super(RotatableLoad, self).__str__()
+                + f', angle: {self.angle}')
 
 
 class WindLoad(Load):
@@ -227,5 +227,6 @@ class WindLoad(Load):
         #Using {type(self).__name} to allow this method to be inherited by
         #sub-classes without having to override it unless additional properties
         #have to go into this method.
-        return (f'{type(self).__name__}: {self.load}, '
-                + f'no. {self.load_no}, wind_speed: {self.wind_speed}')
+        return (super(WindLoad, self).__str__()
+                + f', wind_speed: {self.wind_speed}'
+                + f', angle: {self.angle}')
