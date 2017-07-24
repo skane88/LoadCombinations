@@ -1,3 +1,7 @@
+"""
+Unittest for the Load class.
+"""
+
 from unittest import TestCase
 from Load import Load
 
