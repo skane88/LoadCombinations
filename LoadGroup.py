@@ -5,7 +5,7 @@ appropriate list of loads through an iterator method.
 
 import math
 from numbers import Number
-from typing import List, Union
+from typing import List, Tuple, Union
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 
@@ -139,7 +139,7 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads: List[Load], load_factors: List[float] = [1.0]):
+    def __init__(self, *, group_name, loads: List[Load], load_factors: Tuple[float] = (1.0)):
         """
         Creates a LoadGroup object.mro
 
@@ -160,7 +160,7 @@ class FactoredGroup(LoadGroup):
         return self._load_factors
 
     @load_factors.setter
-    def load_factors(self, load_factors):
+    def load_factors(self, load_factors: Tuple[float]):
         """
         load_factors contains the list of load factors in the group.
 
@@ -213,7 +213,7 @@ class FactoredGroup(LoadGroup):
 
 
 class ScaledGroup(FactoredGroup):
-    def __init__(self, *, group_name, loads: List[ScalableLoad], load_factors,
+    def __init__(self, *, group_name, loads: List[ScalableLoad], load_factors: Tuple[float],
                  scale_to, scale: bool):
         super().__init__(group_name = group_name, loads = loads,
                          load_factors = load_factors)
@@ -317,7 +317,7 @@ class RotationalGroup(ScaledGroup):
     load factors corresponding to an interpolation
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad], load_factors,
+    def __init__(self, *, group_name, loads: List[RotatableLoad], load_factors: Tuple[float],
                  scale_to, scale: bool, half_list: bool, req_angles,
                  interp_func = sine_interp_90):
         super().__init__(group_name = group_name, loads = loads,
