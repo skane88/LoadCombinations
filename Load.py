@@ -109,7 +109,9 @@ class ScalableLoad(Load):
 
         :param load: The name of the load case.
         :param load_no: The load case no.
-        :param load_value: The load value that the loads will be scaled to.
+        :param load_value: The value of the load that is input into the
+            structural model. I.e. if the load case is based off 10t, then
+            load_value should be 10.
         :param abbrev: an abbreviation for the load case.
         """
         super().__init__(load = load, load_no = load_no, abbrev = abbrev)
@@ -119,7 +121,8 @@ class ScalableLoad(Load):
     @property
     def load_value(self) -> float:
         """
-        The load value that the loads will be scaled to.
+        The value of the load that is input into the structural model. I.e. if
+        the load case is based off 10t, then load_value should be 10.
 
         :return: The load value.
         """
@@ -129,9 +132,12 @@ class ScalableLoad(Load):
     @load_value.setter
     def load_value(self, load_value: float):
         """
-        The load value that the loads will be scaled to.
+        The value of the load that is input into the structural model. I.e. if
+        the load case is based off 10t, then load_value should be 10.
 
-        :param load_value: The load value that the loads will be scaled to.
+        :param load_value: The value of the load that is input into the
+            structural model. I.e. if the load case is based off 10t, then
+            load_value should be 10.
         """
 
         self._load_value = load_value
@@ -139,6 +145,8 @@ class ScalableLoad(Load):
     def scale_factor(self, *, scale_to: float, scale: bool = True) -> float:
         """
         Determines the scale factor required to scale the load to a given value.
+        I.e. if the load in the model is 10t, and the scale_to load is 5t, this
+        method will return 0.5.
 
         :param scale_to: The load to scale to.
         :param scale: Should the load be scaled? If False returns 1.0. By
@@ -170,17 +178,44 @@ class ScalableLoad(Load):
 
 class RotatableLoad(ScalableLoad):
 
-    def __init__(self, *, load, load_no, load_value, angle, abbrev = ''):
+    def __init__(self, *, load: str, load_no, load_value: float, angle: float,
+                 abbrev: str = ''):
+        """
+        Constructor for a RotatableLoad object.
+
+        :param load: The name of the load case.
+        :param load_no: The load case no.
+        :param load_value: The value of the load that is input into the
+            structural model. I.e. if the load case is based off 10t, then
+            load_value should be 10.
+        :param angle: The angle that the load in the model is applied at, in
+            degrees. Angles that are >360 or <0 will be converted into the range
+            0-360 degrees by taking their modulus with 360.
+        :param abbrev: an abbreviation for the load case.
+        """
         super().__init__(load = load, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
         self.angle = angle
 
     @property
-    def angle(self):
+    def angle(self) -> float:
+        """
+        The angle that the load in the model is applied at.
+
+        :return: Returns the load angle in degrees, between 0 and 360.
+        """
+
         return self._angle
 
     @angle.setter
-    def angle(self, angle):
+    def angle(self, angle: float):
+        """
+        The angle that the load in the model is applied at.
+
+        :param angle: The angle that the load in the model is applied at, in
+            degrees. Angles that are >360 or <0 will be converted into the range
+            0-360 degrees by taking their modulus with 360.
+        """
 
         self._angle = angle % 360.0
 
@@ -200,29 +235,39 @@ class RotatableLoad(ScalableLoad):
 
 class WindLoad(Load):
 
-    def __init__(self, *, load, load_no, wind_speed, angle, abbrev = ''):
+    def __init__(self, *, load: str, load_no, wind_speed: float, angle: float,
+                 abbrev: str = ''):
+        """
+
+        :param load:
+        :param load_no:
+        :param wind_speed:
+        :param angle:
+        :param abbrev:
+        """
+
         super().__init__(load = load, load_no = load_no, abbrev = abbrev)
         self.wind_speed = wind_speed
         self.angle = angle
 
     @property
-    def wind_speed(self):
+    def wind_speed(self) -> float:
         return self._wind_speed
 
     @wind_speed.setter
-    def wind_speed(self, wind_speed):
+    def wind_speed(self, wind_speed: float):
         self._wind_speed = wind_speed
 
     @property
-    def angle(self):
+    def angle(self) -> float:
         return self._angle
 
     @angle.setter
-    def angle(self, angle):
+    def angle(self, angle: float):
 
         self._angle = angle % 360.0
 
-    def scale_speed(self, *, wind_speed_to, scale: bool = True) -> float:
+    def scale_speed(self, *, wind_speed_to: float, scale: bool = True) -> float:
 
         scale_speed = 1.0 # default value
 
