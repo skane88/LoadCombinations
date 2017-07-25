@@ -15,6 +15,30 @@ LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
 # define a named tuple for interpolation results
 InterpResults = namedtuple('InterpResults', ['left', 'right'])
 
+def linear_interp(gap, x):
+    a = (gap - x) / gap
+    b = 1 - a
+    return InterpResults(left = a, right = b)
+
+
+def sine_interp_90(gap, x):
+    if gap < 0 or gap > 90:
+        raise ValueError('Gap expected to be within 90 degrees.')
+
+    return InterpResults(left = math.cos(x), right = math.sin(x))
+
+
+def sine_interp(gap, x):
+    return sine_interp_90(gap * 90.0 / gap, x * 90.0 / gap)
+
+
+def reversed_group():
+    pass
+
+
+def wind_group_3():
+    pass
+
 
 class LoadGroup:
     """
@@ -27,7 +51,7 @@ class LoadGroup:
     valued iterator.
     """
 
-    def __init__(self, *, group_name, loads: List(Load)):
+    def __init__(self, *, group_name: str, loads: List[Load]):
         """
         Creates a LoadGroup object.mro
 
@@ -38,7 +62,7 @@ class LoadGroup:
         self.loads = loads
 
     @property
-    def group_name(self):
+    def group_name(self) -> str:
         """
         The name of the load group.
         """
@@ -46,7 +70,7 @@ class LoadGroup:
         return self._group_name
 
     @group_name.setter
-    def group_name(self, group_name):
+    def group_name(self, group_name: str):
         """
         The name of the load group.
 
@@ -56,7 +80,7 @@ class LoadGroup:
         self._group_name = group_name
 
     @property
-    def loads(self):
+    def loads(self) -> List[Load]:
         """
         A list of loads to be included in the load group.
         """
@@ -64,7 +88,7 @@ class LoadGroup:
         return self._loads
 
     @loads.setter
-    def loads(self, loads):
+    def loads(self, loads: List[Load]):
         """
         A list of loads to be included in the load group.
 
@@ -115,7 +139,7 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads: List(Load), load_factors = 1.0):
+    def __init__(self, *, group_name, loads: List[Load], load_factors: List[float] = [1.0]):
         """
         Creates a LoadGroup object.mro
 
@@ -155,11 +179,12 @@ class FactoredGroup(LoadGroup):
             (load, load_factor, add_info), ...)
         """
 
-        for l in self.loads:
-            # first iterate through the load_s
+        for f in self.load_factors:
+            # first iterate through the factors, so that all loads in the group
+            # have the same factor
 
             results = []
-            for f in self.load_factors:
+            for l in self.loads:
                 # then iterate through the load_factors
 
                 lf = LoadFactor(load = l, load_factor = f, add_info = '')
@@ -188,7 +213,7 @@ class FactoredGroup(LoadGroup):
 
 
 class ScaledGroup(FactoredGroup):
-    def __init__(self, *, group_name, loads: List(ScalableLoad), load_factors,
+    def __init__(self, *, group_name, loads: List[ScalableLoad], load_factors,
                  scale_to, scale: bool):
         super().__init__(group_name = group_name, loads = loads,
                          load_factors = load_factors)
@@ -214,18 +239,19 @@ class ScaledGroup(FactoredGroup):
 
     def generate_cases(self):
 
-        # first iterate through the loads
-        for l in self.loads:
+        # first iterate through the load factors so that all loads have the same
+        # factor
+        for f in self.load_factors:
 
             results = []
 
-            # call the load's scale_factor method to determine the scale
-            # factor to scale the load by.
-            scale_factor = l.scale_factor(scale_to = self.scale_to,
-                                          scale = self.scale)
+            # then iterate through the loads
+            for l in self.loads:
 
-            for f in self.load_factors:
-                # then iterate through the load_factors
+                # call the load's scale_factor method to determine the scale
+                # factor to scale the load by.
+                scale_factor = l.scale_factor(scale_to = self.scale_to,
+                                              scale = self.scale)
 
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
@@ -267,16 +293,17 @@ class ExclusiveGroup(ScaledGroup):
 
     def generate_cases(self):
 
-        # first iterate through the loads
-        for l in self.loads:
+        # first iterate through the load factors
+        for f in self.load_factors:
 
-            # call the load's scale_factor method to determine the scale
-            # factor to scale the load by.
-            scale_factor = l.scale_factor(scale_to = self.scale_to,
-                                          scale = self.scale)
+            # then iterate through the loads and get a return.
+            for l in self.loads:
 
-            # then iterate through the load_factors and get a return.
-            for f in self.load_factors:
+                # call the load's scale_factor method to determine the scale
+                # factor to scale the load by.
+                scale_factor = l.scale_factor(scale_to = self.scale_to,
+                                              scale = self.scale)
+
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
 
@@ -290,7 +317,7 @@ class RotationalGroup(ScaledGroup):
     load factors corresponding to an interpolation
     """
 
-    def __init__(self, *, group_name, loads: List(RotatableLoad), load_factors,
+    def __init__(self, *, group_name, loads: List[RotatableLoad], load_factors,
                  scale_to, scale: bool, half_list: bool, req_angles,
                  interp_func = sine_interp_90):
         super().__init__(group_name = group_name, loads = loads,
@@ -426,27 +453,3 @@ class WindGroup(FactoredGroup):
     def generate_cases(self):
         raise NotImplementedError()
 
-
-def linear_interp(gap, x):
-    a = (gap - x) / gap
-    b = 1 - a
-    return InterpResults(left = a, right = b)
-
-
-def sine_interp_90(gap, x):
-    if gap < 0 or gap > 90:
-        raise ValueError('Gap expected to be within 90 degrees.')
-
-    return InterpResults(left = math.cos(x), right = math.sin(x))
-
-
-def sine_interp(gap, x):
-    return sine_interp_90(gap * 90.0 / gap, x * 90.0 / gap)
-
-
-def reversed_group():
-    pass
-
-
-def wind_group_3():
-    pass
