@@ -8,37 +8,10 @@ from numbers import Number
 from typing import List, Tuple, Union
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
+from HelperFuncs import sine_interp_90
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
-
-# define a named tuple for interpolation results
-InterpResults = namedtuple('InterpResults', ['left', 'right'])
-
-def linear_interp(gap, x):
-    a = (gap - x) / gap
-    b = 1 - a
-    return InterpResults(left = a, right = b)
-
-
-def sine_interp_90(gap, x):
-    if gap < 0 or gap > 90:
-        raise ValueError('Gap expected to be within 90 degrees.')
-
-    return InterpResults(left = math.cos(x), right = math.sin(x))
-
-
-def sine_interp(gap, x):
-    return sine_interp_90(gap * 90.0 / gap, x * 90.0 / gap)
-
-
-def reversed_group():
-    pass
-
-
-def wind_group_3():
-    pass
-
 
 class LoadGroup:
     """
