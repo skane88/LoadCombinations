@@ -191,7 +191,7 @@ class RotatableLoad(ScalableLoad):
         :param angle: The angle that the load in the model is applied at, in
             degrees. Angles that are >360 or <0 will be converted into the range
             0-360 degrees by taking their modulus with 360.
-        :param abbrev: an abbreviation for the load case.
+        :param abbrev: An abbreviation for the load case.
         """
         super().__init__(load = load, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
@@ -238,12 +238,16 @@ class WindLoad(Load):
     def __init__(self, *, load: str, load_no, wind_speed: float, angle: float,
                  abbrev: str = ''):
         """
+        Constructor for the WindLoad class.
 
-        :param load:
-        :param load_no:
-        :param wind_speed:
-        :param angle:
-        :param abbrev:
+        :param load: The name of the load case.
+        :param load_no: The load case no.
+        :param wind_speed: The windspeed that the load case in the model is
+            based on.
+        :param angle: The angle that the load in the model is applied at, in
+            degrees. Angles that are >360 or <0 will be converted into the range
+            0-360 degrees by taking their modulus with 360.
+        :param abbrev: An abbreviation for the load case.
         """
 
         super().__init__(load = load, load_no = load_no, abbrev = abbrev)
@@ -252,22 +256,61 @@ class WindLoad(Load):
 
     @property
     def wind_speed(self) -> float:
+        """
+        The windspeed that the load case is based on.
+
+        :return: The windspeed the load case is based on.
+        """
+
         return self._wind_speed
 
     @wind_speed.setter
     def wind_speed(self, wind_speed: float):
+        """
+        The windspeed that the load case is based on.
+
+        :param wind_speed: The windspeed that the load case in the model is
+            based on.
+        """
+
         self._wind_speed = wind_speed
 
     @property
     def angle(self) -> float:
+        """
+        The angle that the load in the model is applied at.
+
+        :return: Returns the load angle in degrees, between 0 and 360.
+        """
+
         return self._angle
 
     @angle.setter
     def angle(self, angle: float):
+        """
+        The angle that the load in the model is applied at.
+
+        :param angle: The angle that the load in the model is applied at, in
+            degrees. Angles that are >360 or <0 will be converted into the range
+            0-360 degrees by taking their modulus with 360.
+        """
 
         self._angle = angle % 360.0
 
     def scale_speed(self, *, wind_speed_to: float, scale: bool = True) -> float:
+        """
+        Determines the scale factor required to scale the load to a given value.
+        Note that windload scales to the square of the windspeed.
+        I.e. if the load in the model is based on a 69m/s windspeed, and the
+        windspeed to scale to is 25m/s, this method will return
+        25^2 / 69^2 = 0.131.
+
+        :param wind_speed_to: The windspeed to scale the load to.
+        :param scale: Should the load be scaled? If False returns 1.0. By
+            default this is True.
+        :return: Returns a float which is the factor which will scale this load
+            to the wind_speed_to.
+        """
 
         scale_speed = 1.0 # default value
 
