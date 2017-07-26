@@ -24,15 +24,17 @@ class LoadGroup:
     valued iterator.
     """
 
-    def __init__(self, *, group_name: str, loads: List[Load]):
+    def __init__(self, *, group_name: str, loads: List[Load], abbrev: str = ''):
         """
         Creates a LoadGroup object.mro
 
         :param group_name: The name of the load group.
         :param loads: The list of loads.
+        :param abbrev: An abbreviation for the load group.
         """
         self.group_name = group_name
         self.loads = loads
+        self.abbrev = abbrev
 
     @property
     def group_name(self) -> str:
@@ -70,6 +72,26 @@ class LoadGroup:
 
         self._loads = loads
 
+    @property
+    def abbrev(self) -> str:
+        """
+        An abbreviation for the LoadGroup.
+
+        :return: Returns the abbreviation.
+        """
+
+        return self._abbrev
+
+    @abbrev.setter
+    def abbrev(self, abbrev: str):
+        """
+        An abbreviation for the LoadGroup.
+
+        :param abbrev: An abbreviation for the load group.
+        """
+
+        self._abbrev = abbrev
+
     def generate_cases(self):
         """
         Generates an iterator that iterates through the potential cases that
@@ -95,7 +117,11 @@ class LoadGroup:
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadGroup without change.
-        return f"{type(self).__name__}('{self.group_name}', {repr(self.loads)})"
+        return (f'{type(self).__name__}('
+                + f'group_name = {repr(self.group_name)}, '
+                + f'loads = {repr(self.loads)}, '
+                + f'abbrev = {repr(self.abbrev)}'
+                + ')')
 
     def __str__(self):
         # use the {type(self).__name__} call to get the exact class name. This
