@@ -112,7 +112,7 @@ class LoadGroup:
 
         results = tuple(results)
 
-        yield (results,)
+        yield results
 
     def __repr__(self):
         # use the {type(self).__name__} call to get the exact class name. This
