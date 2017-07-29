@@ -1,4 +1,3 @@
-
 """
 This file creates a "Load" class, that will be used to generate a list of load
 combinations.
@@ -13,7 +12,7 @@ class Load:
     classes, but will be acceptable for simple load cases.
     """
 
-    def __init__(self, *, load: str, load_no, abbrev: str =''):
+    def __init__(self, *, load: str, load_no, abbrev: str = ''):
         """
         Create a Load object.mro
 
@@ -83,26 +82,23 @@ class Load:
         self._abbrev = abbrev
 
     def __repr__(self):
-
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
+        # Using {type(self).__name} to allow this method to be inherited by
+        # sub-classes without having to override it unless additional properties
+        # have to go into this method.
         return (f"{type(self).__name__}(load={repr(self.load)}, "
                 + f"load_no={repr(self.load_no)}, "
                 + f"abbrev={repr(self.abbrev)})")
 
     def __str__(self):
-
-        #Using {type(self).__name} to allow this method to be inherited by
-        #sub-classes without having to override it unless additional properties
-        #have to go into this method.
+        # Using {type(self).__name} to allow this method to be inherited by
+        # sub-classes without having to override it unless additional properties
+        # have to go into this method.
         return f'{type(self).__name__}: {self.load}, load no: {self.load_no}'
 
 
-#now create subclasses of more specialised loads
+# now create subclasses of more specialised loads
 
 class ScalableLoad(Load):
-
     def __init__(self, *, load: str, load_no, load_value: float,
                  abbrev: str = ''):
         """
@@ -156,29 +152,26 @@ class ScalableLoad(Load):
             to the scale_to load.
         """
 
-        scale_factor = 1.0 #default value
+        scale_factor = 1.0  # default value
 
         if scale:
-            #if the load needs to scale
+            # if the load needs to scale
             scale_factor = scale_to / self.load_value
 
         return scale_factor
 
     def __repr__(self):
-
         return (f"{type(self).__name__}(load={repr(self.load)}, "
                 + f"load_no={repr(self.load_no)}, "
                 + f"load_value={repr(self.load_value)}, "
                 + f"abbrev={repr(self.abbrev)})")
 
     def __str__(self):
-
         return (super(ScalableLoad, self).__str__()
                 + f', load value: {self.load_value}')
 
 
 class RotatableLoad(ScalableLoad):
-
     def __init__(self, *, load: str, load_no, load_value: float, angle: float,
                  symmetrical: bool, abbrev: str = ''):
         """
@@ -249,7 +242,6 @@ class RotatableLoad(ScalableLoad):
         self._symmetrical = symmetrical
 
     def __repr__(self):
-
         return (f'{type(self).__name__}(load={repr(self.load)}, '
                 + f'load_no={repr(self.load_no)}, '
                 + f'load_value={repr(self.load_value)}, '
@@ -258,7 +250,6 @@ class RotatableLoad(ScalableLoad):
                 + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
-
         return (super(RotatableLoad, self).__str__()
                 + f', angle: {self.angle}')
 
@@ -277,7 +268,6 @@ class WindLoad(Load):
     WindLoad is still a sub-class of Load, which is desired behaviour.
     """
 
-
     def __init__(self, *, load: str, load_no, wind_speed: float, angle: float,
                  symmetrical: bool, abbrev: str = ''):
         """
@@ -285,7 +275,7 @@ class WindLoad(Load):
 
         :param load: The name of the load case.
         :param load_no: The load case no.
-        :param wind_speed: The windspeed that the load case in the model is
+        :param wind_speed: The wind speed that the load case in the model is
             based on.
         :param angle: The angle that the load in the model is applied at, in
             degrees. Angles that are >360 or <0 will be converted into the range
@@ -297,8 +287,10 @@ class WindLoad(Load):
         """
 
         self._rotatableload = RotatableLoad(load = load, load_no = load_no,
-                                   load_value = wind_speed, angle = angle,
-                                   symmetrical = symmetrical, abbrev = abbrev)
+                                            load_value = wind_speed,
+                                            angle = angle,
+                                            symmetrical = symmetrical,
+                                            abbrev = abbrev)
 
         super().__init__(load = load, load_no = load_no, abbrev = abbrev)
 
@@ -338,9 +330,9 @@ class WindLoad(Load):
     @property
     def wind_speed(self) -> float:
         """
-        The windspeed that the load case is based on.
+        The wind speed that the load case is based on.
 
-        :return: The windspeed the load case is based on.
+        :return: The wind speed the load case is based on.
         """
 
         return self._rotatableload.load_value
@@ -348,9 +340,9 @@ class WindLoad(Load):
     @wind_speed.setter
     def wind_speed(self, wind_speed: float):
         """
-        The windspeed that the load case is based on.
+        The wind speed that the load case is based on.
 
-        :param wind_speed: The windspeed that the load case in the model is
+        :param wind_speed: The wind speed that the load case in the model is
             based on.
         """
 
@@ -405,29 +397,28 @@ class WindLoad(Load):
     def scale_speed(self, *, wind_speed_to: float, scale: bool = True) -> float:
         """
         Determines the scale factor required to scale the load to a given value.
-        Note that windload scales to the square of the windspeed.
-        I.e. if the load in the model is based on a 69m/s windspeed, and the
-        windspeed to scale to is 25m/s, this method will return
+        Note that wind load scales to the square of the wind speed.
+        I.e. if the load in the model is based on a 69m/s wind speed, and the
+        wind speed to scale to is 25m/s, this method will return
         25^2 / 69^2 = 0.131.
 
-        :param wind_speed_to: The windspeed to scale the load to.
+        :param wind_speed_to: The wind speed to scale the load to.
         :param scale: Should the load be scaled? If False returns 1.0. By
             default this is True.
         :return: Returns a float which is the factor which will scale this load
             to the wind_speed_to.
         """
 
-        scale_speed = 1.0 # default value
+        scale_speed = 1.0  # default value
 
         if scale:
-            #if the load needs to be scaled
+            # if the load needs to be scaled
             scale_speed = ((wind_speed_to * wind_speed_to) /
-                            (self.wind_speed * self.wind_speed))
+                           (self.wind_speed * self.wind_speed))
 
         return scale_speed
 
     def __repr__(self):
-
         return (f'{type(self).__name__}(load={repr(self.load)}, '
                 + f'load_no={repr(self.load_no)}, '
                 + f'wind_speed={repr(self.wind_speed)}, '
@@ -436,7 +427,6 @@ class WindLoad(Load):
                 + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
-
         return (super(WindLoad, self).__str__()
                 + f', wind_speed: {self.wind_speed}'
                 + f', angle: {self.angle}')

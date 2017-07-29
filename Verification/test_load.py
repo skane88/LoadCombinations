@@ -5,8 +5,8 @@ Unittest for the Load class.
 from unittest import TestCase
 from Load import Load
 
-class TestLoad(TestCase):
 
+class TestLoad(TestCase):
     def test_basic(self):
         """
         A basic unit test for the Load class. can Load objects be instantiated,
@@ -19,14 +19,14 @@ class TestLoad(TestCase):
 
         l = Load(load = load_title, load_no = load_no, abbrev = abbrev)
 
-        #the repr method should be able to recreate a Load object
+        # the repr method should be able to recreate a Load object
         l2 = eval(repr(l))
 
-        #does printing work?
+        # does printing work?
         print(l)
         print(l2)
 
-        #are the strings of l and l2 the same?
+        # are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))
 
     def test_load(self):
@@ -50,7 +50,7 @@ class TestLoad(TestCase):
 
     def test_load_no(self):
         """
-        Test the load_no getter & settter.
+        Test the load_no getter & setter.
         """
         load_title = 'G1 - Dead Load'
         load_no = 1
@@ -68,7 +68,7 @@ class TestLoad(TestCase):
 
     def test_abbrev(self):
         """
-        Test the abbrev getter & settter.
+        Test the abbrev getter & setter.
         """
         load_title = 'G1 - Dead Load'
         load_no = 1

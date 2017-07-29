@@ -9,17 +9,17 @@ from collections import namedtuple
 # define a named tuple for interpolation results
 InterpResults = namedtuple('InterpResults', ['left', 'right'])
 
+
 def linear_interp(gap, x):
     a = (gap - x) / gap
     b = 1 - a
     return InterpResults(left = a, right = b)
 
 
-def sine_interp_90(gap, x):
+def sine_interp_90(gap: float, x: float):
     if gap != 90:
         raise ValueError('Gap expected to be 90 degrees.')
 
-    gap = math.radians(gap)
     x = math.radians(x)
 
     return InterpResults(left = math.cos(x), right = math.sin(x))
@@ -30,7 +30,6 @@ def sine_interp(gap, x):
 
 
 def wind_interp_85(gap, x):
-
     α = 1.2 - 0.2 * abs(math.cos(2 * math.radians(x)))
     results = sine_interp_90(gap, x)
     results = InterpResults(results.left * α, results.right * α)
@@ -44,3 +43,4 @@ def reversed_group():
 
 def wind_group_3():
     pass
+

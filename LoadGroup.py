@@ -4,7 +4,7 @@ appropriate list of loads through an iterator method.
 """
 
 import math
-from numbers import Number
+from numbers import Real
 from typing import List, Tuple, Union
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
@@ -12,6 +12,7 @@ from HelperFuncs import sine_interp_90
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
+
 
 class LoadGroup:
     """
@@ -138,7 +139,8 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads: List[Load], load_factors: Tuple[float] = (1.0)):
+    def __init__(self, *, group_name, loads: List[Load],
+                 load_factors: Tuple[float] = (1.0,)):
         """
         Creates a LoadGroup object.mro
 
@@ -212,8 +214,9 @@ class FactoredGroup(LoadGroup):
 
 
 class ScaledGroup(FactoredGroup):
-    def __init__(self, *, group_name, loads: List[ScalableLoad], load_factors: Tuple[float],
-                 scale_to, scale: bool):
+    def __init__(self, *, group_name, loads: List[ScalableLoad],
+                 load_factors: Tuple[float], scale_to, scale: bool):
+
         super().__init__(group_name = group_name, loads = loads,
                          load_factors = load_factors)
 
@@ -246,7 +249,6 @@ class ScaledGroup(FactoredGroup):
 
             # then iterate through the loads
             for l in self.loads:
-
                 # call the load's scale_factor method to determine the scale
                 # factor to scale the load by.
                 scale_factor = l.scale_factor(scale_to = self.scale_to,
@@ -297,7 +299,6 @@ class ExclusiveGroup(ScaledGroup):
 
             # then iterate through the loads and get a return.
             for l in self.loads:
-
                 # call the load's scale_factor method to determine the scale
                 # factor to scale the load by.
                 scale_factor = l.scale_factor(scale_to = self.scale_to,
@@ -316,8 +317,9 @@ class RotationalGroup(ScaledGroup):
     load factors corresponding to an interpolation
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad], load_factors: Tuple[float],
-                 scale_to, scale: bool, half_list: bool, req_angles,
+    def __init__(self, *, group_name, loads: List[RotatableLoad],
+                 load_factors: Tuple[float], scale_to, scale: bool,
+                 half_list: bool, req_angles: List[Real],
                  interp_func = sine_interp_90):
         super().__init__(group_name = group_name, loads = loads,
                          load_factors = load_factors, scale_to = scale_to,
@@ -343,7 +345,7 @@ class RotationalGroup(ScaledGroup):
                                      + ' <=180.0 degrees. Load ' + l.abbrev
                                      + ' has an angle of ' + l.angle + '°.')
 
-        #store loads as a sorted list
+        # store loads as a sorted list
         self._loads = loads.sort(key = lambda x: x.angle)
 
     @property
@@ -367,35 +369,19 @@ class RotationalGroup(ScaledGroup):
         return self._req_angles
 
     @req_angles.setter
-    def req_angles(self, req_angles):
+    def req_angles(self, req_angles: List[Real]):
 
-        if isinstance(req_angles, Number):
-            if isinstance(req_angles, int):
-                self._req_angles = req_angles
-            else:
-                raise ValueError('Expected req_angles to be an integer or a '
-                                 + 'list of integers. Value was: '
-                                 + f'{repr(req_angles)}')
-        else:
-            # assume a list or iterable and sort them.
-            self._req_angles = sorted(req_angles)
+        self._req_angles = sorted(req_angles)
 
-    def generate_angle_list(self):
+    def set_req_angles_int(self, no_angles: int):
         """
-        Returns the list of angles that this LoadGroup will return load factors
-        for.
-
-        :return: A list of the angles that this LoadGroup will generate load
-            factors for.
+        Sets the no. of req_angles based on a single integer input, rather than
+        a list of input angles.
         """
 
-        if isinstance(self.req_angles, int):
-            angle_list = [i * 360.0 / self.req_angles
-                          for i in range(self.req_angles)]
-        else:
-            angle_list = self.req_angles
+        angle_list = [i * 360.0 / no_angles for i in range(no_angles)]
 
-        return angle_list
+        self.req_angles = angle_list
 
     def generate_cases(self):
 
@@ -451,4 +437,3 @@ class RotationalGroup(ScaledGroup):
 class WindGroup(FactoredGroup):
     def generate_cases(self):
         raise NotImplementedError()
-
