@@ -338,9 +338,9 @@ class RotationalGroup(ScaledGroup):
         # check angles in each load are less than 180 if half_list:
         if self.half_list:
             for l in loads:
-                if l.angle >= 180.0:
+                if l.angle > 180.0:
                     raise ValueError("With half_list = True, all angles must be"
-                                     + ' <180.0 degrees. Load ' + l.abbrev
+                                     + ' <=180.0 degrees. Load ' + l.abbrev
                                      + ' has an angle of ' + l.angle + '°.')
 
         #store loads as a sorted list

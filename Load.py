@@ -79,6 +79,7 @@ class Load:
 
         :param abbrev: an abbreviation for the load case.
         """
+
         self._abbrev = abbrev
 
     def __repr__(self):
@@ -179,7 +180,7 @@ class ScalableLoad(Load):
 class RotatableLoad(ScalableLoad):
 
     def __init__(self, *, load: str, load_no, load_value: float, angle: float,
-                 abbrev: str = ''):
+                 symmetrical: bool, abbrev: str = ''):
         """
         Constructor for a RotatableLoad object.
 
@@ -191,11 +192,15 @@ class RotatableLoad(ScalableLoad):
         :param angle: The angle that the load in the model is applied at, in
             degrees. Angles that are >360 or <0 will be converted into the range
             0-360 degrees by taking their modulus with 360.
+        :param symmetrical: Is the applied  load symmetrical? I.e. if the load
+            were to rotate through 180 degrees can the load factor simply change
+            from +1 to -1?
         :param abbrev: An abbreviation for the load case.
         """
         super().__init__(load = load, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
         self.angle = angle
+        self.symmetrical = symmetrical
 
     @property
     def angle(self) -> float:
@@ -219,13 +224,38 @@ class RotatableLoad(ScalableLoad):
 
         self._angle = angle % 360.0
 
+    @property
+    def symmetrical(self) -> bool:
+        """
+        Is the applied  load symmetrical? I.e. if the load were to rotate
+        through 180 degrees can the load factor simply change from +1 to -1?
+
+        :return: a boolean indicating if the load is symmetrical or not.
+        """
+
+        return self._symmetrical
+
+    @symmetrical.setter
+    def symmetrical(self, symmetrical: bool):
+        """
+        Is the applied  load symmetrical? I.e. if the load were to rotate
+        through 180 degrees can the load factor simply change from +1 to -1?
+
+        :param symmetrical: Is the applied  load symmetrical? I.e. if the load
+            were to rotate through 180 degrees can the load factor simply change
+            from +1 to -1?
+        """
+
+        self._symmetrical = symmetrical
+
     def __repr__(self):
 
-        return (f"{type(self).__name__}(load={repr(self.load)}, "
-                + f"load_no={repr(self.load_no)}, "
-                + f"load_value={repr(self.load_value)}, "
-                + f"angle={repr(self.angle)}, "
-                + f"abbrev={repr(self.abbrev)})")
+        return (f'{type(self).__name__}(load={repr(self.load)}, '
+                + f'load_no={repr(self.load_no)}, '
+                + f'load_value={repr(self.load_value)}, '
+                + f'angle={repr(self.angle)}, '
+                + f'symmetrical={repr(self.symmetrical)}, '
+                + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
 
@@ -234,9 +264,22 @@ class RotatableLoad(ScalableLoad):
 
 
 class WindLoad(Load):
+    """
+    This class is simply a wrapper around a RotatableLoad object, to allow
+    the use of wind_speed instead of load, and to hide the scale_factor
+    method. If access to the underlying RotatableLoad object is required,
+    use self._rotatableload to access it.
+
+    Note that this approach requires overriding the load, load_no and abbrev
+    setters inherited from the Load class, to ensure tha the underlying
+    RotatableLoad object maintains its current state. This means accepting a
+    limited amount of duplicated code. This does however mean that the
+    WindLoad is still a sub-class of Load, which is desired behaviour.
+    """
+
 
     def __init__(self, *, load: str, load_no, wind_speed: float, angle: float,
-                 abbrev: str = ''):
+                 symmetrical: bool, abbrev: str = ''):
         """
         Constructor for the WindLoad class.
 
@@ -247,12 +290,50 @@ class WindLoad(Load):
         :param angle: The angle that the load in the model is applied at, in
             degrees. Angles that are >360 or <0 will be converted into the range
             0-360 degrees by taking their modulus with 360.
+        :param symmetrical: Is the applied  load symmetrical? I.e. if the load
+            were to rotate through 180 degrees can the load factor simply change
+            from +1 to -1?
         :param abbrev: An abbreviation for the load case.
         """
 
+        self._rotatableload = RotatableLoad(load = load, load_no = load_no,
+                                   load_value = wind_speed, angle = angle,
+                                   symmetrical = symmetrical, abbrev = abbrev)
+
         super().__init__(load = load, load_no = load_no, abbrev = abbrev)
-        self.wind_speed = wind_speed
-        self.angle = angle
+
+    @Load.load.setter
+    def load(self, load: str):
+        """
+        The name of the load case.
+
+        :param load: the name of the load case.
+        """
+
+        self._load = load
+        self._rotatableload.load = load
+
+    @Load.load_no.setter
+    def load_no(self, load_no):
+        """
+        Setter for the load case no.
+
+        :param load_no: The load case no.
+        """
+
+        self._load_no = load_no
+        self._rotatableload.load_no = load_no
+
+    @Load.abbrev.setter
+    def abbrev(self, abbrev: str):
+        """
+        An abbreviation for the load case
+
+        :param abbrev: an abbreviation for the load case.
+        """
+
+        self._abbrev = abbrev
+        self._rotatableload.abbrev = abbrev
 
     @property
     def wind_speed(self) -> float:
@@ -262,7 +343,7 @@ class WindLoad(Load):
         :return: The windspeed the load case is based on.
         """
 
-        return self._wind_speed
+        return self._rotatableload.load_value
 
     @wind_speed.setter
     def wind_speed(self, wind_speed: float):
@@ -273,7 +354,7 @@ class WindLoad(Load):
             based on.
         """
 
-        self._wind_speed = wind_speed
+        self._rotatableload.load_value = wind_speed
 
     @property
     def angle(self) -> float:
@@ -283,7 +364,7 @@ class WindLoad(Load):
         :return: Returns the load angle in degrees, between 0 and 360.
         """
 
-        return self._angle
+        return self._rotatableload.angle
 
     @angle.setter
     def angle(self, angle: float):
@@ -295,7 +376,31 @@ class WindLoad(Load):
             0-360 degrees by taking their modulus with 360.
         """
 
-        self._angle = angle % 360.0
+        self._rotatableload.angle = angle
+
+    @property
+    def symmetrical(self) -> bool:
+        """
+        Is the applied  load symmetrical? I.e. if the load were to rotate
+        through 180 degrees can the load factor simply change from +1 to -1?
+
+        :return: a boolean indicating if the load is symmetrical or not.
+        """
+
+        return self._rotatableload.symmetrical
+
+    @symmetrical.setter
+    def symmetrical(self, symmetrical: bool):
+        """
+        Is the applied  load symmetrical? I.e. if the load were to rotate
+        through 180 degrees can the load factor simply change from +1 to -1?
+
+        :param symmetrical: Is the applied  load symmetrical? I.e. if the load
+            were to rotate through 180 degrees can the load factor simply change
+            from +1 to -1?
+        """
+
+        self._rotatableload.symmetrical = symmetrical
 
     def scale_speed(self, *, wind_speed_to: float, scale: bool = True) -> float:
         """
@@ -323,11 +428,12 @@ class WindLoad(Load):
 
     def __repr__(self):
 
-        return (f"{type(self).__name__}(load={repr(self.load)}, "
-                + f"load_no={repr(self.load_no)}, "
-                + f"wind_speed = {repr(self.wind_speed)}, "
-                + f"angle = {repr(self.angle)}, "
-                + f"abbrev={repr(self.abbrev)})")
+        return (f'{type(self).__name__}(load={repr(self.load)}, '
+                + f'load_no={repr(self.load_no)}, '
+                + f'wind_speed={repr(self.wind_speed)}, '
+                + f'angle={repr(self.angle)}, '
+                + f'symmetrical={repr(self.symmetrical)}, '
+                + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
 

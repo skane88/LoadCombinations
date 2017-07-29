@@ -7,6 +7,7 @@ from Load import RotatableLoad
 
 
 class TestRotatableLoad(TestCase):
+
     def test_basic(self):
         """
         A basic unit test for the RotatableLoad class. Can RotatableLoad objects
@@ -18,10 +19,11 @@ class TestRotatableLoad(TestCase):
         abbrev = 'G1'
         load_value = 10
         angle = 100
+        symmetrical = True
 
         l = RotatableLoad(load = load_title, load_no = load_no,
                           load_value = load_value, angle = angle,
-                          abbrev = abbrev)
+                          symmetrical = symmetrical, abbrev = abbrev)
 
         # the repr method should be able to recreate a Load object
         l2 = eval(repr(l))
@@ -43,10 +45,11 @@ class TestRotatableLoad(TestCase):
         abbrev = 'G1'
         load_value = 10
         angle = 100
+        symmetrical = True
 
         l = RotatableLoad(load = load_title, load_no = load_no,
                           load_value = load_value, angle = angle,
-                          abbrev = abbrev)
+                          symmetrical = symmetrical, abbrev = abbrev)
 
         self.assertEqual(first = l.angle, second = angle)
 
@@ -63,4 +66,27 @@ class TestRotatableLoad(TestCase):
         l.angle = angle
 
         self.assertEqual(first = l.angle, second = angle_exp)
+
+    def test_symmetrical(self):
+        """
+        Test the symmetrical getter / setter.
+        """
+
+        load_title = 'G1 - Dead Load'
+        load_no = 1
+        abbrev = 'G1'
+        load_value = 10
+        angle = 100
+        symmetrical = True
+
+        l = RotatableLoad(load = load_title, load_no = load_no,
+                          load_value = load_value, angle = angle,
+                          symmetrical = symmetrical, abbrev = abbrev)
+
+        self.assertEqual(first = l.symmetrical, second = symmetrical)
+
+        symmetrical = False
+        l.symmetrical = symmetrical
+
+        self.assertEqual(first = l.symmetrical, second = symmetrical)
 
