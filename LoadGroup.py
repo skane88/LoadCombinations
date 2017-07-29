@@ -98,13 +98,12 @@ class LoadGroup:
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
 
-        :return: returns a generator which will create a tuple of load factors:
+        :return: returns a generator which will create a tuple of load factors,
             each of them in their own named tuple:
             ((load, load_factor, add_info),
             (load, load_factor, add_info), ...)
         """
 
-        # need to check on what sort of group this is.
         results = []
         for l in self.loads:
             lf = LoadFactor(load = l, load_factor = 1.0, add_info = '')
