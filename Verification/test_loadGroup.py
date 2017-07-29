@@ -52,9 +52,10 @@ class TestLoadGroup(TestCase):
         l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
                           load_value = 5, abbrev = 'Q1')
         l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
-                           load_value = 10, angle = 45.0, abbrev = 'R1')
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
         l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
-                      angle = 0.0, abbrev = 'WUx')
+                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
 
         group_name = 'Group 1'
         loads = [l1, l2, l3, l4]
@@ -71,10 +72,77 @@ class TestLoadGroup(TestCase):
 
 
     def test_loads(self):
-        self.fail()
+        """
+        Test the loads getter / setter
+        """
+
+        l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
+                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3, l4]
+        abbrev = 'Gp 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        loads = [l1, l2]
+
+        LG.loads = loads
+
+        self.assertEqual(first = LG.loads, second = loads)
 
     def test_abbrev(self):
-        self.fail()
+        """
+        Test the abbrev getter / setter
+        """
+
+        l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
+                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3, l4]
+        abbrev = 'Gp 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertEqual(first = LG.abbrev, second = abbrev)
+
+        abbrev = 'GP 2'
+
+        LG.abbrev = abbrev
+
+        self.assertEqual(first = LG.abbrev, second = abbrev)
+
 
     def test_generate_cases(self):
+        """
+        Test the generate_cases method.
+        """
+
+        l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
+                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+
         self.fail()
