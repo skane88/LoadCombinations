@@ -139,7 +139,7 @@ class FactoredGroup(LoadGroup):
     """
 
     def __init__(self, *, group_name, loads: List[Load],
-                 load_factors: Tuple[float] = (1.0,)):
+                 load_factors: Tuple[float, ...] = (1.0,), abbrev: str = ''):
         """
         Creates a LoadGroup object.mro
 
@@ -147,7 +147,8 @@ class FactoredGroup(LoadGroup):
         :param loads: The list of loads.
         :param load_factors: the list of load factors.
         """
-        super().__init__(group_name = group_name, loads = loads)
+        super().__init__(group_name = group_name, loads = loads,
+                         abbrev = abbrev)
         self.load_factors = load_factors
 
     @property
@@ -199,9 +200,10 @@ class FactoredGroup(LoadGroup):
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadGroup without change.
-        return (f"{type(self).__name__}(group_name='{self.group_name}', "
-                + f"loads={repr(self.loads)}, "
-                + f"load_factors={repr(self.load_factors)})")
+        return (f'{type(self).__name__}(group_name={repr(self.group_name)}, '
+                + f'loads={repr(self.loads)}, '
+                + f'load_factors={repr(self.load_factors)}, '
+                + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
 
