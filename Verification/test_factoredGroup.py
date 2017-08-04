@@ -1,6 +1,13 @@
+# coding=utf-8
+
+"""
+Unit tests for the FactoredGroup class.
+"""
+
 from unittest import TestCase
 from LoadGroup import FactoredGroup, LoadFactor
 from Load import Load, RotatableLoad, ScalableLoad, WindLoad
+
 
 class TestFactoredGroup(TestCase):
     def test_basic(self):
@@ -30,11 +37,11 @@ class TestFactoredGroup(TestCase):
         print(LG)
         print(repr(LG))
 
-        #can the __repr__ method instantiate an object?
+        # can the __repr__ method instantiate an object?
 
         LG2 = eval(repr(LG))
 
-        #does the __str__ method result in equal strings
+        # does the __str__ method result in equal strings
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
