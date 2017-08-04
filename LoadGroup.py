@@ -152,12 +152,13 @@ class FactoredGroup(LoadGroup):
         self.load_factors = load_factors
 
     @property
-    def load_factors(self):
+    def load_factors(self) -> Tuple[float, ...]:
         """
         load_factors contains the list of load factors in the group.
 
         :return: the list of load factors.
         """
+
         return self._load_factors
 
     @load_factors.setter
