@@ -1,10 +1,10 @@
+# coding=utf-8
+
 """
 Creates a LoadGroup class, that stores multiple Loads and can generate an
 appropriate list of loads through an iterator method.
 """
 
-import math
-from numbers import Real
 from typing import List, Tuple, Union
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
@@ -216,10 +216,11 @@ class FactoredGroup(LoadGroup):
 
 class ScaledGroup(FactoredGroup):
     def __init__(self, *, group_name, loads: List[ScalableLoad],
-                 load_factors: Tuple[float], scale_to, scale: bool):
+                 load_factors: Tuple[float,...], scale_to: float, scale: bool,
+                 abbrev: str = ''):
 
         super().__init__(group_name = group_name, loads = loads,
-                         load_factors = load_factors)
+                         load_factors = load_factors, abbrev = abbrev)
 
         self.scale_to = scale_to
         self.scale = scale
@@ -268,10 +269,12 @@ class ScaledGroup(FactoredGroup):
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadGroup without change.
-        return (f"{type(self).__name__}(group_name='{self.group_name}', "
-                + f"loads={repr(self.loads)}, "
-                + f"load_factors={repr(self.load_factors)}, scale_to="
-                + f"{repr(self.scale_to)})")
+        return (f'{type(self).__name__}(group_name={repr(self.group_name)}, '
+                + f'loads={repr(self.loads)}, '
+                + f'load_factors={repr(self.load_factors)}, '
+                + f'scale_to={repr(self.scale_to)}, '
+                  f'scale={repr(self.scale)}, '
+                  f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
 
@@ -320,7 +323,7 @@ class RotationalGroup(ScaledGroup):
 
     def __init__(self, *, group_name, loads: List[RotatableLoad],
                  load_factors: Tuple[float], scale_to, scale: bool,
-                 half_list: bool, req_angles: List[Real],
+                 half_list: bool, req_angles: List[float],
                  interp_func = sine_interp_90):
         super().__init__(group_name = group_name, loads = loads,
                          load_factors = load_factors, scale_to = scale_to,
@@ -370,7 +373,7 @@ class RotationalGroup(ScaledGroup):
         return self._req_angles
 
     @req_angles.setter
-    def req_angles(self, req_angles: List[Real]):
+    def req_angles(self, req_angles: List[float]):
 
         self._req_angles = sorted(req_angles)
 
