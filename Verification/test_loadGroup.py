@@ -12,8 +12,8 @@ from Load import Load, RotatableLoad, ScalableLoad, WindLoad
 class TestLoadGroup(TestCase):
     def test_basic(self):
         """
-        Test basic functionality - can the class be instantiated and can the str
-        and repr methods be used.
+        Test basic functionality - can the class be instantiated and can the
+        __str__ and __repr__ methods be used.
         """
 
         l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,

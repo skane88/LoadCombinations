@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This file creates a "Load" class, that will be used to generate a list of load
 combinations.
