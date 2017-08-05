@@ -283,7 +283,8 @@ class ScaledGroup(FactoredGroup):
         # should allow the __str__ method to be accepted for subclasses of
         # LoadGroup without change.
         return (f'{type(self).__name__}: {self.group_name}, '
-                + f'loads: {self.loads}, factors: {self.factors}, '
+                + f'loads: {self.loads}, '
+                + f'factors: {self.factors}, '
                 + f'scale_to:  {self.scale_to}')
 
 
