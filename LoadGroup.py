@@ -274,8 +274,8 @@ class ScaledGroup(FactoredGroup):
                 + f'loads={repr(self.loads)}, '
                 + f'factors={repr(self.factors)}, '
                 + f'scale_to={repr(self.scale_to)}, '
-                  f'scale={repr(self.scale)}, '
-                  f'abbrev={repr(self.abbrev)})')
+                + f'scale={repr(self.scale)}, '
+                + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
 
