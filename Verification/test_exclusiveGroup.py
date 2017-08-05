@@ -6,7 +6,7 @@ Tests the ExclusiveGroup class.
 
 from unittest import TestCase
 from LoadGroup import ExclusiveGroup, LoadFactor
-from Load import Load, RotatableLoad, WindLoad, ScalableLoad
+from Load import RotatableLoad, ScalableLoad
 
 
 class TestExclusiveGroup(TestCase):
@@ -32,7 +32,7 @@ class TestExclusiveGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = ExclusiveGroup(group_name = group_name, loads = loads,
-                            factors = factors, scale_to = 7.5,
+                            factors = factors, scale_to = scale_to,
                             scale = scale, abbrev = abbrev)
 
         print(LG)
@@ -72,9 +72,9 @@ class TestExclusiveGroup(TestCase):
 
         LC_1 = LoadFactor(load = loads[0],
                           load_factor = factors[0]
-                                        *loads[0].scale_factor(scale_to =
-                                                               scale_to,
-                                                               scale = scale),
+                                        * loads[0].scale_factor(scale_to =
+                                                                scale_to,
+                                                                scale = scale),
                           add_info = f'(scaled: {scale_to})')
 
         LC_2 = LoadFactor(load = loads[1],
@@ -133,8 +133,8 @@ class TestExclusiveGroup(TestCase):
                                                                 scale = scale),
                           add_info = f'(scaled: {scale_to})')
 
-        LC = ((LC_1, ), (LC_2, ), (LC_3, ), (LC_4, ), (LC_5, ), (LC_6, ),
-              (LC_7, ), (LC_8, ), (LC_9, ))
+        LC = ((LC_1,), (LC_2,), (LC_3,), (LC_4,), (LC_5,), (LC_6,),
+              (LC_7,), (LC_8,), (LC_9,))
 
         LC_ACT = tuple(LG.generate_cases())
 
