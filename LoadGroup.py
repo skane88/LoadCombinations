@@ -139,36 +139,36 @@ class FactoredGroup(LoadGroup):
     """
 
     def __init__(self, *, group_name, loads: List[Load],
-                 load_factors: Tuple[float, ...] = (1.0,), abbrev: str = ''):
+                 factors: Tuple[float, ...] = (1.0,), abbrev: str = ''):
         """
         Creates a LoadGroup object.mro
 
         :param group_name: The name of the load group.
         :param loads: The list of loads.
-        :param load_factors: the list of load factors.
+        :param factors: the list of load factors.
         """
         super().__init__(group_name = group_name, loads = loads,
                          abbrev = abbrev)
-        self.load_factors = load_factors
+        self.factors = factors
 
     @property
-    def load_factors(self) -> Tuple[float, ...]:
+    def factors(self) -> Tuple[float, ...]:
         """
         load_factors contains the list of load factors in the group.
 
         :return: the list of load factors.
         """
 
-        return self._load_factors
+        return self._factors
 
-    @load_factors.setter
-    def load_factors(self, load_factors: Tuple[float]):
+    @factors.setter
+    def factors(self, factors: Tuple[float]):
         """
         load_factors contains the list of load factors in the group.
 
         :param load_factors: the list of load factors.
         """
-        self._load_factors = load_factors
+        self._factors = factors
 
     def generate_cases(self):
         """
@@ -181,7 +181,7 @@ class FactoredGroup(LoadGroup):
             (load, load_factor, add_info), ...)
         """
 
-        for f in self.load_factors:
+        for f in self.factors:
             # first iterate through the factors, so that all loads in the group
             # have the same factor
 
@@ -203,7 +203,7 @@ class FactoredGroup(LoadGroup):
         # LoadGroup without change.
         return (f'{type(self).__name__}(group_name={repr(self.group_name)}, '
                 + f'loads={repr(self.loads)}, '
-                + f'load_factors={repr(self.load_factors)}, '
+                + f'factors={repr(self.factors)}, '
                 + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
@@ -212,16 +212,16 @@ class FactoredGroup(LoadGroup):
         # should allow the __str__ method to be accepted for subclasses of
         # LoadGroup without change.
         return (f'{type(self).__name__}: {self.group_name}, '
-                + f'loads: {self.loads}, load_factors: {self.load_factors}')
+                + f'loads: {self.loads}, factors: {self.factors}')
 
 
 class ScaledGroup(FactoredGroup):
     def __init__(self, *, group_name, loads: List[ScalableLoad],
-                 load_factors: Tuple[float,...], scale_to: float, scale: bool,
+                 factors: Tuple[float, ...], scale_to: float, scale: bool,
                  abbrev: str = ''):
 
         super().__init__(group_name = group_name, loads = loads,
-                         load_factors = load_factors, abbrev = abbrev)
+                         factors = factors, abbrev = abbrev)
 
         self.scale_to = scale_to
         self.scale = scale
@@ -246,7 +246,7 @@ class ScaledGroup(FactoredGroup):
 
         # first iterate through the load factors so that all loads have the same
         # factor
-        for f in self.load_factors:
+        for f in self.factors:
 
             results = []
 
@@ -272,7 +272,7 @@ class ScaledGroup(FactoredGroup):
         # LoadGroup without change.
         return (f'{type(self).__name__}(group_name={repr(self.group_name)}, '
                 + f'loads={repr(self.loads)}, '
-                + f'load_factors={repr(self.load_factors)}, '
+                + f'factors={repr(self.factors)}, '
                 + f'scale_to={repr(self.scale_to)}, '
                   f'scale={repr(self.scale)}, '
                   f'abbrev={repr(self.abbrev)})')
@@ -283,7 +283,7 @@ class ScaledGroup(FactoredGroup):
         # should allow the __str__ method to be accepted for subclasses of
         # LoadGroup without change.
         return (f'{type(self).__name__}: {self.group_name}, '
-                + f'loads: {self.loads}, load_factors: {self.load_factors}, '
+                + f'loads: {self.loads}, factors: {self.factors}, '
                 + f'scale_to:  {self.scale_to}')
 
 
@@ -300,7 +300,7 @@ class ExclusiveGroup(ScaledGroup):
     def generate_cases(self):
 
         # first iterate through the load factors
-        for f in self.load_factors:
+        for f in self.factors:
 
             # then iterate through the loads and get a return.
             for l in self.loads:
@@ -323,11 +323,11 @@ class RotationalGroup(ScaledGroup):
     """
 
     def __init__(self, *, group_name, loads: List[RotatableLoad],
-                 load_factors: Tuple[float], scale_to, scale: bool,
+                 factors: Tuple[float], scale_to, scale: bool,
                  half_list: bool, req_angles: List[float],
                  interp_func = sine_interp_90):
         super().__init__(group_name = group_name, loads = loads,
-                         load_factors = load_factors, scale_to = scale_to,
+                         factors = factors, scale_to = scale_to,
                          scale = scale)
         self.half_list = half_list
         self.interp_func = interp_func

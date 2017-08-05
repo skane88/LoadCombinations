@@ -32,7 +32,7 @@ class TestScaledGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = ScaledGroup(group_name = group_name, loads = loads,
-                         load_factors = load_factors, scale_to = scale_to,
+                         factors = load_factors, scale_to = scale_to,
                          scale = scale, abbrev = abbrev)
 
         print(LG)
@@ -67,7 +67,7 @@ class TestScaledGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = ScaledGroup(group_name = group_name, loads = loads,
-                         load_factors = load_factors, scale_to = scale_to,
+                         factors = load_factors, scale_to = scale_to,
                          scale = scale, abbrev = abbrev)
 
         self.assertEqual(first = LG.scale_to, second = scale_to)
@@ -98,7 +98,7 @@ class TestScaledGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = ScaledGroup(group_name = group_name, loads = loads,
-                         load_factors = load_factors, scale_to = scale_to,
+                         factors = load_factors, scale_to = scale_to,
                          scale = scale, abbrev = abbrev)
 
         self.assertEqual(first = LG.scale, second = scale)
@@ -129,7 +129,7 @@ class TestScaledGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = ScaledGroup(group_name = group_name, loads = loads,
-                         load_factors = load_factors, scale_to = scale_to,
+                         factors = load_factors, scale_to = scale_to,
                          scale = scale, abbrev = abbrev)
 
         LC1_1 = LoadFactor(load = l1,

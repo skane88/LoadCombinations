@@ -32,7 +32,7 @@ class TestFactoredGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = FactoredGroup(group_name = group_name, loads = loads,
-                           load_factors = load_factors, abbrev = abbrev)
+                           factors = load_factors, abbrev = abbrev)
 
         print(LG)
         print(repr(LG))
@@ -45,9 +45,9 @@ class TestFactoredGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-    def test_load_factors(self):
+    def test_factors(self):
         """
-        Test the load_factors getter / setter
+        Test the factors getter / setter
         """
 
         l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
@@ -62,19 +62,19 @@ class TestFactoredGroup(TestCase):
 
         group_name = 'Group 1'
         loads = [l1, l2, l3, l4]
-        load_factors = (-1.0, 0.0, 1.0)
+        factors = (-1.0, 0.0, 1.0)
         abbrev = 'GP 1'
 
         LG = FactoredGroup(group_name = group_name, loads = loads,
-                           load_factors = load_factors, abbrev = abbrev)
+                           factors = factors, abbrev = abbrev)
 
-        self.assertEqual(first = LG.load_factors, second = load_factors)
+        self.assertEqual(first = LG.factors, second = factors)
 
-        load_factors = (-0.5, -1.0, 0.25, 0.33, -5, 10)
+        factors = (-0.5, -1.0, 0.25, 0.33, -5, 10)
 
-        LG.load_factors = load_factors
+        LG.factors = factors
 
-        self.assertEqual(first = LG.load_factors, second = load_factors)
+        self.assertEqual(first = LG.factors, second = factors)
 
     def test_generate_cases(self):
         """
@@ -98,7 +98,7 @@ class TestFactoredGroup(TestCase):
         abbrev = 'GP 1'
 
         LG = FactoredGroup(group_name = group_name, loads = loads,
-                           load_factors = load_factors, abbrev = abbrev)
+                           factors = load_factors, abbrev = abbrev)
 
         LC1_1 = LoadFactor(load = l1, load_factor = -1.0, add_info = '')
         LC2_1 = LoadFactor(load = l2, load_factor = -1.0, add_info = '')
