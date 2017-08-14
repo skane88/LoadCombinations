@@ -5,7 +5,7 @@ Creates a LoadGroup class, that stores multiple Loads and can generate an
 appropriate list of loads through an iterator method.
 """
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Callable
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from HelperFuncs import sine_interp_90
@@ -324,13 +324,30 @@ class RotationalGroup(ScaledGroup):
     """
 
     def __init__(self, *, group_name, loads: List[RotatableLoad],
-                 factors: Tuple[float], scale_to, scale: bool,
-                 half_list: bool, req_angles: List[float],
-                 interp_func = sine_interp_90):
+                 factors: Tuple[float, ...], scale_to, scale: bool,
+                 req_angles: Tuple[float, ...],
+                 interp_func: Callable = sine_interp_90,
+                 abbrev: str = ''):
+        """
+
+        :param group_name:
+        :param loads: The loads that form part of the group. the loads will be
+            sorted, and if half_list is True they must all have angles <=180.
+        :param factors:
+        :param scale_to:
+        :param scale:
+        :param req_angles: The angles that the resulting load combinations are
+            required at. Any duplicates are removed, and all angles are
+            taken to be in the range of 0-360 degrees by taking the modulus
+            of the angle. The list is sorted.
+        :param interp_func:
+        :param abbrev:
+        """
+
         super().__init__(group_name = group_name, loads = loads,
                          factors = factors, scale_to = scale_to,
-                         scale = scale)
-        self.half_list = half_list
+                         scale = scale, abbrev = abbrev)
+
         self.interp_func = interp_func
         self.req_angles = req_angles
 
@@ -340,44 +357,69 @@ class RotationalGroup(ScaledGroup):
         Set the loads. This setter overrides the parent class' method to allow
         for the list of loads to be sorted.
 
-        :param loads: The loads that form part of the group.
+        :param loads: The loads that form part of the group. the loads will be
+            sorted, and if half_list is True they must all have angles <=180.
         """
 
-        # check angles in each load are less than 180 if half_list:
-        if self.half_list:
-            for l in loads:
-                if l.angle > 180.0:
-                    raise ValueError("With half_list = True, all angles must be"
-                                     + ' <=180.0 degrees. Load ' + l.abbrev
-                                     + ' has an angle of ' + l.angle + '°.')
-
         # store loads as a sorted list
-        self._loads = loads.sort(key = lambda x: x.angle)
+        loads.sort(key = lambda x: x.angle)
+        self._loads = loads
 
     @property
-    def half_list(self):
-        return self._half_list
+    def interp_func(self) -> Callable[[float, float], Tuple[float, float]]:
+        """
+        Getter for the interpolation function.
 
-    @half_list.setter
-    def half_list(self, half_list):
-        self._half_list = half_list
-
-    @property
-    def interp_func(self):
+        :return: Returns the interpolation function used to determine the load
+            factors for intermediate angles between the Load angles.
+        """
         return self._interp_func
 
     @interp_func.setter
-    def interp_func(self, interp_func):
+    def interp_func(self, interp_func: Callable[[float, float],
+                                                Tuple[float, float]]):
+        """
+        Setter for the interpolation function.
+
+        :param interp_func: A function used to interpolate between Load angles,
+            and determine the load factors used. The function should take a
+            gap value, corresponding to the angle between 2x adjacent loads,
+            and an angle, corresponding to the angle between the left-hand Load
+            and the angle at which the load combination is being determined.
+            The function should return a named tuple (left, right) where left
+            and right are floats which specify the factors to apply to the
+            2x angles.
+        """
+
         self._interp_func = interp_func
 
     @property
-    def req_angles(self):
+    def req_angles(self) -> Tuple[float, ...]:
+        """
+        The getter for the req_angles.
+
+        :return: A tuple containing the angles that the RotataionalGroup will
+            generate load combinations for.
+        """
         return self._req_angles
 
     @req_angles.setter
-    def req_angles(self, req_angles: List[float]):
+    def req_angles(self, req_angles: Tuple[float, ...]):
+        """
+        The setter for the req_angles list.
 
-        self._req_angles = sorted(req_angles)
+        :param req_angles: The angles that the resulting load combinations are
+            required at. Any duplicates are removed, and all angles are
+            taken to be in the range of 0-360 degrees by taking the modulus
+            of the angle. The list is sorted.
+        """
+
+        req_angles = tuple(i % 360 for i in req_angles) # Convert everything
+                                                        # into the 360 deg range
+        req_angles = tuple(set(req_angles)) # Remove duplicates
+
+        self._req_angles = tuple(sorted(req_angles)) # Sort and set the
+                                                     # attribute
 
     def set_req_angles_int(self, no_angles: int):
         """
@@ -439,6 +481,27 @@ class RotationalGroup(ScaledGroup):
 
                 yield (lf1, lf2)
 
+    def __str__(self):
+
+        return (f'{type(self).__name__}: {self.group_name}, '
+                + f'loads: {self.loads}, '
+                + f'factors: {self.factors}, '
+                + f'scale_to:  {self.scale_to}'
+                + f'angles: {self.req_angles}')
+
+    def __repr__(self):
+
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __repr__ method to be accepted for subclasses of
+        # LoadGroup without change.
+        return (f'{type(self).__name__}(group_name={repr(self.group_name)}, '
+                + f'loads={repr(self.loads)}, '
+                + f'factors={repr(self.factors)}, '
+                + f'scale_to={repr(self.scale_to)}, '
+                + f'scale={repr(self.scale)}, '
+                + f'req_angles={repr(self.req_angles)}, '
+                + f'interp_func={repr(self.interp_func.__name__)}, '
+                + f'abbrev={repr(self.abbrev)})')
 
 class WindGroup(FactoredGroup):
     def generate_cases(self):

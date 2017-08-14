@@ -192,6 +192,7 @@ class RotatableLoad(ScalableLoad):
             from +1 to -1?
         :param abbrev: An abbreviation for the load case.
         """
+
         super().__init__(load = load, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
         self.angle = angle
