@@ -414,22 +414,14 @@ class RotationalGroup(ScaledGroup):
             of the angle. The list is sorted.
         """
 
+        #TODO: remove this code to the helper function
+
         req_angles = tuple(i % 360 for i in req_angles) # Convert everything
                                                         # into the 360 deg range
         req_angles = tuple(set(req_angles)) # Remove duplicates
 
         self._req_angles = tuple(sorted(req_angles)) # Sort and set the
                                                      # attribute
-
-    def set_req_angles_int(self, no_angles: int):
-        """
-        Sets the no. of req_angles based on a single integer input, rather than
-        a list of input angles.
-        """
-
-        angle_list = [i * 360.0 / no_angles for i in range(no_angles)]
-
-        self.req_angles = angle_list
 
     def generate_cases(self):
 

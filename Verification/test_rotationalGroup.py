@@ -186,12 +186,5 @@ class TestRotationalGroup(TestCase):
         self.assertEqual(first = LG.interp_func, second = linear_interp)
 
 
-    def test_set_req_angles_int(self):
-        '''
-
-        '''
-
-        self.fail()
-
     def test_generate_cases(self):
         self.fail()
