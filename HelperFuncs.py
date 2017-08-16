@@ -5,7 +5,7 @@ the Load or LoadGroup headers.
 
 import math
 from collections import namedtuple
-from typing import Union, List, Tuple
+from typing import List, Tuple, Union
 
 # define a named tuple for interpolation results
 InterpResults = namedtuple('InterpResults', ['left', 'right'])
@@ -56,15 +56,15 @@ def req_angles_int(no_angles: int):
 
     return angle_list
 
-def req_angles_list(req_angles: Union(List[float], Tuple[float,...])):
+def req_angles_list(req_angles: Union[List[float], Tuple[float, ...]]):
 
     req_angles = tuple(i % 360 for i in req_angles)  # Convert everything
                                                      # into the 360 deg range
     req_angles = tuple(set(req_angles))  # Remove duplicates
 
-    return tuple(sorted(req_angles))  # Sort and set the attribute
+    return tuple(sorted(req_angles))  # Sort and return the list
 
-def req_angles_chooser(angles: Union(Union(List[float], Tuple[float,...]), int)):
+def req_angles_chooser(angles: Union[Union[List[float], Tuple[float,...]], int]):
 
     if isinstance(angles, int):
         return req_angles_int(angles)
