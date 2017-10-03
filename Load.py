@@ -97,6 +97,25 @@ class Load:
         # have to go into this method.
         return f'{type(self).__name__}: {self.load}, load no: {self.load_no}'
 
+    def __eq__(self, other):
+        """
+        Override the equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        """
+        Override the non-equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+
+        return NotImplemented
 
 # now create subclasses of more specialised loads
 

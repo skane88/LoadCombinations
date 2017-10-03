@@ -8,11 +8,11 @@ appropriate list of loads through an iterator method.
 from typing import List, Tuple, Union, Callable
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
-from HelperFuncs import sine_interp_90
+from HelperFuncs import sine_interp_90, req_angles_list
+from copy import deepcopy
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
-
 
 class LoadGroup:
     """
@@ -128,7 +128,6 @@ class LoadGroup:
         # should allow the __str__ method to be accepted for subclasses of
         # LoadGroup without change.
         return f'{type(self).__name__}: {self.group_name}, loads: {self.loads}'
-
 
 # next define more complex load groups as subclasses.
 class FactoredGroup(LoadGroup):
@@ -404,7 +403,7 @@ class RotationalGroup(ScaledGroup):
         return self._req_angles
 
     @req_angles.setter
-    def req_angles(self, req_angles: Tuple[float, ...]):
+    def req_angles(self, req_angles: Union[List[float], Tuple[float, ...]]):
         """
         The setter for the req_angles list.
 
@@ -414,64 +413,132 @@ class RotationalGroup(ScaledGroup):
             of the angle. The list is sorted.
         """
 
-        #TODO: remove this code to the helper function
-
-        req_angles = tuple(i % 360 for i in req_angles) # Convert everything
-                                                        # into the 360 deg range
-        req_angles = tuple(set(req_angles)) # Remove duplicates
-
-        self._req_angles = tuple(sorted(req_angles)) # Sort and set the
-                                                     # attribute
+        self._req_angles = req_angles_list(req_angles)
 
     def generate_cases(self):
 
-        # first build a list of loads and rotation factors:
-        load_list = self.loads
-        rotation_factor = [1.0] * len(load_list)
-        angle_mod = [0.0] * len(load_list)
+        # define a named tuple for use in the rotating load cases
+        RotateFactors = namedtuple('RotateFactors',['Load', ])
 
-        # If the loads only form half the circle then need to wrap them around:
-        if self.half_list:
-            load_list = load_list + load_list
-            rotation_factor = rotation_factor + [-1] * len(rotation_factor)
-            angle_mod = angle_mod + [180.0] * len(angle_mod)
+        # first build a dictionary of loads mapped to their angles:
+        load_dict = {l.angle:l for l in self.loads}
+        sym_dict = {l.angle:1.0 for l in self.loads}
 
-        # append the first load to the end of the list of loads to get a full
-        # 360 degree array that wraps around
-        load_list = load_list + load_list[:1]
-        rotation_factor = rotation_factor + [1]
-        angle_mod = angle_mod + [0]
+        #next go through each load and check if it can be reversed.
+        for l in self.loads:
 
-        # zip the load & rotation lists for ease of use later.
-        zip_loads = list(zip(load_list, rotation_factor, angle_mod))
+            if l.symmetrical:
+                # if l is symmetrical then need to check if the angle already
+                # exists in the dictionary
 
-        angles_req = self.generate_angle_list()
+                angle = (l.angle + 180.0) % 360
+
+                if not angle in load_dict:
+                    # only add to the load dict if there isn't already an angle
+
+                    l_new = deepcopy(l)
+                    # note: don't change the angle for the copied load, as this
+                    # would change the load itself
+
+                    load_dict[angle] = l_new
+                    sym_dict[angle] = -1.0
+
+        # next check if 0 or 360 exist in the load dictionary, and wrap them
+        # around if necessary
+
+        if 0.0 in load_dict and 360.0 not in load_dict:
+            # need to wrap 0.0 to 360.0
+
+            l_new = deepcopy(load_dict[0.0])
+
+            # note don't change the angle for the copied load as this would
+            # change the load
+
+            load_dict[360.0] = l_new
+            sym_dict[360.0] = 1.0
+
+        if 360.0 in load_dict and 0.0 not in load_dict:
+            # need to wrap 360.0 to 0.0
+
+            l_new = deepcopy(load_dict[360.0])
+
+            # note don't change the angle for the copied load as this would
+            # change the load
+
+            load_dict[0.0] = l_new
+            sym_dict[0.0] = 1.0
+
+        # next need to get a list of angles rather than a dictionary so we can
+        # easily slice
+        list_angles = sorted(load_dict.keys())
 
         # next we need to iterate through the load factors:
-        for f in self.load_factors:
+        for f in self.factors:
 
             # next iterate through the angles that loads are required from
-            for a in angles_req:
-                list_min = [t for t in zip_loads if (t[0].angle + t[2]) <= a]
-                l_min = list_min[-1][0]
-                rf_min = list_min[-1][1]
-                list_max = [t for t in zip_loads if (t[0].angle + t[2]) >= a]
-                l_max = list_max[0][0]
-                rf_max = list_max[0][1]
+            for a in self.req_angles:
 
-                gap = l_max.angle - l_min.angle
-                x = a - l_min.angle
+                ret_val = (None,)
 
-                factors = self.interp_func(gap, x)
+                #first check if a is already in the list of angles
+                if a in list_angles:
+                    #if so, we can simply return load_a
+                    load_a = load_dict[a]
+                    sym_a = sym_dict[a]
 
-                lf1 = LoadFactor(load = l_min,
-                                 load_factor = rf_min * f * factors.left,
-                                 add_info = f'(Rotated: {a})')
-                lf2 = LoadFactor(load = l_max,
-                                 load_factor = rf_max * f * factors.right,
-                                 add_info = f'(Rotated: {a})')
+                    lf1 = LoadFactor(load = load_a, load_factor = sym_a * f,
+                                     add_info = f'(Rotated: {a})')
+                    ret_val = (lf1, )
 
-                yield (lf1, lf2)
+                else:
+                    #if not, we need to interpolate between angles.
+                    list_min = [l for l in list_angles if l <= a]
+                    angle_min = 0
+
+                    if len(list_min) == 0:
+                        # if there are no elements less than or == a, then we
+                        # need to get the last element and wrap it round
+                        l_min = list_angles[-1]
+                        load_min = load_dict[l_min]
+                        sym_min = sym_dict[l_min]
+                        l_min = l_min.angle - 360.0
+                    else:
+                        # else, the next smallest angle will do.
+                        l_min = list_min[-1]
+                        load_min = load_dict[l_min]
+                        sym_min = sym_dict[l_min]
+
+                    list_max = [l for l in list_angles if l >= a]
+                    angle_max = 0
+
+                    if len(list_max) == 0:
+                        # if there are no angles in the list larger than a
+                        # we need to take the smallest and wrap it around
+                        l_max = list_angles[0]
+                        load_max = load_dict[l_max]
+                        sym_max = sym_dict[l_max]
+                        l_max = l_max + 360.0
+                    else:
+                        # else the next largest angle will do
+                        l_max = list_max[0]
+                        load_max = load_dict[l_max]
+                        sym_max = sym_dict[l_max]
+
+                    gap = l_max - l_min
+                    x = a - l_min
+
+                    factors = self.interp_func(gap, x)
+
+                    lf1 = LoadFactor(load = load_min,
+                                     load_factor = sym_min * f * factors.left,
+                                     add_info = f'(Rotated: {a})')
+                    lf2 = LoadFactor(load = load_max,
+                                     load_factor = sym_max * f * factors.right,
+                                     add_info = f'(Rotated: {a})')
+
+                    ret_val = (lf1, lf2)
+
+                yield ret_val
 
     def __str__(self):
 
