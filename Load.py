@@ -298,7 +298,7 @@ class WindLoad(Load):
         :param load: The name of the load case.
         :param load_no: The load case no.
         :param wind_speed: The wind speed that the load case in the model is
-            based on.
+            based on. Will always be an absolute value.
         :param angle: The angle that the load in the model is applied at, in
             degrees. Angles that are >360 or <0 will be converted into the range
             0-360 degrees by taking their modulus with 360.
@@ -309,7 +309,7 @@ class WindLoad(Load):
         """
 
         self._rotatableload = RotatableLoad(load = load, load_no = load_no,
-                                            load_value = wind_speed,
+                                            load_value = abs(wind_speed),
                                             angle = angle,
                                             symmetrical = symmetrical,
                                             abbrev = abbrev)
@@ -365,10 +365,10 @@ class WindLoad(Load):
         The wind speed that the load case is based on.
 
         :param wind_speed: The wind speed that the load case in the model is
-            based on.
+            based on. Will always be an absolute value.
         """
 
-        self._rotatableload.load_value = wind_speed
+        self._rotatableload.load_value = abs(wind_speed)
 
     @property
     def angle(self) -> float:

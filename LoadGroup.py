@@ -659,7 +659,7 @@ class WindGroup(FactoredGroup):
     wind scale to the square of wind speed.
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad],
+    def __init__(self, *, group_name, loads: List[WindLoad],
                  factors: Tuple[float, ...], scale_speed: float, scale: bool,
                  req_angles: Tuple[float, ...],
                  interp_func: Callable = sine_interp_90,
@@ -670,7 +670,8 @@ class WindGroup(FactoredGroup):
         :param loads: The loads that form part of the group. the loads will be
             sorted, and if half_list is True they must all have angles <=180.
         :param factors: Factors to multiply the resulting loads by.
-        :param scale_speed: The wind speed to which output will be scaled.
+        :param scale_speed: The wind speed to which output will be scaled. Will
+            always be an absolute value.
         :param scale: Should output be scaled to wind speed?
         :param req_angles: The angles that the resulting load combinations are
             required at. Any duplicates are removed, and all angles are
@@ -724,9 +725,9 @@ class WindGroup(FactoredGroup):
         The speed that loads in this WindGroup will be scaled to.
 
         :param scale_speed: The speed that loads in this WindGroup will be
-            scaled to.
+            scaled to. Will always be an absolute value.
         """
-        self._scale_speed = scale_speed
+        self._scale_speed = abs(scale_speed)
 
     @property
     def scale(self) -> bool:

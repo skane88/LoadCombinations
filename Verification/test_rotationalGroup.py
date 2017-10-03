@@ -12,9 +12,9 @@ from HelperFuncs import sine_interp, linear_interp
 class TestRotationalGroup(TestCase):
 
     def test_basic(self):
-        '''
+        """
         Test the initialisation and __str__ and __repr__ methods.
-        '''
+        """
 
         l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
@@ -109,9 +109,9 @@ class TestRotationalGroup(TestCase):
 
 
     def test_req_angles(self):
-        '''
+        """
         Test the getter / setter
-        '''
+        """
 
         l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
@@ -150,9 +150,9 @@ class TestRotationalGroup(TestCase):
 
 
     def test_interp_func(self):
-        '''
+        """
         Test the interp_func getter / setter
-        '''
+        """
 
         l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
