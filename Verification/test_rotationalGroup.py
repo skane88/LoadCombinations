@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Tests for the RotataionalGroup class.
+Tests for the RotationalGroup class.
 """
 import math
 from unittest import TestCase
@@ -224,15 +224,15 @@ class TestRotationalGroup(TestCase):
                              scale = scale, req_angles = req_angles,
                              interp_func = sine_interp, abbrev = abbrev)
 
-        LC1_1 = LoadFactor(l1, -1.0, '(Rotated: 0.0)')
-        LC2_1 = LoadFactor(l2, -1.0, '(Rotated: 90.0)')
-        LC3_1 = LoadFactor(l3, -1.0, '(Rotated: 180.0)')
-        LC4_1 = LoadFactor(l4, -1.0, '(Rotated: 270.0)')
+        LC1_1 = LoadFactor(l1, -2.0, '(Rotated: 0.0)')
+        LC2_1 = LoadFactor(l2, -2.0, '(Rotated: 90.0)')
+        LC3_1 = LoadFactor(l3, -2.0, '(Rotated: 180.0)')
+        LC4_1 = LoadFactor(l4, -2.0, '(Rotated: 270.0)')
 
-        LC1_2 = LoadFactor(l1, 1.0, '(Rotated: 0.0)')
-        LC2_2 = LoadFactor(l2, 1.0, '(Rotated: 90.0)')
-        LC3_2 = LoadFactor(l3, 1.0, '(Rotated: 180.0)')
-        LC4_2 = LoadFactor(l4, 1.0, '(Rotated: 270.0)')
+        LC1_2 = LoadFactor(l1, 2.0, '(Rotated: 0.0)')
+        LC2_2 = LoadFactor(l2, 2.0, '(Rotated: 90.0)')
+        LC3_2 = LoadFactor(l3, 2.0, '(Rotated: 180.0)')
+        LC4_2 = LoadFactor(l4, 2.0, '(Rotated: 270.0)')
 
         LC1 = (LC1_1,)
         LC2 = (LC2_1,)
@@ -290,24 +290,24 @@ class TestRotationalGroup(TestCase):
 
         rad45 = math.radians(45.0)
 
-        LC1 = (LoadFactor(l1, -1.0 * math.sin(rad45), '(Rotated: 45.0)'),
-               LoadFactor(l2, -1.0 * math.sin(rad45), '(Rotated: 45.0)'))
-        LC2 = (LoadFactor(l2, -1.0 * math.sin(rad45), '(Rotated: 135.0)'),
-               LoadFactor(l3, -1.0 * math.sin(rad45), '(Rotated: 135.0)'))
-        LC3= (LoadFactor(l3, -1.0 * math.sin(rad45), '(Rotated: 225.0)'),
-               LoadFactor(l4, -1.0 * math.sin(rad45), '(Rotated: 225.0)'))
-        LC4 = (LoadFactor(l4, -1.0 * math.sin(rad45), '(Rotated: 315.0)'),
-               LoadFactor(l1, -1.0 * math.sin(rad45), '(Rotated: 315.0)'))
+        LC1 = (LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+               LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+        LC2 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+               LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+        LC3= (LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+               LoadFactor(l4, -2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+        LC4 = (LoadFactor(l4, -2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+               LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 315.0)'))
 
 
-        LC5 = (LoadFactor(l1, 1.0 * math.sin(rad45), '(Rotated: 45.0)'),
-               LoadFactor(l2, 1.0 * math.sin(rad45), '(Rotated: 45.0)'))
-        LC6 = (LoadFactor(l2, 1.0 * math.sin(rad45), '(Rotated: 135.0)'),
-               LoadFactor(l3, 1.0 * math.sin(rad45), '(Rotated: 135.0)'))
-        LC7= (LoadFactor(l3, 1.0 * math.sin(rad45), '(Rotated: 225.0)'),
-               LoadFactor(l4, 1.0 * math.sin(rad45), '(Rotated: 225.0)'))
-        LC8 = (LoadFactor(l4, 1.0 * math.sin(rad45), '(Rotated: 315.0)'),
-               LoadFactor(l1, 1.0 * math.sin(rad45), '(Rotated: 315.0)'))
+        LC5 = (LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+               LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+        LC6 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+               LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+        LC7= (LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+               LoadFactor(l4, 2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+        LC8 = (LoadFactor(l4, 2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+               LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 315.0)'))
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
@@ -337,10 +337,10 @@ class TestRotationalGroup(TestCase):
         cos63 = math.cos(rad63)
         sin63 = math.sin(rad63)
 
-        LC1 = (LoadFactor(l1, 1.0 * cos15, '(Rotated: 15.0)'),
-               LoadFactor(l2, 1.0 * sin15, '(Rotated: 15.0)'))
-        LC4 = (LoadFactor(l4, 1.0 * cos63, '(Rotated: 333.0)'),
-               LoadFactor(l1, 1.0 * sin63, '(Rotated: 333.0)'))
+        LC1 = (LoadFactor(l1, 2.0 * cos15, '(Rotated: 15.0)'),
+               LoadFactor(l2, 2.0 * sin15, '(Rotated: 15.0)'))
+        LC4 = (LoadFactor(l4, 2.0 * cos63, '(Rotated: 333.0)'),
+               LoadFactor(l1, 2.0 * sin63, '(Rotated: 333.0)'))
 
         LC = (LC1, LC4)
 
@@ -390,23 +390,23 @@ class TestRotationalGroup(TestCase):
 
             rad45 = math.radians(45.0)
 
-            LC1 = (LoadFactor(l1, -1.0 * math.sin(rad45), '(Rotated: 45.0)'),
-                   LoadFactor(l2, -1.0 * math.sin(rad45), '(Rotated: 45.0)'))
-            LC2 = (LoadFactor(l2, -1.0 * math.sin(rad45), '(Rotated: 135.0)'),
-                   LoadFactor(l3, -1.0 * math.sin(rad45), '(Rotated: 135.0)'))
-            LC3 = (LoadFactor(l3, -1.0 * math.sin(rad45), '(Rotated: 225.0)'),
-                   LoadFactor(l2, 1.0 * math.sin(rad45), '(Rotated: 225.0)'))
-            LC4 = (LoadFactor(l2, 1.0 * math.sin(rad45), '(Rotated: 315.0)'),
-                   LoadFactor(l1, -1.0 * math.sin(rad45), '(Rotated: 315.0)'))
+            LC1 = (LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+                   LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+            LC2 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+                   LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+            LC3 = (LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+                   LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+            LC4 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+                   LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 315.0)'))
 
-            LC5 = (LoadFactor(l1, 1.0 * math.sin(rad45), '(Rotated: 45.0)'),
-                   LoadFactor(l2, 1.0 * math.sin(rad45), '(Rotated: 45.0)'))
-            LC6 = (LoadFactor(l2, 1.0 * math.sin(rad45), '(Rotated: 135.0)'),
-                   LoadFactor(l3, 1.0 * math.sin(rad45), '(Rotated: 135.0)'))
-            LC7 = (LoadFactor(l3, 1.0 * math.sin(rad45), '(Rotated: 225.0)'),
-                   LoadFactor(l2, -1.0 * math.sin(rad45), '(Rotated: 225.0)'))
-            LC8 = (LoadFactor(l2, -1.0 * math.sin(rad45), '(Rotated: 315.0)'),
-                   LoadFactor(l1, 1.0 * math.sin(rad45), '(Rotated: 315.0)'))
+            LC5 = (LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+                   LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+            LC6 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+                   LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+            LC7 = (LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+                   LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+            LC8 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+                   LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 315.0)'))
 
             LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
@@ -436,10 +436,10 @@ class TestRotationalGroup(TestCase):
             cos63 = math.cos(rad63)
             sin63 = math.sin(rad63)
 
-            LC1 = (LoadFactor(l1, 1.0 * cos15, '(Rotated: 15.0)'),
-                   LoadFactor(l2, 1.0 * sin15, '(Rotated: 15.0)'))
-            LC4 = (LoadFactor(l2, -1.0 * cos63, '(Rotated: 333.0)'),
-                   LoadFactor(l1, 1.0 * sin63, '(Rotated: 333.0)'))
+            LC1 = (LoadFactor(l1, 2.0 * cos15, '(Rotated: 15.0)'),
+                   LoadFactor(l2, 2.0 * sin15, '(Rotated: 15.0)'))
+            LC4 = (LoadFactor(l2, -2.0 * cos63, '(Rotated: 333.0)'),
+                   LoadFactor(l1, 2.0 * sin63, '(Rotated: 333.0)'))
 
             LC = (LC1, LC4)
 
@@ -454,4 +454,3 @@ class TestRotationalGroup(TestCase):
                 print(LC[i] == LC_act[i])
 
             self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
-
