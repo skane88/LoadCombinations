@@ -260,5 +260,14 @@ class TestWindGroup(TestCase):
         self.assertEqual(first = LG.interp_func, second = sine_interp)
 
 
-    def test_generate_cases(self):
+    def test_generate_cases_simple (self):
         self.fail()
+
+
+    def test_generate_cases_rotated (self):
+        self.fail()
+
+
+    def test_generate_cases_symmetric (self):
+        self.fail()
+

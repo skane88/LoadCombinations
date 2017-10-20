@@ -196,7 +196,7 @@ class TestRotationalGroup(TestCase):
         '''
 
         l1 = RotatableLoad(load = 'R1 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 0.0, symmetrical = True,
+                           load_value = 1.25, angle = 0.0, symmetrical = True,
                            abbrev = 'R1')
 
         l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
@@ -204,7 +204,7 @@ class TestRotationalGroup(TestCase):
                            abbrev = 'R2')
 
         l3 = RotatableLoad(load = 'R3 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 180.0, symmetrical = True,
+                           load_value = 10.0, angle = 180.0, symmetrical = True,
                            abbrev = 'R3')
 
         l4 = RotatableLoad(load = 'R4 - Rotating Load, 2.5 kPa', load_no = 4,
@@ -224,14 +224,14 @@ class TestRotationalGroup(TestCase):
                              scale = scale, req_angles = req_angles,
                              interp_func = sine_interp, abbrev = abbrev)
 
-        LC1_1 = LoadFactor(l1, -2.0, '(Rotated: 0.0)')
+        LC1_1 = LoadFactor(l1, -4.0, '(Rotated: 0.0)')
         LC2_1 = LoadFactor(l2, -2.0, '(Rotated: 90.0)')
-        LC3_1 = LoadFactor(l3, -2.0, '(Rotated: 180.0)')
+        LC3_1 = LoadFactor(l3, -0.5, '(Rotated: 180.0)')
         LC4_1 = LoadFactor(l4, -2.0, '(Rotated: 270.0)')
 
-        LC1_2 = LoadFactor(l1, 2.0, '(Rotated: 0.0)')
+        LC1_2 = LoadFactor(l1, 4.0, '(Rotated: 0.0)')
         LC2_2 = LoadFactor(l2, 2.0, '(Rotated: 90.0)')
-        LC3_2 = LoadFactor(l3, 2.0, '(Rotated: 180.0)')
+        LC3_2 = LoadFactor(l3, 0.5, '(Rotated: 180.0)')
         LC4_2 = LoadFactor(l4, 2.0, '(Rotated: 270.0)')
 
         LC1 = (LC1_1,)
@@ -257,6 +257,7 @@ class TestRotationalGroup(TestCase):
             print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+
 
     def test_generate_cases_rotated(self):
         l1 = RotatableLoad(load = 'R1 - Rotating Load, 2.5 kPa', load_no = 3,
