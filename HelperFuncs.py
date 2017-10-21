@@ -31,19 +31,11 @@ def sine_interp(gap, x):
 
 
 def wind_interp_85(gap, x):
-    α = 1.2 - 0.2 * abs(math.cos(2 * math.radians(x)))
+    α = 1.20208 - 0.20208 * abs(math.cos(2 * math.radians(x)))
     results = sine_interp_90(gap, x)
     results = InterpResults(results.left * α, results.right * α)
 
     return results
-
-
-def reversed_group():
-    pass
-
-
-def wind_group_3():
-    pass
 
 
 def req_angles_int(no_angles: int):
