@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This file contains a number of helper functions that don't really fit under
 the Load or LoadGroup headers.
@@ -11,15 +13,53 @@ from typing import List, Tuple, Union
 InterpResults = namedtuple('InterpResults', ['left', 'right'])
 
 
-def linear_interp(gap, x):
-    a = (gap - x) / gap
+def linear_interp(range, x):
+    """
+    Linearly interpolates within a range. Used for the interpolation functions
+    within the LoadGroup functions, and returns a "left" and "right" factor that
+    can be used to factor 2x loads to generate a resultant load that is in
+    between them.
+
+    :param range: The range to interpolate between.
+    :param x: An interim value within the range.
+    :return: Returns an InterpResults NamedTuple with a factor for the LHS & RHS
+        loads.
+    """
+
+    if x < 0 or x > range:
+        raise ValueError("Expected x to be within the range.")
+
+    a = (range - x) / range
     b = 1 - a
     return InterpResults(left = a, right = b)
 
 
-def sine_interp_90(gap: float, x: float):
-    if gap != 90:
+def sine_interp_90(range: float, x: float):
+    """
+    Interpolates within a range. Used for the interpolation functions
+    within the LoadGroup functions, and returns a "left" and "right" factor that
+    can be used to factor 2x loads to generate a resultant load that is in
+    between them.
+
+    This function interpolates using a sine curve.
+
+    This function throws an error if the range is != 90 degrees. Technically the
+    range should not be specified (it is always 90) but for compatibility with
+    other interpolation functions (where the range could be specified) it is
+    left in as an argument so that the RotationalGroup and WindGroup
+    generate_cases functions do not have to be customised.
+
+    :param range: The range to interpolate between.
+    :param x: An interim value within the range.
+    :return: Returns an InterpResults NamedTuple with a factor for the LHS & RHS
+        loads.
+    """
+
+    if range != 90:
         raise ValueError('Gap expected to be 90 degrees.')
+
+    if x < 0 or x > 90:
+        raise ValueError('x expected to be within the 90 degree range.')
 
     x = math.radians(x)
 
@@ -48,15 +88,18 @@ def req_angles_int(no_angles: int):
 
     return angle_list
 
+
 def req_angles_list(req_angles: Union[List[float], Tuple[float, ...]]):
 
     req_angles = tuple(i % 360 for i in req_angles)  # Convert everything
-                                                     # into the 360 deg range
+    # into the 360 deg range
     req_angles = tuple(set(req_angles))  # Remove duplicates
 
     return tuple(sorted(req_angles))  # Sort and return the list
 
-def req_angles_chooser(angles: Union[Union[List[float], Tuple[float,...]], int]):
+
+def req_angles_chooser(
+        angles: Union[Union[List[float], Tuple[float, ...]], int]):
 
     if isinstance(angles, int):
         return req_angles_int(angles)
