@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import math
 from unittest import TestCase
 from LoadGroup import WindGroup, LoadFactor
 from Load import WindLoad
@@ -327,7 +328,102 @@ class TestWindGroup(TestCase):
 
 
     def test_generate_cases_rotated (self):
-        self.fail()
+
+        l1 = WindLoad(load = 'R1 - Rotating Load, 2.5 kPa', load_no = 3,
+                      wind_speed = 25.0, angle = 0.0, symmetrical = True,
+                      abbrev = 'R1')
+
+        l2 = WindLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
+                      wind_speed = 40.0, angle = 90, symmetrical = True,
+                      abbrev = 'R2')
+
+        l3 = WindLoad(load = 'R3 - Rotating Load, 2.5 kPa', load_no = 3,
+                      wind_speed = 50.0, angle = 180.0, symmetrical = True,
+                      abbrev = 'R3')
+
+        l4 = WindLoad(load = 'R4 - Rotating Load, 2.5 kPa', load_no = 4,
+                      wind_speed = 69.0, angle = 270.0, symmetrical = True,
+                      abbrev = 'R4')
+
+        group_name = 'Group 1'
+        loads = [l1, l4, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 69.0
+        scale = True
+        req_angles = (45.0, 135.0, 225.0, 315.0)
+        abbrev = 'GP 1'
+
+        LG = WindGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_speed = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        rad45 = math.radians(45.0)
+
+        LC1 = (LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+               LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+        LC2 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+               LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+        LC3 = (LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+               LoadFactor(l4, -2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+        LC4 = (LoadFactor(l4, -2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+               LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 315.0)'))
+
+        LC5 = (LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+               LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+        LC6 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+               LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+        LC7 = (LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+               LoadFactor(l4, 2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+        LC8 = (LoadFactor(l4, 2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+               LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 315.0)'))
+
+        LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
+
+        LC_act = tuple(LG.generate_cases())
+
+        for i in range(len(LC)):
+            print(f'LC1_tst[{i}]: ' + str(LC[i]))
+            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
+            print(LC[i][0].load == LC_act[i][0].load)
+            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
+            print(LC[i][0].add_info == LC_act[i][0].add_info)
+            print(LC[i] == LC_act[i])
+
+        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+
+        req_angles = (15.0, 333.0)
+        load_factors = (1.0,)
+
+        LG.req_angles = req_angles
+        LG.factors = load_factors
+
+        rad15 = math.radians(15)
+        rad63 = math.radians(63)
+
+        cos15 = math.cos(rad15)
+        sin15 = math.sin(rad15)
+        cos63 = math.cos(rad63)
+        sin63 = math.sin(rad63)
+
+        LC1 = (LoadFactor(l1, 2.0 * cos15, '(Rotated: 15.0)'),
+               LoadFactor(l2, 2.0 * sin15, '(Rotated: 15.0)'))
+        LC4 = (LoadFactor(l4, 2.0 * cos63, '(Rotated: 333.0)'),
+               LoadFactor(l1, 2.0 * sin63, '(Rotated: 333.0)'))
+
+        LC = (LC1, LC4)
+
+        LC_act = tuple(LG.generate_cases())
+
+        for i in range(len(LC)):
+            print(f'LC1_tst[{i}]: ' + str(LC[i]))
+            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
+            print(LC[i][0].load == LC_act[i][0].load)
+            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
+            print(LC[i][0].add_info == LC_act[i][0].add_info)
+            print(LC[i] == LC_act[i])
+
+        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
 
 
     def test_generate_cases_symmetric (self):
