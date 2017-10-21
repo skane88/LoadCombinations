@@ -309,6 +309,21 @@ class WindLoad(RotatableLoad):
 
     def __init__(self, *, load: str, load_no, wind_speed: float, angle: float,
                  symmetrical: bool, abbrev: str = ''):
+        """
+        Constructor for a WindLoad object.
+
+        :param load: The name of the load case.
+        :param load_no: The load case no.
+        :param wind_speed: The windspeed the load is based on. This is simply an
+            alias for the property load_value.
+        :param angle: The angle that the load in the model is applied at, in
+            degrees. Angles that are >360 or <0 will be converted into the range
+            0-360 degrees by taking their modulus with 360.
+        :param symmetrical: Is the applied  load symmetrical? I.e. if the load
+            were to rotate through 180 degrees can the load factor simply change
+            from +1 to -1?
+        :param abbrev: An abbreviation for the load case.
+        """
 
         super().__init__(load = load, load_no = load_no,
                          load_value = wind_speed, angle = angle,
@@ -330,7 +345,8 @@ class WindLoad(RotatableLoad):
         The wind speed the load is based on. This is simply an alias for the
         property load_value.
 
-        :param wind_speed:
+        :param wind_speed: The windspeed the load is based on. This is simply an
+            alias for the property load_value.
         """
 
         self._load_value = wind_speed
