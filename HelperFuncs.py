@@ -86,14 +86,41 @@ def sine_interp(range: float, x: float):
 
     if x < 0 or x > range:
         raise ValueError(f'x expected to be within the range 0 to {range}.'
-                         + f' Actual range was {x}')
+                         + f' x given was {x}')
 
     return sine_interp_90(range * 90.0 / range, x * 90.0 / range)
 
 
-def wind_interp_85(gap, x):
+def wind_interp_85(range: float, x: float):
+    """
+    Interpolates within a range. Used for the interpolation functions
+    within the LoadGroup functions, and returns a "left" and "right" factor that
+    can be used to factor 2x loads to generate a resultant load that is in
+    between them.
+
+    This function interpolates using a sine curve. This is then modified with
+    the factor 1.20208-0.20208 * abs(cos(2 * x)) to produce a value that at the
+    45 degree angle results in an increase in load of about 20%. This is
+    consistent with the method given in AS4324 for non-orthogonal wind loads.
+
+    This function throws an error if the range is != 90 degrees. Technically the
+    range should not be specified (it is always 90) but for compatibility with
+    other interpolation functions (where the range could be specified) it is
+    left in as an argument so that the RotationalGroup and WindGroup
+    generate_cases functions do not have to be customised.
+
+    :param range: The range to interpolate between.
+    :param x: An interim value within the range.
+    :return: Returns an InterpResults NamedTuple with a factor for the LHS & RHS
+        loads.
+    """
+
+    if x < 0 or x > range:
+        raise ValueError(f'x expected to be within the range of {range}. '
+                         + f'x given was {x}')
+
     α = 1.20208 - 0.20208 * abs(math.cos(2 * math.radians(x)))
-    results = sine_interp_90(gap, x)
+    results = sine_interp_90(range, x)
     results = InterpResults(results.left * α, results.right * α)
 
     return results

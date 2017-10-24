@@ -75,7 +75,6 @@ class test_helper_funcs(TestCase):
 
 
     def test_sine_interp(self):
-
         #first run the tests from before, as the 90degree range is expected
         #to be the same.
 
