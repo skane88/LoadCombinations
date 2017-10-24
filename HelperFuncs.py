@@ -13,7 +13,7 @@ from typing import List, Tuple, Union
 InterpResults = namedtuple('InterpResults', ['left', 'right'])
 
 
-def linear_interp(range, x):
+def linear_interp(range: float, x: float):
     """
     Linearly interpolates within a range. Used for the interpolation functions
     within the LoadGroup functions, and returns a "left" and "right" factor that
@@ -66,8 +66,29 @@ def sine_interp_90(range: float, x: float):
     return InterpResults(left = math.cos(x), right = math.sin(x))
 
 
-def sine_interp(gap, x):
-    return sine_interp_90(gap * 90.0 / gap, x * 90.0 / gap)
+def sine_interp(range: float, x: float):
+    """
+    Interpolates within a range. Used for the interpolation functions
+    within the LoadGroup functions, and returns a "left" and "right" factor that
+    can be used to factor 2x loads to generate a resultant load that is in
+    between them.
+
+    This function interpolates using a sine curve.
+
+    To achieve this it scales both the range and the interpolation value by the
+    parameter 90 / range.
+
+    :param range: The range to interpolate between.
+    :param x: An interim value within the range.
+    :return: Returns an InterpResults NamedTuple with a factor for the LHS & RHS
+        loads.
+    """
+
+    if x < 0 or x > range:
+        raise ValueError(f'x expected to be within the range 0 to {range}.'
+                         + f' Actual range was {x}')
+
+    return sine_interp_90(range * 90.0 / range, x * 90.0 / range)
 
 
 def wind_interp_85(gap, x):
