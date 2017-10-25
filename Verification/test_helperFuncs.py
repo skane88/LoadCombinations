@@ -3,6 +3,7 @@
 import math
 from unittest import TestCase
 from HelperFuncs import linear_interp, sine_interp_90, sine_interp
+from HelperFuncs import wind_interp_85
 
 
 class test_helper_funcs(TestCase):
@@ -138,16 +139,38 @@ class test_helper_funcs(TestCase):
 
 
     def test_wind_interp_85(self):
-        self.fail()
+
+        # Test the function against values calculated in Excel.
+
+        angle = (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75,
+                 80, 85, 90)
+
+        left = (1.00000, 0.99925, 0.99681, 0.99208, 0.98412, 0.97173, 0.95353,
+                0.92807, 0.89397, 0.85000, 0.75013, 0.64984, 0.55052, 0.45313,
+                0.35819, 0.26583, 0.17576, 0.08742, 0.00000)
+
+        right = (0.00000, 0.08742, 0.17576, 0.26583, 0.35819, 0.45313, 0.55052,
+                 0.64984, 0.75013, 0.85000, 0.89397, 0.92807, 0.95353, 0.97173,
+                 0.98412, 0.99208, 0.99681, 0.99925, 1.00000)
+
+
+        for a, l, r in zip(angle, left, right):
+
+            l_exp, r_exp = wind_interp_85(90, a)
+
+            self.assertAlmostEqual(first = l, second = l_exp, places = 5)
+            self.assertAlmostEqual(first = r, second = r_exp, places = 5)
+
+        self.assertRaises(ValueError, wind_interp_85, 95, 5)
+        self.assertRaises(ValueError, wind_interp_85, 90, -5)
+        self.assertRaises(ValueError, wind_interp_85, 90, 95)
 
 
     def test_req_angles_int(self):
         self.fail()
 
-
     def req_angles_list(self):
         self.fail()
-
 
     def req_angles_chooser(self):
         self.fail()
