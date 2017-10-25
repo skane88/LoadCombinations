@@ -167,10 +167,13 @@ class test_helper_funcs(TestCase):
 
 
     def test_req_angles_int(self):
+
         self.fail()
 
-    def req_angles_list(self):
+    def test_eq_angles_list(self):
+
         self.fail()
 
-    def req_angles_chooser(self):
+    def test_req_angles_chooser(self):
+
         self.fail()
