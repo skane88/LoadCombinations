@@ -75,6 +75,39 @@ class LoadGroup:
 
         self._loads = loads
 
+    def add_load(self, load: Load):
+        """
+        A method to add a single load into the loads that make up the group.
+
+        This is a place-holder method currently. Eventually it is planned to
+        use this method to provide logic when adding the loads in
+        through the "loads" property, to allow for checking that loads don't
+        already exist etc. and to allow migration of the internal storage
+        from a list to a dictionary.
+
+        :param load: The load to add.
+        """
+
+        raise NotImplementedError
+
+    def del_load(self, load_no: int = None, load_name: str = None,
+                 abbrev: str = None):
+        """
+        A method to delete a single load from the loads list.
+
+        This is a place-holder method currently. Eventually it is planned to
+        use this method to allow deletion of a single load at a time from the
+        group.
+
+        Loads should be able to be deleted optionally via their no., name or
+        abbrev.
+
+        :param load_no: The load_no of the load to delete.
+        :param load_name: The load_name of the load to delete.
+        :param abbrev:  The abbrev of the load to delete.
+        """
+        raise NotImplementedError
+
     @property
     def abbrev(self) -> str:
         """
@@ -455,6 +488,39 @@ class RotationalGroup(ScaledGroup):
         # store loads as a sorted list
         loads.sort(key = lambda x: x.angle)
         self._loads = loads
+
+    def add_load(self, load: Load):
+        """
+        A method to add a single load into the loads that make up the group.
+
+        This is a place-holder method currently. Eventually it is planned to
+        use this method to provide logic when adding the loads in
+        through the "loads" property, to allow for checking that loads don't
+        already exist etc. and to allow migration of the internal storage
+        from a list to a dictionary.
+
+        :param load: The load to add.
+        """
+
+        raise NotImplementedError
+
+    def del_load(self, load_no: int = None, load_name: str = None,
+                 abbrev: str = None):
+        """
+        A method to delete a single load from the loads list.
+
+        This is a place-holder method currently. Eventually it is planned to
+        use this method to allow deletion of a single load at a time from the
+        group.
+
+        Loads should be able to be deleted optionally via their no., name or
+        abbrev.
+
+        :param load_no: The load_no of the load to delete.
+        :param load_name: The load_name of the load to delete.
+        :param abbrev:  The abbrev of the load to delete.
+        """
+        raise NotImplementedError
 
     @property
     def interp_func(self) -> Callable[[float, float], Tuple[float, float]]:
