@@ -168,12 +168,18 @@ class test_helper_funcs(TestCase):
 
     def test_req_angles_int(self):
 
+        print("Method req_angles_int not tested as not currently used.")
+
         self.fail()
 
-    def test_eq_angles_list(self):
+    def test_req_angles_list(self):
+
+        print("Method req_angles_list not tested as not currently used.")
 
         self.fail()
 
     def test_req_angles_chooser(self):
+
+        print("Method req_angles_chooser not tested as not currently used.")
 
         self.fail()
