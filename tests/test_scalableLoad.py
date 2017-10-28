@@ -18,7 +18,7 @@ class TestScalableLoad(TestCase):
         abbrev = 'G1'
         load_value = 10
 
-        l = ScalableLoad(load = load_title, load_no = load_no,
+        l = ScalableLoad(load_name = load_title, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
 
         # the repr method should be able to recreate a Load object
@@ -41,7 +41,7 @@ class TestScalableLoad(TestCase):
         abbrev = 'G1'
         load_value = 10
 
-        l = ScalableLoad(load = load_title, load_no = load_no,
+        l = ScalableLoad(load_name = load_title, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
 
         self.assertEqual(first = l.load_value, second = load_value)
@@ -62,7 +62,7 @@ class TestScalableLoad(TestCase):
         abbrev = 'G1'
         load_value = 10
 
-        l = ScalableLoad(load = load_title, load_no = load_no,
+        l = ScalableLoad(load_name = load_title, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
 
         scale_to = 5

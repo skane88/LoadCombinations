@@ -15,36 +15,36 @@ class Load:
     classes, but will be acceptable for simple load cases.
     """
 
-    def __init__(self, *, load: str, load_no, abbrev: str = ''):
+    def __init__(self, *, load_name: str, load_no, abbrev: str = ''):
         """
         Create a Load object.mro
 
-        :param load: The name of the load case.
+        :param load_name: The name of the load case.
         :param load_no: The load case no.
         :param abbrev: an abbreviation for the load case.
         """
 
-        self.load = load
+        self.load_name = load_name
         self.load_no = load_no
         self.abbrev = abbrev
 
     @property
-    def load(self) -> str:
+    def load_name(self) -> str:
         """
         The name of the load case.
         """
 
-        return self._load
+        return self._load_name
 
-    @load.setter
-    def load(self, load: str):
+    @load_name.setter
+    def load_name(self, load_name: str):
         """
         The name of the load case.
 
-        :param load: the name of the load case.
+        :param load_name: the name of the load case.
         """
 
-        self._load = load
+        self._load_name = load_name
 
     @property
     def load_no(self):
@@ -88,7 +88,8 @@ class Load:
         # Using {type(self).__name} to allow this method to be inherited by
         # sub-classes without having to override it unless additional properties
         # have to go into this method.
-        return (f"{type(self).__name__}(load={repr(self.load)}, "
+        return (f"{type(self).__name__}("
+                + f"load_name={repr(self.load_name)}, "
                 + f"load_no={repr(self.load_no)}, "
                 + f"abbrev={repr(self.abbrev)})")
 
@@ -96,7 +97,9 @@ class Load:
         # Using {type(self).__name} to allow this method to be inherited by
         # sub-classes without having to override it unless additional properties
         # have to go into this method.
-        return f'{type(self).__name__}: {self.load}, load no: {self.load_no}'
+        return (f'{type(self).__name__}:'
+                + f' {self.load_name}, '
+                + f'load no: {self.load_no}')
 
     def __eq__(self, other):
         """
@@ -130,19 +133,19 @@ class ScalableLoad(Load):
     will provide an appropriate scale_factor to scale the load up or down.
     """
 
-    def __init__(self, *, load: str, load_no, load_value: float,
+    def __init__(self, *, load_name: str, load_no, load_value: float,
                  abbrev: str = ''):
         """
         Constructor for a ScalableLoad object.
 
-        :param load: The name of the load case.
+        :param load_name: The name of the load case.
         :param load_no: The load case no.
         :param load_value: The value of the load that is input into the
             structural model. I.e. if the load case is based off 10t, then
             load_value should be 10.
         :param abbrev: an abbreviation for the load case.
         """
-        super().__init__(load = load, load_no = load_no, abbrev = abbrev)
+        super().__init__(load_name = load_name, load_no = load_no, abbrev = abbrev)
 
         self.load_value = load_value
 
@@ -201,10 +204,11 @@ class ScalableLoad(Load):
         return scale_factor
 
     def __repr__(self):
-        return (f"{type(self).__name__}(load={repr(self.load)}, "
-                + f"load_no={repr(self.load_no)}, "
-                + f"load_value={repr(self.load_value)}, "
-                + f"abbrev={repr(self.abbrev)})")
+        return (f'{type(self).__name__}('
+                + f'load_name={repr(self.load_name)}, '
+                + f'load_no={repr(self.load_no)}, '
+                + f'load_value={repr(self.load_value)}, '
+                + f'abbrev={repr(self.abbrev)})')
 
     def __str__(self):
         return (super(ScalableLoad, self).__str__()
@@ -217,12 +221,13 @@ class RotatableLoad(ScalableLoad):
     so that they can be scaled as loads are rotated around.
     """
 
-    def __init__(self, *, load: str, load_no, load_value: float, angle: float,
+    def __init__(self, *, load_name: str, load_no, load_value: float,
+                 angle: float,
                  symmetrical: bool, abbrev: str = ''):
         """
         Constructor for a RotatableLoad object.
 
-        :param load: The name of the load case.
+        :param load_name: The name of the load case.
         :param load_no: The load case no.
         :param load_value: The value of the load that is input into the
             structural model. I.e. if the load case is based off 10t, then
@@ -236,7 +241,7 @@ class RotatableLoad(ScalableLoad):
         :param abbrev: An abbreviation for the load case.
         """
 
-        super().__init__(load = load, load_no = load_no,
+        super().__init__(load_name = load_name, load_no = load_no,
                          load_value = load_value, abbrev = abbrev)
         self.angle = angle
         self.symmetrical = symmetrical
@@ -288,7 +293,8 @@ class RotatableLoad(ScalableLoad):
         self._symmetrical = symmetrical
 
     def __repr__(self):
-        return (f'{type(self).__name__}(load={repr(self.load)}, '
+        return (f'{type(self).__name__}('
+                + f'load_name={repr(self.load_name)}, '
                 + f'load_no={repr(self.load_no)}, '
                 + f'load_value={repr(self.load_value)}, '
                 + f'angle={repr(self.angle)}, '
@@ -307,12 +313,12 @@ class WindLoad(RotatableLoad):
     as either load or wind_speed.
     """
 
-    def __init__(self, *, load: str, load_no, wind_speed: float, angle: float,
-                 symmetrical: bool, abbrev: str = ''):
+    def __init__(self, *, load_name: str, load_no, wind_speed: float,
+                 angle: float, symmetrical: bool, abbrev: str = ''):
         """
         Constructor for a WindLoad object.
 
-        :param load: The name of the load case.
+        :param load_name: The name of the load case.
         :param load_no: The load case no.
         :param wind_speed: The windspeed the load is based on. This is simply an
             alias for the property load_value.
@@ -325,7 +331,7 @@ class WindLoad(RotatableLoad):
         :param abbrev: An abbreviation for the load case.
         """
 
-        super().__init__(load = load, load_no = load_no,
+        super().__init__(load_name = load_name, load_no = load_no,
                          load_value = wind_speed, angle = angle,
                          symmetrical = symmetrical, abbrev = abbrev)
 
@@ -373,7 +379,8 @@ class WindLoad(RotatableLoad):
                                  scale = scale)
 
     def __repr__(self):
-        return (f'{type(self).__name__}(load={repr(self.load)}, '
+        return (f'{type(self).__name__}('
+                + f'load_name={repr(self.load_name)}, '
                 + f'load_no={repr(self.load_no)}, '
                 + f'wind_speed={repr(self.wind_speed)}, '
                 + f'angle={repr(self.angle)}, '

@@ -13,15 +13,15 @@ class TestWindGroup(TestCase):
         Test the initialisation and __str__ and __repr__ methods.
         """
 
-        l1 = WindLoad(load = 'W1 - Wind Load, 25m/s', load_no = 3,
+        l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 3,
                            wind_speed = 25, angle = 45.0, symmetrical = True,
                            abbrev = 'W1')
 
-        l2 = WindLoad(load = 'W2 - Wind Load, 50m/s', load_no = 3,
+        l2 = WindLoad(load_name = 'W2 - Wind Load, 50m/s', load_no = 3,
                            wind_speed = 50, angle = 45.0, symmetrical = True,
                            abbrev = 'W2')
 
-        l3 = WindLoad(load = 'W3 - Wind Load, 75m/s', load_no = 3,
+        l3 = WindLoad(load_name = 'W3 - Wind Load, 75m/s', load_no = 3,
                            wind_speed = 75, angle = 45.0, symmetrical = True,
                            abbrev = 'W3')
 
@@ -55,15 +55,15 @@ class TestWindGroup(TestCase):
         Test the scale_speed method.
         """
 
-        l1 = WindLoad(load = 'W1 - Wind Load, 25m/s', load_no = 3,
+        l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 3,
                       wind_speed = 25, angle = 45.0, symmetrical = True,
                       abbrev = 'W1')
 
-        l2 = WindLoad(load = 'W2 - Wind Load, 50m/s', load_no = 3,
+        l2 = WindLoad(load_name = 'W2 - Wind Load, 50m/s', load_no = 3,
                       wind_speed = 50, angle = 45.0, symmetrical = True,
                       abbrev = 'W2')
 
-        l3 = WindLoad(load = 'W3 - Wind Load, 75m/s', load_no = 3,
+        l3 = WindLoad(load_name = 'W3 - Wind Load, 75m/s', load_no = 3,
                       wind_speed = 75, angle = 45.0, symmetrical = True,
                       abbrev = 'W3')
 
@@ -90,19 +90,19 @@ class TestWindGroup(TestCase):
 
     def test_generate_cases_simple (self):
 
-        l1 = WindLoad(load = 'W1 - Wind Load, 25m/s', load_no = 3,
+        l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 3,
                            wind_speed = 25.0, angle = 0.0, symmetrical = True,
                            abbrev = 'W1')
 
-        l2 = WindLoad(load = 'W2 - Wind Load, 40m/s', load_no = 3,
+        l2 = WindLoad(load_name = 'W2 - Wind Load, 40m/s', load_no = 3,
                            wind_speed = 40.0, angle = 90, symmetrical = True,
                            abbrev = 'W2')
 
-        l3 = WindLoad(load = 'W3 - Wind Load, 50m/s', load_no = 3,
+        l3 = WindLoad(load_name = 'W3 - Wind Load, 50m/s', load_no = 3,
                            wind_speed = 50.0, angle = 180.0, symmetrical = True,
                            abbrev = 'W3')
 
-        l4 = WindLoad(load = 'W4 - Wind Load, 69m/s', load_no = 4,
+        l4 = WindLoad(load_name = 'W4 - Wind Load, 69m/s', load_no = 4,
                            wind_speed = 69.0, angle = 270.0, symmetrical = True,
                            abbrev = 'W4')
 
@@ -156,19 +156,19 @@ class TestWindGroup(TestCase):
 
     def test_generate_cases_rotated (self):
 
-        l1 = WindLoad(load = 'W1 - Wind Load, 25m/s', load_no = 3,
+        l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 3,
                       wind_speed = 25.0, angle = 0.0, symmetrical = True,
                       abbrev = 'W1')
 
-        l2 = WindLoad(load = 'W2 - Wind Load, 40m/s', load_no = 3,
+        l2 = WindLoad(load_name = 'W2 - Wind Load, 40m/s', load_no = 3,
                       wind_speed = 40.0, angle = 90, symmetrical = True,
                       abbrev = 'W2')
 
-        l3 = WindLoad(load = 'W3 - Wind Load, 50m/s', load_no = 3,
+        l3 = WindLoad(load_name = 'W3 - Wind Load, 50m/s', load_no = 3,
                       wind_speed = 50.0, angle = 180.0, symmetrical = True,
                       abbrev = 'W3')
 
-        l4 = WindLoad(load = 'W4 - Wind Load, 69m/s', load_no = 4,
+        l4 = WindLoad(load_name = 'W4 - Wind Load, 69m/s', load_no = 4,
                       wind_speed = 69.0, angle = 270.0, symmetrical = True,
                       abbrev = 'W4')
 
@@ -277,15 +277,15 @@ class TestWindGroup(TestCase):
 
     def test_generate_cases_symmetric (self):
 
-        l1 = WindLoad(load = 'W1 - Wind Load, 25m/s', load_no = 3,
+        l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 3,
                       wind_speed = 25.0, angle = 0.0, symmetrical = True,
                       abbrev = 'W1')
 
-        l2 = WindLoad(load = 'W2 - Wind Load, 40m/s', load_no = 3,
+        l2 = WindLoad(load_name = 'W2 - Wind Load, 40m/s', load_no = 3,
                       wind_speed = 40.0, angle = 90, symmetrical = True,
                       abbrev = 'W2')
 
-        l3 = WindLoad(load = 'W3 - Wind Load, 50m/s', load_no = 3,
+        l3 = WindLoad(load_name = 'W3 - Wind Load, 50m/s', load_no = 3,
                       wind_speed = 50.0, angle = 180.0, symmetrical = True,
                       abbrev = 'W3')
 

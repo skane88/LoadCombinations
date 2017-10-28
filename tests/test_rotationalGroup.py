@@ -16,15 +16,15 @@ class TestRotationalGroup(TestCase):
         Test the initialisation and __str__ and __repr__ methods.
         """
 
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 22.5, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, 5 kPa', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 7.5, angle = 135.0, symmetrical = True,
                            abbrev = 'R3')
 
@@ -58,15 +58,15 @@ class TestRotationalGroup(TestCase):
         Test the load getter / setter.
         '''
 
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 22.5, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, 5 kPa', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 7.5, angle = 135.0, symmetrical = True,
                            abbrev = 'R3')
 
@@ -87,17 +87,17 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.loads, second = loads)
 
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 25 kPa', load_no = 3,
-                           load_value = 25, angle = 75.0, symmetrical = True,
-                           abbrev = 'R1')
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 25 kPa',
+                           load_no = 3, load_value = 25, angle = 75.0,
+                           symmetrical = True, abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 33.3, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 33.3,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, -5 kPa', load_no = 3,
-                           load_value = -5, angle = -25, symmetrical = True,
-                           abbrev = 'R3')
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, -5 kPa',
+                           load_no = 3, load_value = -5, angle = -25,
+                           symmetrical = True, abbrev = 'R3')
 
         loads = [l1, l2, l3]
 
@@ -113,15 +113,15 @@ class TestRotationalGroup(TestCase):
         Test the getter / setter
         """
 
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 22.5, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, 5 kPa', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 7.5, angle = 135.0, symmetrical = True,
                            abbrev = 'R3')
 
@@ -154,17 +154,17 @@ class TestRotationalGroup(TestCase):
         Test the interp_func getter / setter
         """
 
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 22.5, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, 5 kPa', load_no = 3,
-                           load_value = 7.5, angle = 135.0, symmetrical = True,
-                           abbrev = 'R3')
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
+                           load_value = 7.5, angle = 135.0,
+                           symmetrical = True, abbrev = 'R3')
 
         group_name = 'Group 1'
         loads = [l1, l2, l3]
@@ -195,21 +195,21 @@ class TestRotationalGroup(TestCase):
         in the list of loads.
         '''
 
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 1.25, angle = 0.0, symmetrical = True,
-                           abbrev = 'R1')
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 1.25, angle = 0.0,
+                           symmetrical = True, abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 90, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 90,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 10.0, angle = 180.0, symmetrical = True,
-                           abbrev = 'R3')
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 10.0, angle = 180.0,
+                           symmetrical = True, abbrev = 'R3')
 
-        l4 = RotatableLoad(load = 'R4 - Rotating Load, 2.5 kPa', load_no = 4,
-                           load_value = 2.5, angle = 270.0, symmetrical = True,
-                           abbrev = 'R4')
+        l4 = RotatableLoad(load_name = 'R4 - Rotating Load, 2.5 kPa',
+                           load_no = 4, load_value = 2.5, angle = 270.0,
+                           symmetrical = True,  abbrev = 'R4')
 
         group_name = 'Group 1'
         loads = [l1, l4, l3, l2]
@@ -260,21 +260,21 @@ class TestRotationalGroup(TestCase):
 
 
     def test_generate_cases_rotated(self):
-        l1 = RotatableLoad(load = 'R1 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 0.0, symmetrical = True,
-                           abbrev = 'R1')
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 0.0,
+                           symmetrical = True, abbrev = 'R1')
 
-        l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 90, symmetrical = True,
-                           abbrev = 'R2')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 90,
+                           symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load = 'R3 - Rotating Load, 2.5 kPa', load_no = 3,
-                           load_value = 2.5, angle = 180.0, symmetrical = True,
-                           abbrev = 'R3')
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 2.5, angle = 180.0,
+                           symmetrical = True, abbrev = 'R3')
 
-        l4 = RotatableLoad(load = 'R4 - Rotating Load, 2.5 kPa', load_no = 4,
-                           load_value = 2.5, angle = 270.0, symmetrical = True,
-                           abbrev = 'R4')
+        l4 = RotatableLoad(load_name = 'R4 - Rotating Load, 2.5 kPa',
+                           load_no = 4,  load_value = 2.5, angle = 270.0,
+                           symmetrical = True,  abbrev = 'R4')
 
         group_name = 'Group 1'
         loads = [l1, l4, l3, l2]
@@ -359,18 +359,18 @@ class TestRotationalGroup(TestCase):
 
 
     def test_generate_cases_symmetric(self):
-            l1 = RotatableLoad(load = 'R1 - Rotating Load, 2.5 kPa',
+            l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
                                load_no = 3,
                                load_value = 2.5, angle = 0.0,
                                symmetrical = True,
                                abbrev = 'R1')
 
-            l2 = RotatableLoad(load = 'R2 - Rotating Load, 2.5 kPa',
+            l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
                                load_no = 3,
                                load_value = 2.5, angle = 90, symmetrical = True,
                                abbrev = 'R2')
 
-            l3 = RotatableLoad(load = 'R3 - Rotating Load, 2.5 kPa',
+            l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
                                load_no = 3,
                                load_value = 2.5, angle = 180.0,
                                symmetrical = True,

@@ -21,7 +21,7 @@ class TestRotatableLoad(TestCase):
         angle = 100
         symmetrical = True
 
-        l = RotatableLoad(load = load_title, load_no = load_no,
+        l = RotatableLoad(load_name = load_title, load_no = load_no,
                           load_value = load_value, angle = angle,
                           symmetrical = symmetrical, abbrev = abbrev)
 
@@ -47,7 +47,7 @@ class TestRotatableLoad(TestCase):
         angle = 100
         symmetrical = True
 
-        l = RotatableLoad(load = load_title, load_no = load_no,
+        l = RotatableLoad(load_name = load_title, load_no = load_no,
                           load_value = load_value, angle = angle,
                           symmetrical = symmetrical, abbrev = abbrev)
 
@@ -79,7 +79,7 @@ class TestRotatableLoad(TestCase):
         angle = 100
         symmetrical = True
 
-        l = RotatableLoad(load = load_title, load_no = load_no,
+        l = RotatableLoad(load_name = load_title, load_no = load_no,
                           load_value = load_value, angle = angle,
                           symmetrical = symmetrical, abbrev = abbrev)
 

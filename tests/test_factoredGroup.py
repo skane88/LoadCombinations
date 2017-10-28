@@ -16,15 +16,16 @@ class TestFactoredGroup(TestCase):
         and __repr__ methods.
         """
 
-        l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
                   abbrev = 'G1')
-        l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
                           load_value = 5, abbrev = 'Q1')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
                            load_value = 10, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
-        l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
-                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0, symmetrical = True,
+                      abbrev = 'WUx')
 
         group_name = 'Group 1'
         loads = [l1, l2, l3, l4]
@@ -50,15 +51,16 @@ class TestFactoredGroup(TestCase):
         Test the factors getter / setter
         """
 
-        l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
                   abbrev = 'G1')
-        l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
                           load_value = 5, abbrev = 'Q1')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
                            load_value = 10, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
-        l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
-                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0, symmetrical = True,
+                      abbrev = 'WUx')
 
         group_name = 'Group 1'
         loads = [l1, l2, l3, l4]
@@ -82,15 +84,16 @@ class TestFactoredGroup(TestCase):
         combinations
         """
 
-        l1 = Load(load = 'G1 - Mechanical Dead Load', load_no = 1,
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
                   abbrev = 'G1')
-        l2 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
                           load_value = 5, abbrev = 'Q1')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
                            load_value = 10, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
-        l4 = WindLoad(load = 'WUx - Wind Load', load_no = 4, wind_speed = 69.0,
-                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0, symmetrical = True,
+                      abbrev = 'WUx')
 
         group_name = 'Group 1'
         loads = [l1, l2, l3, l4]

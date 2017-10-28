@@ -16,11 +16,11 @@ class TestExclusiveGroup(TestCase):
         __str__ and __repr__ methods be used.
         """
 
-        l1 = ScalableLoad(load = 'Q1 - 2.5kPa Live Load', load_no = 1,
+        l1 = ScalableLoad(load_name = 'Q1 - 2.5kPa Live Load', load_no = 1,
                           load_value = 2.5, abbrev = 'Q1')
-        l2 = ScalableLoad(load = 'Q2 - 5kPa Live Load', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q2 - 5kPa Live Load', load_no = 2,
                           load_value = 5, abbrev = 'Q2')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
                            load_value = 10, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
@@ -51,11 +51,11 @@ class TestExclusiveGroup(TestCase):
         Test the generate cases method.
         """
 
-        l1 = ScalableLoad(load = 'Q1 - 2.5kPa Live Load', load_no = 1,
+        l1 = ScalableLoad(load_name = 'Q1 - 2.5kPa Live Load', load_no = 1,
                           load_value = 2.5, abbrev = 'Q1')
-        l2 = ScalableLoad(load = 'Q2 - 5kPa Live Load', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q2 - 5kPa Live Load', load_no = 2,
                           load_value = 5, abbrev = 'Q2')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
                            load_value = 10, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 

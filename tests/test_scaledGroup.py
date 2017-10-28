@@ -16,11 +16,11 @@ class TestScaledGroup(TestCase):
         __repr__ methods work.
         """
 
-        l1 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 1,
+        l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
                           load_value = 5, abbrev = 'Q1')
-        l2 = ScalableLoad(load = 'Q2 - 5kPa Live Load 2', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q2 - 5kPa Live Load 2', load_no = 2,
                           load_value = 5, abbrev = 'Q2')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
@@ -51,11 +51,11 @@ class TestScaledGroup(TestCase):
         Test the scale_to getter / setter
         """
 
-        l1 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 1,
+        l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
                           load_value = 5, abbrev = 'Q1')
-        l2 = ScalableLoad(load = 'Q2 - 5kPa Live Load 2', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q2 - 5kPa Live Load 2', load_no = 2,
                           load_value = 5, abbrev = 'Q2')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
@@ -82,11 +82,11 @@ class TestScaledGroup(TestCase):
         Test the scale getter / setter
         """
 
-        l1 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 1,
+        l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
                           load_value = 5, abbrev = 'Q1')
-        l2 = ScalableLoad(load = 'Q2 - 5kPa Live Load 2', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q2 - 5kPa Live Load 2', load_no = 2,
                           load_value = 5, abbrev = 'Q2')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
@@ -113,13 +113,13 @@ class TestScaledGroup(TestCase):
         Test the generate_cases method.
         """
 
-        l1 = ScalableLoad(load = 'Q1 - 5kPa Live Load', load_no = 1,
+        l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
                           load_value = 5, abbrev = 'Q1')
-        l2 = ScalableLoad(load = 'Q2 - 2.5kPa Live Load 2', load_no = 2,
+        l2 = ScalableLoad(load_name = 'Q2 - 2.5kPa Live Load 2', load_no = 2,
                           load_value = 2.5, abbrev = 'Q2')
-        l3 = RotatableLoad(load = 'R1 - Rotating Load, 10 kPa', load_no = 3,
-                           load_value = 10, angle = 45.0, symmetrical = True,
-                           abbrev = 'R1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load, 10 kPa',
+                           load_no = 3, load_value = 10, angle = 45.0,
+                           symmetrical = True, abbrev = 'R1')
 
         group_name = 'Group 1'
         loads = [l1, l2, l3]

@@ -17,7 +17,7 @@ class TestLoad(TestCase):
         load_no = 1
         abbrev = 'G1'
 
-        l = Load(load = load_title, load_no = load_no, abbrev = abbrev)
+        l = Load(load_name = load_title, load_no = load_no, abbrev = abbrev)
 
         # the repr method should be able to recreate a Load object
         l2 = eval(repr(l))
@@ -38,15 +38,15 @@ class TestLoad(TestCase):
         load_no = 1
         abbrev = 'G1'
 
-        l = Load(load = load_title, load_no = load_no, abbrev = abbrev)
+        l = Load(load_name = load_title, load_no = load_no, abbrev = abbrev)
 
-        self.assertEqual(first = l.load, second = load_title)
+        self.assertEqual(first = l.load_name, second = load_title)
 
         load_title = 'Changed Load'
 
-        l.load = load_title
+        l.load_name = load_title
 
-        self.assertEqual(first = l.load, second = load_title)
+        self.assertEqual(first = l.load_name, second = load_title)
 
     def test_load_no(self):
         """
@@ -56,7 +56,7 @@ class TestLoad(TestCase):
         load_no = 1
         abbrev = 'G1'
 
-        l = Load(load = load_title, load_no = load_no, abbrev = abbrev)
+        l = Load(load_name = load_title, load_no = load_no, abbrev = abbrev)
 
         self.assertEqual(first = l.load_no, second = load_no)
 
@@ -74,7 +74,7 @@ class TestLoad(TestCase):
         load_no = 1
         abbrev = 'G1'
 
-        l = Load(load = load_title, load_no = load_no, abbrev = abbrev)
+        l = Load(load_name = load_title, load_no = load_no, abbrev = abbrev)
 
         self.assertEqual(first = l.abbrev, second = abbrev)
 

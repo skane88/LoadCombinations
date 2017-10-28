@@ -21,7 +21,7 @@ class TestWindLoad(TestCase):
         angle = 100
         symmetrical = True
 
-        l = WindLoad(load = load_title, load_no = load_no,
+        l = WindLoad(load_name = load_title, load_no = load_no,
                      wind_speed = wind_speed, angle = angle,
                      symmetrical = symmetrical, abbrev = abbrev)
 
@@ -47,7 +47,7 @@ class TestWindLoad(TestCase):
         angle = 100
         symmetrical = True
 
-        l = WindLoad(load = load_title, load_no = load_no,
+        l = WindLoad(load_name = load_title, load_no = load_no,
                      wind_speed = wind_speed, angle = angle,
                      symmetrical = symmetrical, abbrev = abbrev)
 
@@ -70,7 +70,7 @@ class TestWindLoad(TestCase):
         angle = 100
         symmetrical = True
 
-        l = WindLoad(load = load_title, load_no = load_no,
+        l = WindLoad(load_name = load_title, load_no = load_no,
                      wind_speed = wind_speed, angle = angle,
                      symmetrical = symmetrical, abbrev = abbrev)
 
