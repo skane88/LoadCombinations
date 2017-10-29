@@ -5,7 +5,7 @@ Creates a LoadGroup class, that stores multiple Loads and can generate an
 appropriate list of loads through an iterator method.
 """
 
-from typing import List, Tuple, Union, Callable
+from typing import Dict, List, Tuple, Union, Callable
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
@@ -26,18 +26,25 @@ class LoadGroup:
     valued iterator.
     """
 
-    def __init__(self, *, group_name: str, loads: List[Load], abbrev: str = ''):
+    def __init__(self, *, group_name: str,
+                 loads: Union[Dict[Load], List[Load], Load],
+                 abbrev: str = '',
+                 allow_duplicates: bool = False):
         """
         Creates a LoadGroup object.mro
 
         :param group_name: The name of the load group.
         :param loads: The list of loads.
         :param abbrev: An abbreviation for the load group.
+        :param allow_duplicates: Are duplicate loads allowed in the group?
         """
 
         self.group_name = group_name
-        self.loads = loads
         self.abbrev = abbrev
+        self.allow_duplicates = allow_duplicates
+
+        self.loads = loads # call last as the logic of this method depends on
+                           # allow_duplicates.
 
     @property
     def group_name(self) -> str:
@@ -58,7 +65,7 @@ class LoadGroup:
         self._group_name = group_name
 
     @property
-    def loads(self) -> List[Load]:
+    def loads(self) -> Dict[Load]:
         """
         A list of loads to be included in the load group.
         """
@@ -66,16 +73,16 @@ class LoadGroup:
         return self._loads
 
     @loads.setter
-    def loads(self, loads: List[Load]):
+    def loads(self, loads: Union[Dict[Load], List[Load], Load]):
         """
         A list of loads to be included in the load group.
 
         :param loads: the list of loads.
         """
 
-        self._loads = loads
+        self.add_load(loads)
 
-    def add_load(self, load: Load):
+    def add_load(self, load: Union[Dict[Load], List[Load], Load]):
         """
         A method to add a single load into the loads that make up the group.
 
@@ -128,6 +135,24 @@ class LoadGroup:
 
         self._abbrev = abbrev
 
+    @property
+    def allow_duplicates(self) -> bool:
+        """
+        Are duplicate loads allowed in the group?
+        """
+
+        return self._allow_duplicates
+
+    @allow_duplicates.setter
+    def allow_duplicates(self, allow_duplicates: bool = False):
+        """
+        Are duplicate loads allowed in the group?
+
+        :param allow_duplicates: Are duplicate loads allowed in the group?
+        """
+
+        self._allow_duplicates = allow_duplicates
+
     def generate_cases(self):
         """
         Generates an iterator that iterates through the potential cases that
@@ -156,6 +181,7 @@ class LoadGroup:
                 + f'group_name = {repr(self.group_name)}, '
                 + f'loads = {repr(self.loads)}, '
                 + f'abbrev = {repr(self.abbrev)}'
+                + f'allow_duplicates = {repr(self.allow_duplicates)}'
                 + ')')
 
     def __str__(self):
