@@ -10,6 +10,7 @@ from Load import Load, RotatableLoad, ScalableLoad, WindLoad
 
 
 class TestLoadGroup(TestCase):
+
     def test_basic(self):
         """
         Test basic functionality - can the class be instantiated and can the
@@ -87,14 +88,14 @@ class TestLoadGroup(TestCase):
                       angle = 0.0, symmetrical = True, abbrev = 'WUx')
 
         group_name = 'Group 1'
-        loads = [l1, l2, l3, l4]
+        loads = {1: l1, 2: l2, 3: l3, 4: l4}
         abbrev = 'Gp 1'
 
         LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
 
         self.assertEqual(first = LG.loads, second = loads)
 
-        loads = [l1, l2]
+        loads = {1: l1, 2: l2}
 
         LG.loads = loads
 
@@ -170,3 +171,53 @@ class TestLoadGroup(TestCase):
         print(tuple(LG.generate_cases()))
 
         self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+
+    def test_add_load(self):
+        """
+        Test the add_load method
+        """
+
+
+
+        self.fail()
+
+    def test_del_load(self):
+        """
+        Test the del_load method.
+        """
+
+        self.fail()
+
+    def test_load_exists(self):
+        """
+        Test the load_exists method.
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0,
+                      symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3]
+        abbrev = 'GP 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertFalse(LG.load_exists(load = l4))
+        self.assertTrue(LG.load_exists(load = l3))
+
+        self.assertFalse(LG.load_exists(load_no = 4))
+        self.assertTrue(LG.load_exists(load_no = 3))
+
+        self.assertFalse(LG.load_exists(load_name = l4.load_name))
+        self.assertTrue(LG.load_exists(load_name = l3.load_name))
+
+        self.assertFalse(LG.load_exists(abbrev = l4.abbrev))
+        self.assertTrue(LG.load_exists(abbrev = l3.abbrev))

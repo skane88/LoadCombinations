@@ -10,6 +10,7 @@ from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
 from copy import deepcopy
+from exceptions import LoadExistsException
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
@@ -27,24 +28,23 @@ class LoadGroup:
     """
 
     def __init__(self, *, group_name: str,
-                 loads: Union[Dict[Load], List[Load], Load],
-                 abbrev: str = '',
-                 allow_duplicates: bool = False):
+                 loads: Union[Dict[int, Load], List[Load], Load],
+                 abbrev: str = ''):
         """
         Creates a LoadGroup object.mro
 
         :param group_name: The name of the load group.
         :param loads: The list of loads.
         :param abbrev: An abbreviation for the load group.
-        :param allow_duplicates: Are duplicate loads allowed in the group?
         """
 
         self.group_name = group_name
-        self.abbrev = abbrev
-        self.allow_duplicates = allow_duplicates
 
-        self.loads = loads # call last as the logic of this method depends on
-                           # allow_duplicates.
+        self.loads = loads
+
+        self.abbrev = abbrev
+
+
 
     @property
     def group_name(self) -> str:
@@ -53,6 +53,7 @@ class LoadGroup:
         """
 
         return self._group_name
+
 
     @group_name.setter
     def group_name(self, group_name: str):
@@ -64,25 +65,36 @@ class LoadGroup:
 
         self._group_name = group_name
 
+
     @property
-    def loads(self) -> Dict[Load]:
+    def loads(self) -> Dict[int, Load]:
         """
-        A list of loads to be included in the load group.
+        The loads included in the load group. Note that when set via the
+        setter this completely overwrites the loads dictionary. If a single load
+        is meant to be added use the add_load method instead.
         """
 
         return self._loads
 
+
     @loads.setter
-    def loads(self, loads: Union[Dict[Load], List[Load], Load]):
+    def loads(self, loads: Union[Dict[int, Load], List[Load], Load]):
         """
-        A list of loads to be included in the load group.
+        The loads included in the load group. Note that when set via the
+        setter this completely overwrites the loads dictionary. If a single load
+        is meant to be added use the add_load method instead.
 
-        :param loads: the list of loads.
+        :param loads: A ``Dict[int, Load]`, ``List[Load]`` or a ``Load`` object
+            to make up the LoadGroup loads.
         """
 
-        self.add_load(loads)
+        self._loads = {}
 
-    def add_load(self, load: Union[Dict[Load], List[Load], Load]):
+        self.add_load(loads) # for simplicity, call add_load which is written
+                             # to handle adding multiple loads at once etc.
+
+
+    def add_load(self, load: Union[Dict[int, Load], List[Load], Load]):
         """
         A method to add a single load into the loads that make up the group.
 
@@ -95,25 +107,145 @@ class LoadGroup:
         :param load: The load to add.
         """
 
-        raise NotImplementedError
+        if isinstance(load, Dict):
 
-    def del_load(self, load_no: int = None, load_name: str = None,
-                 abbrev: str = None):
+            if len(self._loads) == 0:
+                # if the existing self._loads dictionary is empty, can just
+                # overwrite it altogether.
+                self._loads = load
+            else:
+                # otherwise iterate through all the dictionary items and
+                # add_load
+                for k in load:
+                    self.add_load(load[k])
+
+        elif isinstance(load, List):
+            # if the load is a List then iterate through the List and add all
+            # loads.
+
+            for l in load:
+                self.add_load(l)
+
+        else:
+            #first check if the load exists in the self._loads dictionary
+
+            if self.load_exists(load = load) == False:
+                self._loads[load.load_no] = load
+            else:
+                raise LoadExistsException(f'Attempted to add a load to the '
+                                          + f'LoadGroup that already exists. '
+                                          + f'Load: {str(load)}, '
+                                          + f'LoadGroup: {str(self)}.')
+
+
+    def del_load(self, *, load_no: int = None, load_name: str = None,
+                 abbrev: str = None, load: Load = None):
         """
-        A method to delete a single load from the loads list.
+        A method to delete a single load from the self.loads property.
 
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to allow deletion of a single load at a time from the
-        group.
+        The load to delete can be specified by either the ``load_no``,
+        ``load_name`` or ``abbrev`` properties of the ``Load``, or a ``Load``
+        object can be passed in directly. It should be noted that if
+        more than one parameter is given the search will only be carried out
+        based on the first provided parameter - providing multiple parameters
+        does not result in a search by multiple parameters.
 
-        Loads should be able to be deleted optionally via their no., name or
-        abbrev.
+        This method does not curently return information on the status of the
+        deletion operation. If it is necessary to know if the deletion was
+        successful or not the user should ensure they check for it directly.
 
         :param load_no: The load_no of the load to delete.
         :param load_name: The load_name of the load to delete.
         :param abbrev:  The abbrev of the load to delete.
+        :param load: A ``Load`` object to check for.
         """
-        raise NotImplementedError
+
+        load_present = self.load_exists(load_no = load_no,
+                                        load_name = load_name,
+                                        abbrev = abbrev,
+                                        load = load)
+
+        if load_present != False:
+
+            self._loads.pop(load_present)
+
+        else:
+            raise ValueError(f'To delete a load a load needs to be'
+                             + f'provided. No load information provided.')
+
+
+    def load_exists(self, *, load_no: int = None, load_name: str = None,
+                    abbrev: str = None, load: Load = None) -> bool:
+        """
+        This method searches the self.loads property of the ``LoadGroup`` to
+        determine if a ``Load`` exists in it. It will search by either the
+        ``load_no``, ``load_name`` or ``abbrev`` properties of the ``Load``, or
+        can search using a given ``Load`` object. It should be noted that if
+        more than one parameter is given the search will only be carried out
+        based on the first provided parameter - providing multiple parameters
+        does not result in a search by multiple parameters.
+
+        :param load_no: The ``load_no`` of the load to check.
+        :param load_name: The ``load_name`` of the load to check.
+        :param abbrev: The ``abbrev`` of the load to check.
+        :param load: A ``Load`` object to look for.
+        :return: Returns the ``load_no`` of the load if the load is found,
+            ``False`` otherwise.
+        """
+
+        # can shortcut this method if the self._loads method is empty.
+        if len(self._loads) == 0:
+            # by default the load cannot exist in an empty dictionary.
+            return False
+
+        if load_no != None:
+            # if provided the load no. the search is via the key of the
+            # self._load dictionary
+
+            if load_no in self._loads:
+                return load_no
+            else:
+                return False
+
+        elif load_name != None:
+            # if provided with the load name, the search needs to go through all
+            # the items in the dictionary
+
+            for k, l in self._loads.items():
+
+                if load_name == l.load_name:
+                    return k
+
+            # if haven't found in the dictionary, return False.
+            return False
+
+        elif abbrev != None:
+            # similar with abbrev, the search needs to go through all the items
+            # in the dictionary
+
+            for k, l in self._loads.items():
+                if abbrev == l.abbrev:
+                    return k
+
+            # if haven't found in the dictionary, return False.
+            return False
+
+        elif load != None:
+            # if provided a load we have to search through all the items in the
+            # self._loads dictionary to check for it.
+
+            for k, l in self._loads.items():
+
+                if load == l:
+                    return k
+
+            # if haven't found in the dictionary, return False.
+            return False
+
+        else:
+            raise ValueError(f'To check if a load exists a load needs to be'
+                             + f'provided. No load information provided.')
+
 
     @property
     def abbrev(self) -> str:
@@ -134,24 +266,6 @@ class LoadGroup:
         """
 
         self._abbrev = abbrev
-
-    @property
-    def allow_duplicates(self) -> bool:
-        """
-        Are duplicate loads allowed in the group?
-        """
-
-        return self._allow_duplicates
-
-    @allow_duplicates.setter
-    def allow_duplicates(self, allow_duplicates: bool = False):
-        """
-        Are duplicate loads allowed in the group?
-
-        :param allow_duplicates: Are duplicate loads allowed in the group?
-        """
-
-        self._allow_duplicates = allow_duplicates
 
     def generate_cases(self):
         """
@@ -181,7 +295,6 @@ class LoadGroup:
                 + f'group_name = {repr(self.group_name)}, '
                 + f'loads = {repr(self.loads)}, '
                 + f'abbrev = {repr(self.abbrev)}'
-                + f'allow_duplicates = {repr(self.allow_duplicates)}'
                 + ')')
 
     def __str__(self):
@@ -189,6 +302,26 @@ class LoadGroup:
         # should allow the __str__ method to be accepted for subclasses of
         # LoadGroup without change.
         return f'{type(self).__name__}: {self.group_name}, loads: {self.loads}'
+
+    def __eq__(self, other):
+        """
+        Override the equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        """
+        Override the non-equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+
+        return NotImplemented
 
 
 # next define more complex load groups as subclasses.
