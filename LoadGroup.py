@@ -11,6 +11,7 @@ from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
 from copy import deepcopy
 from exceptions import LoadExistsException, LoadNotPresentException
+from exceptions import AngleExistsException
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
@@ -96,15 +97,11 @@ class LoadGroup:
 
     def add_load(self, load: Union[Dict[int, Load], List[Load], Load]):
         """
-        A method to add a single load into the loads that make up the group.
+        A method to add loads into the self.loads that make up the group,
+        without having to overwrite the entire self.loads dictionary.
 
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to provide logic when adding the loads in
-        through the "loads" property, to allow for checking that loads don't
-        already exist etc. and to allow migration of the internal storage
-        from a list to a dictionary.
-
-        :param load: The load to add.
+        :param load: The load to add. Can be a single ``Load`` object, a
+            ``Dict[int, Load]`` or a ``List[Load]``.
         """
 
         if isinstance(load, Dict):
@@ -628,34 +625,81 @@ class RotationalGroup(ScaledGroup):
         self.interp_func = interp_func
         self.req_angles = req_angles
 
-    @LoadGroup.loads.setter
-    def loads(self, loads):
-        """
-        Set the loads. This setter overrides the parent class' method to allow
-        for the list of loads to be sorted.
-
-        :param loads: The loads that form part of the group. the loads will be
-            sorted, and if half_list is True they must all have angles <=180.
-        """
-
-        # store loads as a sorted list
-        loads.sort(key = lambda x: x.angle)
-        self._loads = loads
-
     def add_load(self, load: Union[Dict[int, Load], List[Load], Load]):
         """
-        A method to add a single load into the loads that make up the group.
+        A method to add loads into the self.loads that make up the group,
+        without having to overwrite the entire self.loads dictionary.
 
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to provide logic when adding the loads in
-        through the "loads" property, to allow for checking that loads don't
-        already exist etc. and to allow migration of the internal storage
-        from a list to a dictionary.
-
-        :param load: The load to add.
+        :param load: The load to add. Can be a single ``Load`` object, a
+            ``Dict[int, Load]`` or a ``List[Load]``.
         """
 
-        raise NotImplementedError
+        if isinstance(load, Dict):
+
+            # iterate through all the dictionary items and add_load
+            for k in load:
+                self.add_load(load[k])
+
+        elif isinstance(load, List):
+            # if the load is a List then iterate through the List and add all
+            # loads.
+
+            for l in load:
+                self.add_load(l)
+
+        else:
+            #first check if the load exists in the self._loads dictionary
+            if self.load_exists(load = load) == False:
+
+                # need to check that the angle does not already exist in the
+                # self.loads dictionary.
+                if not self.check_angle(load.angle):
+
+                    self._loads[load.load_no] = load
+                else:
+
+                    raise AngleExistsException(f'Attepmted to add a load to the'
+                                     + f' RotationalGroup where a load already '
+                                     + f'exists at the given angle. Angle is '
+                                     + f'{load.angle}, load being added is: '
+                                     + f'{load.load_no}.')
+            else:
+                raise LoadExistsException(f'Attempted to add a load to the '
+                                          + f'LoadGroup that already exists. '
+                                          + f'Load: {str(load)}, '
+                                          + f'LoadGroup: {str(self)}.')
+
+
+
+    def check_angle(self, angle: float) -> bool:
+        """
+        Checks if a load already exists in the ``self.loads`` dictionary which
+        matches the given angle to check.
+
+        :param angle: An angle to check against the list of loads in the
+            ``self.loads`` dictionary.
+        :return: ``True`` if the angle exists in a load in the ``self.loads``
+            dictionary, ``False`` otherwise.
+        """
+
+        if angle in self.angles:
+            return True
+        else:
+            return False
+
+    @property
+    def angles(self) -> Dict[float, int]:
+        """
+        Returns a dictionary of all the angles covered by the loads in the
+        ``self.loads`` dictionary, and their corresponding loads.
+
+        :return: a dictionary of all the angles covered by the loads in the
+            ``self.loads`` dictionary, and their corresponding loads, in the
+            format ``{angle: load_no}``.
+        """
+
+        return {l.angle: k for k, l in self.loads.items()}
+
 
     @property
     def interp_func(self) -> Callable[[float, float], Tuple[float, float]]:

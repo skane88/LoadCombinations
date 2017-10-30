@@ -17,5 +17,12 @@ class LoadNotPresentException(Exception):
     but is expected by a method.
     """
 
+    pass
+
+class AngleExistsException(LoadExistsException):
+    """
+    This exception is raised in a RotationalGroup when a load with the same
+    angle already exists in the RotationalGroup.
+    """
 
     pass
