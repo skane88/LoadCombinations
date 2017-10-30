@@ -376,7 +376,7 @@ class FactoredGroup(LoadGroup):
             # have the same factor
 
             results = []
-            for l in self.loads:
+            for k, l in self.loads.items():
                 # then iterate through the load_factors
 
                 lf = LoadFactor(load = l, load_factor = f, add_info = '')
@@ -501,7 +501,7 @@ class ScaledGroup(FactoredGroup):
             results = []
 
             # then iterate through the loads
-            for l in self.loads:
+            for k, l in self.loads.items():
                 # call the load's scale_factor method to determine the scale
                 # factor to scale the load by.
                 scale_factor = l.scale_factor(scale_to = self.scale_to,
@@ -571,7 +571,7 @@ class ExclusiveGroup(ScaledGroup):
         for f in self.factors:
 
             # then iterate through the loads and get a return.
-            for l in self.loads:
+            for k, l in self.loads.items():
                 # call the load's scale_factor method to determine the scale
                 # factor to scale the load by.
                 scale_factor = l.scale_factor(scale_to = self.scale_to,
@@ -642,7 +642,7 @@ class RotationalGroup(ScaledGroup):
         loads.sort(key = lambda x: x.angle)
         self._loads = loads
 
-    def add_load(self, load: Load):
+    def add_load(self, load: Union[Dict[int, Load], List[Load], Load]):
         """
         A method to add a single load into the loads that make up the group.
 
@@ -655,24 +655,6 @@ class RotationalGroup(ScaledGroup):
         :param load: The load to add.
         """
 
-        raise NotImplementedError
-
-    def del_load(self, load_no: int = None, load_name: str = None,
-                 abbrev: str = None):
-        """
-        A method to delete a single load from the loads list.
-
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to allow deletion of a single load at a time from the
-        group.
-
-        Loads should be able to be deleted optionally via their no., name or
-        abbrev.
-
-        :param load_no: The load_no of the load to delete.
-        :param load_name: The load_name of the load to delete.
-        :param abbrev:  The abbrev of the load to delete.
-        """
         raise NotImplementedError
 
     @property
