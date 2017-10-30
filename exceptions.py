@@ -10,3 +10,12 @@ class LoadExistsException(Exception):
     """
 
     pass
+
+class LoadNotPresentException(Exception):
+    """
+    This exception is raised when a load does not exist in a LoadGroup object
+    but is expected by a method.
+    """
+
+
+    pass

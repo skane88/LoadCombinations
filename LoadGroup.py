@@ -10,7 +10,7 @@ from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
 from copy import deepcopy
-from exceptions import LoadExistsException
+from exceptions import LoadExistsException, LoadNotPresentException
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
@@ -164,7 +164,7 @@ class LoadGroup:
             self._loads.pop(load_present)
 
         else:
-            raise ValueError(f'To delete a load a load needs to be'
+            raise LoadNotPresentException(f'To delete a load a load needs to be'
                              + f'provided. No load information provided.')
 
 
@@ -273,7 +273,7 @@ class LoadGroup:
         """
 
         results = []
-        for l in self.loads:
+        for k, l in self.loads.items():
             lf = LoadFactor(load = l, load_factor = 1.0, add_info = '')
             results.append(lf)
 
