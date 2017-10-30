@@ -109,15 +109,9 @@ class LoadGroup:
 
         if isinstance(load, Dict):
 
-            if len(self._loads) == 0:
-                # if the existing self._loads dictionary is empty, can just
-                # overwrite it altogether.
-                self._loads = load
-            else:
-                # otherwise iterate through all the dictionary items and
-                # add_load
-                for k in load:
-                    self.add_load(load[k])
+            # iterate through all the dictionary items and add_load
+            for k in load:
+                self.add_load(load[k])
 
         elif isinstance(load, List):
             # if the load is a List then iterate through the List and add all
