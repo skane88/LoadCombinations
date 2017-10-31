@@ -199,3 +199,27 @@ class TestScaledGroup(TestCase):
         print(LC_act[2])
 
         self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        
+    def test_scale_factors(self):
+        l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
+                          load_value = 5, abbrev = 'Q1')
+        l2 = ScalableLoad(load_name = 'Q2 - 2.5kPa Live Load 2', load_no = 2,
+                          load_value = 2.5, abbrev = 'Q2')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load, 10 kPa',
+                           load_no = 3, load_value = 10, angle = 45.0,
+                           symmetrical = True, abbrev = 'R1')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3]
+        load_factors = (-1.0, 0, 1.0)
+        scale_to = 4.0
+        scale = True
+        abbrev = 'GP 1'
+
+        LG = ScaledGroup(group_name = group_name, loads = loads,
+                         factors = load_factors, scale_to = scale_to,
+                         scale = scale, abbrev = abbrev)
+
+        scale_factors = {1: 4.0 / 5.0, 2: 4.0 / 2.5, 3: 4.0 / 10.0}
+
+        self.assertEqual(first = LG.scale_factors(), second = scale_factors)

@@ -358,3 +358,14 @@ class TestLoadGroup(TestCase):
 
         self.assertFalse(LG.load_exists(abbrev = l4.abbrev))
         self.assertTrue(LG.load_exists(abbrev = l3.abbrev))
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
+                          load_value = 5, abbrev = 'Q1')
+
+        LG.loads = {1: l1}
+
+        # the following should return true because l1 and l2 share the same
+        # load_no
+        self.assertTrue(LG.load_exists(load = l2))

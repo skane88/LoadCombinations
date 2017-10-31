@@ -227,7 +227,13 @@ class LoadGroup:
 
             for k, l in self._loads.items():
 
-                if load == l:
+                # to avoid silently closing this method if loads share the same
+                # load_no we need to return the load_no if either of the
+                # following are true:
+                # the load_no is the same as an existing load_no OR
+                # the load is == to an existing load.
+
+                if load.load_no == k or load == l:
                     return k
 
             # if haven't found in the dictionary, return False.
@@ -473,6 +479,25 @@ class ScaledGroup(FactoredGroup):
         """
         self._scale = scale
 
+    def scale_factors(self,
+                      scale_func: Callable[[float, float], float] = None)\
+            -> Dict[int, float]:
+        """
+        This function returns a dictionary containing all the scale factors that
+        will be applied to the loads in the group.
+
+        :param scale_func: A function can be provided to determine the scale
+            factor. This should take 2x inputs: scale_to, load_value, and return
+            a float as a return value.
+        :return: returns a dictionary of loads mapped against the scale factor
+            that will be applied to them: ``{load_no: scale_factor}``.
+        """
+
+        return {k: l.scale_factor(scale_to = self.scale_to,
+                                  scale_func = scale_func,
+                                  scale = self.scale)
+                for k, l in self.loads.items()}
+
     def generate_cases(self,
                        scale_func: Callable[[float, float], float] = None):
         """
@@ -491,6 +516,12 @@ class ScaledGroup(FactoredGroup):
             (load, load_factor, add_info), ...)
         """
 
+        # get the dictionary of scale_factors for the loads. These are
+        # independent of the group factors and can therefore be grabbed
+        # early using a separate method to simplify this generator.
+
+        scale_factors = self.scale_factors(scale_func)
+
         # first iterate through the load factors so that all loads have the same
         # factor
         for f in self.factors:
@@ -499,11 +530,11 @@ class ScaledGroup(FactoredGroup):
 
             # then iterate through the loads
             for k, l in self.loads.items():
-                # call the load's scale_factor method to determine the scale
-                # factor to scale the load by.
-                scale_factor = l.scale_factor(scale_to = self.scale_to,
-                                              scale_func = scale_func,
-                                              scale = self.scale)
+                # Grab the load's scale factor from the dictionary
+
+                scale_factor = scale_factors[k]
+
+                #generate the return load factor object.
 
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
@@ -564,16 +595,19 @@ class ExclusiveGroup(ScaledGroup):
             (load, load_factor, add_info), ...)
         """
 
+        # get the dictionary of scale_factors for the loads. These are
+        # independent of the group factors and can therefore be grabbed
+        # early using a separate method to simplify this generator.
+
+        scale_factors = self.scale_factors(scale_func)
+
         # first iterate through the load factors
         for f in self.factors:
 
             # then iterate through the loads and get a return.
             for k, l in self.loads.items():
-                # call the load's scale_factor method to determine the scale
-                # factor to scale the load by.
-                scale_factor = l.scale_factor(scale_to = self.scale_to,
-                                              scale_func = scale_func,
-                                              scale = self.scale)
+                # get the load's scale factor from the dictionary.
+                scale_factor = scale_factors[k]
 
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
@@ -658,7 +692,7 @@ class RotationalGroup(ScaledGroup):
                     self._loads[load.load_no] = load
                 else:
 
-                    raise AngleExistsException(f'Attepmted to add a load to the'
+                    raise AngleExistsException(f'Attempted to add a load to the'
                                      + f' RotationalGroup where a load already '
                                      + f'exists at the given angle. Angle is '
                                      + f'{load.angle}, load being added is: '
@@ -668,7 +702,6 @@ class RotationalGroup(ScaledGroup):
                                           + f'LoadGroup that already exists. '
                                           + f'Load: {str(load)}, '
                                           + f'LoadGroup: {str(self)}.')
-
 
 
     def check_angle(self, angle: float) -> bool:
@@ -693,6 +726,9 @@ class RotationalGroup(ScaledGroup):
         Returns a dictionary of all the angles covered by the loads in the
         ``self.loads`` dictionary, and their corresponding loads.
 
+        Does not return angles which are covered by symmetry - refer to the
+        ``self.angles_with_symmetry`` property if these are required.
+
         :return: a dictionary of all the angles covered by the loads in the
             ``self.loads`` dictionary, and their corresponding loads, in the
             format ``{angle: load_no}``.
@@ -700,6 +736,47 @@ class RotationalGroup(ScaledGroup):
 
         return {l.angle: k for k, l in self.loads.items()}
 
+    @property
+    def angles_with_symmetry(self) -> Dict[float, Tuple[int, float]]:
+        """
+        Returns a dictionary of all the angles covered by the loads in the
+        ``self.loads`` dictionary, and their corresponding loads. This includes
+        angles that are covered by symmetric properties of loads, however
+        preference is always given to directly specified angles.
+
+        :return: a dictionary of all the angles covered by the loads in the
+            ``self.loads`` dictionary, and their corresponding loads, in the
+            format ``{angle: (load_no, symmetry_factor)}``. Symmetry factor will
+            either be 1.0 or -1.0.
+        """
+
+        #first get a dictionary of angles with their initial symmetry factors.
+
+        return_dict = {l.angle: (k, 1.0) for k, l in self.loads.items()}
+
+        # next check the special case of 0.0 and 360.0 which are identical
+        # but not handled by the wrapping ability of the % function.
+
+        if 0.0 in return_dict and 360.0 not in return_dict:
+            return_dict[360.0] = (return_dict[0.0][0], 1.0)
+
+        if 360.0 in return_dict and 0.0 not in return_dict:
+            return_dict[0.0] = (return_dict[360.0][0], 1.0)
+
+        # next go through all load elements again and test for symmetric angles
+
+        for k, l in self.loads.items():
+
+            if l.symmetrical:
+
+                #get the new angle of the load
+                new_angle = (l.angle + 180.0) % 360.0
+
+                #if not already in the dictionary add it in.
+                if new_angle not in return_dict:
+                    return_dict[new_angle] = (k, -1.0)
+
+        return return_dict
 
     @property
     def interp_func(self) -> Callable[[float, float], Tuple[float, float]]:
@@ -772,12 +849,15 @@ class RotationalGroup(ScaledGroup):
             (load, load_factor, add_info), ...)
         """
 
-        # first build a dictionary of loads mapped to their angles:
-        load_dict = {l.angle: l for l in self.loads}
-        sym_dict = {l.angle: 1.0 for l in self.loads}
+        raise NotImplementedError
+
+        # first build a dictionary of loads mapped to their angles
+        # and a matching dictionary of symmetry factors.
+        load_dict = {l.angle: l for k, l in self.loads.items()}
+        sym_dict = {l.angle: 1.0 for k, l in self.loads.items()}
 
         # next go through each load and check if it can be reversed.
-        for l in self.loads:
+        for k, l in self.loads.items():
 
             if l.symmetrical:
                 # if l is symmetrical then need to check if the angle already
