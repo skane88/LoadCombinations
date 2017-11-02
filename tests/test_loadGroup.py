@@ -7,9 +7,11 @@ Unit test for the LoadGroup class.
 from unittest import TestCase
 from LoadGroup import LoadGroup, LoadFactor
 from Load import Load, RotatableLoad, ScalableLoad, WindLoad
+from exceptions import LoadExistsException, LoadNotPresentException
 
 
 class TestLoadGroup(TestCase):
+
     def test_basic(self):
         """
         Test basic functionality - can the class be instantiated and can the
@@ -87,14 +89,14 @@ class TestLoadGroup(TestCase):
                       angle = 0.0, symmetrical = True, abbrev = 'WUx')
 
         group_name = 'Group 1'
-        loads = [l1, l2, l3, l4]
+        loads = {1: l1, 2: l2, 3: l3, 4: l4}
         abbrev = 'Gp 1'
 
         LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
 
         self.assertEqual(first = LG.loads, second = loads)
 
-        loads = [l1, l2]
+        loads = {1: l1, 2: l2}
 
         LG.loads = loads
 
@@ -170,3 +172,200 @@ class TestLoadGroup(TestCase):
         print(tuple(LG.generate_cases()))
 
         self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+
+
+    def test_add_load(self):
+        """
+        Test the add_load method.
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0,
+                      symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = []
+        abbrev = 'GP 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertEqual(first = LG.loads, second = {})
+
+        LG.add_load(l1)
+
+        loads = {1: l1}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.add_load(l2)
+
+        loads = {1: l1, 2: l2}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.add_load([l3, l4])
+
+        loads = {1: l1, 2: l2, 3: l3, 4: l4}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.loads = {}
+
+        self.assertEqual(first = LG.loads, second = {})
+
+        LG.loads = loads
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+
+    def test_add_load_exception(self):
+        """
+        Test the add_load method raises an exception when adding an already
+        existing load.
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0,
+                      symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3, l4]
+        abbrev = 'GP 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertRaises(LoadExistsException, LG.add_load, l4)
+
+    def test_del_load(self):
+        """
+        Test the del_load method
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0,
+                      symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3, l4]
+        abbrev = 'GP 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        LG.del_load(load = l4)
+
+        loads = {1: l1, 2: l2, 3: l3}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.del_load(load_no = 3)
+
+        loads = {1: l1, 2: l2}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.del_load(load_name = l2.load_name)
+        LG.del_load(abbrev = l1.abbrev)
+
+        self.assertEqual(first = LG.loads, second = {})
+
+
+    def test_del_load_exception(self):
+        """
+        Test the del_load method raises an exception when deleting a
+        non-existent load.
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0,
+                      symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = []
+        abbrev = 'GP 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertRaises(LoadNotPresentException, LG.del_load, load = l4)
+
+        self.assertRaises(LoadNotPresentException, LG.del_load,
+                          load_name = l3.load_name)
+
+        self.assertRaises(LoadNotPresentException, LG.del_load,
+                          load_no = l2.load_no)
+
+        self.assertRaises(LoadNotPresentException, LG.del_load,
+                          abbrev = l1.abbrev)
+
+
+    def test_load_exists(self):
+        """
+        Test the load_exists method.
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0, angle = 0.0,
+                      symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3]
+        abbrev = 'GP 1'
+
+        LG = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        self.assertFalse(LG.load_exists(load = l4))
+        self.assertTrue(LG.load_exists(load = l3))
+
+        self.assertFalse(LG.load_exists(load_no = 4))
+        self.assertTrue(LG.load_exists(load_no = 3))
+
+        self.assertFalse(LG.load_exists(load_name = l4.load_name))
+        self.assertTrue(LG.load_exists(load_name = l3.load_name))
+
+        self.assertFalse(LG.load_exists(abbrev = l4.abbrev))
+        self.assertTrue(LG.load_exists(abbrev = l3.abbrev))
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
+                          load_value = 5, abbrev = 'Q1')
+
+        LG.loads = {1: l1}
+
+        # the following should return true because l1 and l2 share the same
+        # load_no
+        self.assertTrue(LG.load_exists(load = l2))

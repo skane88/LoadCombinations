@@ -8,6 +8,7 @@ from unittest import TestCase
 from LoadGroup import RotationalGroup, LoadFactor
 from Load import RotatableLoad
 from HelperFuncs import sine_interp, linear_interp
+from exceptions import LoadExistsException, AngleExistsException
 
 class TestRotationalGroup(TestCase):
 
@@ -16,12 +17,12 @@ class TestRotationalGroup(TestCase):
         Test the initialisation and __str__ and __repr__ methods.
         """
 
-        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 1,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           load_no = 2, load_value = 2.5, angle = 22.5,
                            symmetrical = True, abbrev = 'R2')
 
         l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
@@ -52,18 +53,17 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
+    def test_add_load(self):
+        """
+        Test the add_load method.
+        """
 
-    def test_loads(self):
-        '''
-        Test the load getter / setter.
-        '''
-
-        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 1,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           load_no = 2, load_value = 2.5, angle = 22.5,
                            symmetrical = True, abbrev = 'R2')
 
         l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
@@ -71,7 +71,7 @@ class TestRotationalGroup(TestCase):
                            abbrev = 'R3')
 
         group_name = 'Group 1'
-        loads = [l1, l2, l3]
+        loads = {}
         load_factors = (-1.0, 0, 1.0)
         scale_to = 4.0
         scale = True
@@ -83,42 +83,194 @@ class TestRotationalGroup(TestCase):
                              scale = scale, req_angles = req_angles,
                              interp_func = sine_interp, abbrev = abbrev)
 
-        loads = [l2, l1, l3]
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.add_load(l1)
+        loads = {1: l1}
 
         self.assertEqual(first = LG.loads, second = loads)
 
-        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 25 kPa',
-                           load_no = 3, load_value = 25, angle = 75.0,
+        LG.add_load(l2)
+        loads = {1: l1, 2: l2}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+        LG.add_load(l3)
+        loads = {1: l1, 2: l2, 3: l3}
+
+        self.assertEqual(first = LG.loads, second = loads)
+
+
+    def test_add_load_errors(self):
+        """
+        Test the add_load method raises errors.
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 1,
+                           load_value = 5, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2, load_value = 2.5, angle = 22.5,
+                           symmetrical = True, abbrev = 'R2')
+
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 2,
+                           load_value = 7.5, angle = 350.0, symmetrical = True,
+                           abbrev = 'R3')
+
+        l4 = RotatableLoad(load_name = 'R4 - Rotating Load, 1 kPa', load_no = 4,
+                           load_value = 1.0, angle = 45.0, symmetrical = True,
+                           abbrev = 'R4')
+
+        group_name = 'Group 1'
+        loads = {1: l1, 2: l2}
+        load_factors = (-1.0, 0, 1.0)
+        scale_to = 4.0
+        scale = True
+        req_angles = (0, 90, 180, 270)
+        abbrev = 'GP 1'
+
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        # the following should fail because the load already exists in the
+        # dictionary
+        self.assertRaises(LoadExistsException, LG.add_load, l2)
+
+        # the following should fail because the load_no already exists in the
+        # dictionary
+        self.assertRaises(LoadExistsException, LG.add_load, l3)
+
+        # the following should fail because the angle already exists in the
+        # dictionary
+        self.assertRaises(AngleExistsException, LG.add_load, l4)
+
+    def test_angles(self):
+        """
+        Test the angles property
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1, load_value = 1.25, angle = 0.0,
                            symmetrical = True, abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 33.3,
+                           load_no = 2, load_value = 2.5, angle = 90,
                            symmetrical = True, abbrev = 'R2')
 
-        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, -5 kPa',
-                           load_no = 3, load_value = -5, angle = -25,
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 10.0, angle = 180.0,
                            symmetrical = True, abbrev = 'R3')
 
-        loads = [l1, l2, l3]
+        l4 = RotatableLoad(load_name = 'R4 - Rotating Load, 2.5 kPa',
+                           load_no = 4, load_value = 2.5, angle = 270.0,
+                           symmetrical = True, abbrev = 'R4')
 
-        LG.loads = loads
+        group_name = 'Group 1'
+        loads = [l1, l4, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (0.0, 90.0, 180.0, 270.0)
+        abbrev = 'GP 1'
 
-        loads = [l2, l1, l3]
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
 
-        self.assertEqual(first = LG.loads, second = loads)
+        angles = {0.0: 1, 90.0: 2, 180.0: 3, 270.0: 4}
 
+        self.assertEqual(first = LG.angles, second = angles)
+
+    def test_angles_with_symmetry(self):
+        """
+        Test the angles_with_symmetry property
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1,
+                           load_value = 2.5, angle = 0.0,
+                           symmetrical = True,
+                           abbrev = 'R1')
+
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2,
+                           load_value = 2.5, angle = 90, symmetrical = True,
+                           abbrev = 'R2')
+
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3,
+                           load_value = 2.5, angle = 180.0,
+                           symmetrical = True,
+                           abbrev = 'R3')
+
+        l4 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 4,
+                           load_value = 2.5, angle = 35.0,
+                           symmetrical = True,
+                           abbrev = 'R4')
+
+        group_name = 'Group 1'
+        loads = [l1, l3, l2, l4]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (45.0, 135.0, 225.0, 315.0)
+        abbrev = 'GP 1'
+
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        angles_with_symmetry = {0.0: (1, 1.0), 90.0: (2, 1.0),
+                                180.0: (3, 1.0), 270.0: (2, -1.0),
+                                360: (1, 1.0),
+                                35.0: (4, 1.0), 215.0: (4, -1.0)}
+
+        print(LG.angles_with_symmetry)
+        print(angles_with_symmetry)
+
+        self.assertEqual(first = LG.angles_with_symmetry,
+                         second = angles_with_symmetry)
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1,
+                           load_value = 2.5, angle = 360.0,
+                           symmetrical = True,
+                           abbrev = 'R1')
+
+
+        loads = [l1, l3, l2]
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        angles_with_symmetry = {0.0: (1, 1.0), 90.0: (2, 1.0),
+                                180.0: (3, 1.0), 270.0: (2, -1.0),
+                                360: (1, 1.0)}
+
+        print(LG.angles_with_symmetry)
+        print(angles_with_symmetry)
+
+        self.assertEqual(first = LG.angles_with_symmetry,
+                         second = angles_with_symmetry)
 
     def test_req_angles(self):
         """
         Test the getter / setter
         """
 
-        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 1,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           load_no = 2, load_value = 2.5, angle = 22.5,
                            symmetrical = True, abbrev = 'R2')
 
         l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
@@ -154,12 +306,12 @@ class TestRotationalGroup(TestCase):
         Test the interp_func getter / setter
         """
 
-        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 3,
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 5 kPa', load_no = 1,
                            load_value = 5, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 22.5,
+                           load_no = 2, load_value = 2.5, angle = 22.5,
                            symmetrical = True, abbrev = 'R2')
 
         l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 5 kPa', load_no = 3,
@@ -185,6 +337,113 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.interp_func, second = linear_interp)
 
+    def test_nearest_angles(self):
+        """
+        Test the nearest_angles method.
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1, load_value = 1.25, angle = 0.0,
+                           symmetrical = False, abbrev = 'R1')
+
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2, load_value = 2.5, angle = 90,
+                           symmetrical = False, abbrev = 'R2')
+
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 10.0, angle = 180.0,
+                           symmetrical = False, abbrev = 'R3')
+
+        l4 = RotatableLoad(load_name = 'R4 - Rotating Load, 2.5 kPa',
+                           load_no = 4, load_value = 2.5, angle = 270.0,
+                           symmetrical = False, abbrev = 'R4')
+
+        group_name = 'Group 1'
+        loads = [l1, l4, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (0.0, 90.0, 180.0, 270.0)
+        abbrev = 'GP 1'
+
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        angle = 0
+        expected = {0.0: (1, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 45
+        expected =  {0.0: (1, 1.0), 90.0: (2, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 335
+        expected = {270.: (4, 1.0), 360.0: (1, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 360
+        expected = {360.0: (1, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+
+    def test_nearest_angles_with_symmetry(self):
+        """
+        Test the nearest_angles method when the ``self.loads`` dictionary relies
+        on symmetry to return a full list of angles.
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1, load_value = 1.25, angle = 15.0,
+                           symmetrical = True, abbrev = 'R1')
+
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2, load_value = 2.5, angle = 105.0,
+                           symmetrical = True, abbrev = 'R2')
+
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 10.0, angle = 180.0,
+                           symmetrical = True, abbrev = 'R3')
+
+
+        group_name = 'Group 1'
+        loads = [l1, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (0.0, 90.0, 180.0, 270.0)
+        abbrev = 'GP 1'
+
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        angle = 0
+        expected = {0.0: (3, -1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 45
+        expected = {15.0: (1, 1.0), 105.0: (2, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 335
+        expected = {285.0: (2, -1.0), 360.0: (3, -1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 360
+        expected = {360.0: (3, -1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
 
     def test_generate_cases_simple(self):
         '''
@@ -196,11 +455,11 @@ class TestRotationalGroup(TestCase):
         '''
 
         l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 1.25, angle = 0.0,
+                           load_no = 1, load_value = 1.25, angle = 0.0,
                            symmetrical = True, abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 90,
+                           load_no = 2, load_value = 2.5, angle = 90,
                            symmetrical = True, abbrev = 'R2')
 
         l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
@@ -261,11 +520,11 @@ class TestRotationalGroup(TestCase):
 
     def test_generate_cases_rotated(self):
         l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 0.0,
+                           load_no = 1, load_value = 2.5, angle = 0.0,
                            symmetrical = True, abbrev = 'R1')
 
         l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                           load_no = 3, load_value = 2.5, angle = 90,
+                           load_no = 2, load_value = 2.5, angle = 90,
                            symmetrical = True, abbrev = 'R2')
 
         l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
@@ -359,99 +618,104 @@ class TestRotationalGroup(TestCase):
 
 
     def test_generate_cases_symmetric(self):
-            l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
-                               load_no = 3,
-                               load_value = 2.5, angle = 0.0,
-                               symmetrical = True,
-                               abbrev = 'R1')
+        """
+        Test the generate_cases function with loads that should test its ability
+        to handle symmetric loads.
+        """
 
-            l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
-                               load_no = 3,
-                               load_value = 2.5, angle = 90, symmetrical = True,
-                               abbrev = 'R2')
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1,
+                           load_value = 2.5, angle = 0.0,
+                           symmetrical = True,
+                           abbrev = 'R1')
 
-            l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
-                               load_no = 3,
-                               load_value = 2.5, angle = 180.0,
-                               symmetrical = True,
-                               abbrev = 'R3')
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2,
+                           load_value = 2.5, angle = 90, symmetrical = True,
+                           abbrev = 'R2')
 
-            group_name = 'Group 1'
-            loads = [l1, l3, l2]
-            load_factors = (-1.0, 1.0)
-            scale_to = 5.0
-            scale = True
-            req_angles = (45.0, 135.0, 225.0, 315.0)
-            abbrev = 'GP 1'
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3,
+                           load_value = 2.5, angle = 180.0,
+                           symmetrical = True,
+                           abbrev = 'R3')
 
-            LG = RotationalGroup(group_name = group_name, loads = loads,
-                                 factors = load_factors, scale_to = scale_to,
-                                 scale = scale, req_angles = req_angles,
-                                 interp_func = sine_interp, abbrev = abbrev)
+        group_name = 'Group 1'
+        loads = [l1, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (45.0, 135.0, 225.0, 315.0)
+        abbrev = 'GP 1'
 
-            rad45 = math.radians(45.0)
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
 
-            LC1 = (LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 45.0)'),
-                   LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 45.0)'))
-            LC2 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 135.0)'),
-                   LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 135.0)'))
-            LC3 = (LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 225.0)'),
-                   LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 225.0)'))
-            LC4 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 315.0)'),
-                   LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 315.0)'))
+        rad45 = math.radians(45.0)
 
-            LC5 = (LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 45.0)'),
-                   LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 45.0)'))
-            LC6 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 135.0)'),
-                   LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 135.0)'))
-            LC7 = (LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 225.0)'),
-                   LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 225.0)'))
-            LC8 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 315.0)'),
-                   LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 315.0)'))
+        LC1 = (LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+               LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+        LC2 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+               LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+        LC3 = (LoadFactor(l3, -2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+               LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+        LC4 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+               LoadFactor(l1, -2.0 * math.sin(rad45), '(Rotated: 315.0)'))
 
-            LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
+        LC5 = (LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 45.0)'),
+               LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 45.0)'))
+        LC6 = (LoadFactor(l2, 2.0 * math.sin(rad45), '(Rotated: 135.0)'),
+               LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 135.0)'))
+        LC7 = (LoadFactor(l3, 2.0 * math.sin(rad45), '(Rotated: 225.0)'),
+               LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 225.0)'))
+        LC8 = (LoadFactor(l2, -2.0 * math.sin(rad45), '(Rotated: 315.0)'),
+               LoadFactor(l1, 2.0 * math.sin(rad45), '(Rotated: 315.0)'))
 
-            LC_act = tuple(LG.generate_cases())
+        LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
-            for i in range(len(LC)):
-                print(f'LC1_tst[{i}]: ' + str(LC[i]))
-                print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-                print(LC[i][0].load == LC_act[i][0].load)
-                print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-                print(LC[i][0].add_info == LC_act[i][0].add_info)
-                print(LC[i] == LC_act[i])
+        LC_act = tuple(LG.generate_cases())
 
-            self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        for i in range(len(LC)):
+            print(f'LC1_tst[{i}]: ' + str(LC[i]))
+            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
+            print(LC[i][0].load == LC_act[i][0].load)
+            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
+            print(LC[i][0].add_info == LC_act[i][0].add_info)
+            print(LC[i] == LC_act[i])
 
-            req_angles = (15.0, 333.0)
-            load_factors = (1.0,)
+        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
 
-            LG.req_angles = req_angles
-            LG.factors = load_factors
+        req_angles = (15.0, 333.0)
+        load_factors = (1.0,)
 
-            rad15 = math.radians(15)
-            rad63 = math.radians(63)
+        LG.req_angles = req_angles
+        LG.factors = load_factors
 
-            cos15 = math.cos(rad15)
-            sin15 = math.sin(rad15)
-            cos63 = math.cos(rad63)
-            sin63 = math.sin(rad63)
+        rad15 = math.radians(15)
+        rad63 = math.radians(63)
 
-            LC1 = (LoadFactor(l1, 2.0 * cos15, '(Rotated: 15.0)'),
-                   LoadFactor(l2, 2.0 * sin15, '(Rotated: 15.0)'))
-            LC4 = (LoadFactor(l2, -2.0 * cos63, '(Rotated: 333.0)'),
-                   LoadFactor(l1, 2.0 * sin63, '(Rotated: 333.0)'))
+        cos15 = math.cos(rad15)
+        sin15 = math.sin(rad15)
+        cos63 = math.cos(rad63)
+        sin63 = math.sin(rad63)
 
-            LC = (LC1, LC4)
+        LC1 = (LoadFactor(l1, 2.0 * cos15, '(Rotated: 15.0)'),
+               LoadFactor(l2, 2.0 * sin15, '(Rotated: 15.0)'))
+        LC4 = (LoadFactor(l2, -2.0 * cos63, '(Rotated: 333.0)'),
+               LoadFactor(l1, 2.0 * sin63, '(Rotated: 333.0)'))
 
-            LC_act = tuple(LG.generate_cases())
+        LC = (LC1, LC4)
 
-            for i in range(len(LC)):
-                print(f'LC1_tst[{i}]: ' + str(LC[i]))
-                print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-                print(LC[i][0].load == LC_act[i][0].load)
-                print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-                print(LC[i][0].add_info == LC_act[i][0].add_info)
-                print(LC[i] == LC_act[i])
+        LC_act = tuple(LG.generate_cases())
 
-            self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        for i in range(len(LC)):
+            print(f'LC1_tst[{i}]: ' + str(LC[i]))
+            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
+            print(LC[i][0].load == LC_act[i][0].load)
+            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
+            print(LC[i][0].add_info == LC_act[i][0].add_info)
+            print(LC[i] == LC_act[i])
+
+        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)

@@ -5,11 +5,13 @@ Creates a LoadGroup class, that stores multiple Loads and can generate an
 appropriate list of loads through an iterator method.
 """
 
-from typing import List, Tuple, Union, Callable
+from typing import Dict, List, Tuple, Union, Callable
 from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
 from copy import deepcopy
+from exceptions import LoadExistsException, LoadNotPresentException
+from exceptions import AngleExistsException
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
@@ -26,7 +28,9 @@ class LoadGroup:
     valued iterator.
     """
 
-    def __init__(self, *, group_name: str, loads: List[Load], abbrev: str = ''):
+    def __init__(self, *, group_name: str,
+                 loads: Union[Dict[int, Load], List[Load], Load],
+                 abbrev: str = ''):
         """
         Creates a LoadGroup object.mro
 
@@ -36,8 +40,12 @@ class LoadGroup:
         """
 
         self.group_name = group_name
+
         self.loads = loads
+
         self.abbrev = abbrev
+
+
 
     @property
     def group_name(self) -> str:
@@ -46,6 +54,7 @@ class LoadGroup:
         """
 
         return self._group_name
+
 
     @group_name.setter
     def group_name(self, group_name: str):
@@ -57,56 +66,183 @@ class LoadGroup:
 
         self._group_name = group_name
 
+
     @property
-    def loads(self) -> List[Load]:
+    def loads(self) -> Dict[int, Load]:
         """
-        A list of loads to be included in the load group.
+        The loads included in the load group. Note that when set via the
+        setter this completely overwrites the loads dictionary. If a single load
+        is meant to be added use the add_load method instead.
         """
 
         return self._loads
 
+
     @loads.setter
-    def loads(self, loads: List[Load]):
+    def loads(self, loads: Union[Dict[int, Load], List[Load], Load]):
         """
-        A list of loads to be included in the load group.
+        The loads included in the load group. Note that when set via the
+        setter this completely overwrites the loads dictionary. If a single load
+        is meant to be added use the add_load method instead.
 
-        :param loads: the list of loads.
-        """
-
-        self._loads = loads
-
-    def add_load(self, load: Load):
-        """
-        A method to add a single load into the loads that make up the group.
-
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to provide logic when adding the loads in
-        through the "loads" property, to allow for checking that loads don't
-        already exist etc. and to allow migration of the internal storage
-        from a list to a dictionary.
-
-        :param load: The load to add.
+        :param loads: A ``Dict[int, Load]`, ``List[Load]`` or a ``Load`` object
+            to make up the LoadGroup loads.
         """
 
-        raise NotImplementedError
+        self._loads = {}
 
-    def del_load(self, load_no: int = None, load_name: str = None,
-                 abbrev: str = None):
+        self.add_load(loads) # for simplicity, call add_load which is written
+                             # to handle adding multiple loads at once etc.
+
+
+    def add_load(self, load: Union[Dict[int, Load], List[Load], Load]):
         """
-        A method to delete a single load from the loads list.
+        A method to add loads into the self.loads that make up the group,
+        without having to overwrite the entire self.loads dictionary.
 
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to allow deletion of a single load at a time from the
-        group.
+        :param load: The load to add. Can be a single ``Load`` object, a
+            ``Dict[int, Load]`` or a ``List[Load]``.
+        """
 
-        Loads should be able to be deleted optionally via their no., name or
-        abbrev.
+        if isinstance(load, Dict):
+
+            # iterate through all the dictionary items and add_load
+            for k in load:
+                self.add_load(load[k])
+
+        elif isinstance(load, List):
+            # if the load is a List then iterate through the List and add all
+            # loads.
+
+            for l in load:
+                self.add_load(l)
+
+        else:
+            #first check if the load exists in the self._loads dictionary
+
+            if self.load_exists(load = load) == False:
+                self._loads[load.load_no] = load
+            else:
+                raise LoadExistsException(f'Attempted to add a load to the '
+                                          + f'LoadGroup that already exists. '
+                                          + f'Load: {str(load)}, '
+                                          + f'LoadGroup: {str(self)}.')
+
+
+    def del_load(self, *, load_no: int = None, load_name: str = None,
+                 abbrev: str = None, load: Load = None):
+        """
+        A method to delete a single load from the self.loads property.
+
+        The load to delete can be specified by either the ``load_no``,
+        ``load_name`` or ``abbrev`` properties of the ``Load``, or a ``Load``
+        object can be passed in directly. It should be noted that if
+        more than one parameter is given the search will only be carried out
+        based on the first provided parameter - providing multiple parameters
+        does not result in a search by multiple parameters.
+
+        This method does not curently return information on the status of the
+        deletion operation. If it is necessary to know if the deletion was
+        successful or not the user should ensure they check for it directly.
 
         :param load_no: The load_no of the load to delete.
         :param load_name: The load_name of the load to delete.
         :param abbrev:  The abbrev of the load to delete.
+        :param load: A ``Load`` object to check for.
         """
-        raise NotImplementedError
+
+        load_present = self.load_exists(load_no = load_no,
+                                        load_name = load_name,
+                                        abbrev = abbrev,
+                                        load = load)
+
+        if load_present != False:
+
+            self._loads.pop(load_present)
+
+        else:
+            raise LoadNotPresentException(f'To delete a load a load needs to be'
+                             + f'provided. No load information provided.')
+
+
+    def load_exists(self, *, load_no: int = None, load_name: str = None,
+                    abbrev: str = None, load: Load = None) -> bool:
+        """
+        This method searches the self.loads property of the ``LoadGroup`` to
+        determine if a ``Load`` exists in it. It will search by either the
+        ``load_no``, ``load_name`` or ``abbrev`` properties of the ``Load``, or
+        can search using a given ``Load`` object. It should be noted that if
+        more than one parameter is given the search will only be carried out
+        based on the first provided parameter - providing multiple parameters
+        does not result in a search by multiple parameters.
+
+        :param load_no: The ``load_no`` of the load to check.
+        :param load_name: The ``load_name`` of the load to check.
+        :param abbrev: The ``abbrev`` of the load to check.
+        :param load: A ``Load`` object to look for.
+        :return: Returns the ``load_no`` of the load if the load is found,
+            ``False`` otherwise.
+        """
+
+        # can shortcut this method if the self._loads method is empty.
+        if len(self._loads) == 0:
+            # by default the load cannot exist in an empty dictionary.
+            return False
+
+        if load_no != None:
+            # if provided the load no. the search is via the key of the
+            # self._load dictionary
+
+            if load_no in self._loads:
+                return load_no
+            else:
+                return False
+
+        elif load_name != None:
+            # if provided with the load name, the search needs to go through all
+            # the items in the dictionary
+
+            for k, l in self._loads.items():
+
+                if load_name == l.load_name:
+                    return k
+
+            # if haven't found in the dictionary, return False.
+            return False
+
+        elif abbrev != None:
+            # similar with abbrev, the search needs to go through all the items
+            # in the dictionary
+
+            for k, l in self._loads.items():
+                if abbrev == l.abbrev:
+                    return k
+
+            # if haven't found in the dictionary, return False.
+            return False
+
+        elif load != None:
+            # if provided a load we have to search through all the items in the
+            # self._loads dictionary to check for it.
+
+            for k, l in self._loads.items():
+
+                # to avoid silently closing this method if loads share the same
+                # load_no we need to return the load_no if either of the
+                # following are true:
+                # the load_no is the same as an existing load_no OR
+                # the load is == to an existing load.
+
+                if load.load_no == k or load == l:
+                    return k
+
+            # if haven't found in the dictionary, return False.
+            return False
+
+        else:
+            raise ValueError(f'To check if a load exists a load needs to be'
+                             + f'provided. No load information provided.')
+
 
     @property
     def abbrev(self) -> str:
@@ -140,7 +276,7 @@ class LoadGroup:
         """
 
         results = []
-        for l in self.loads:
+        for k, l in self.loads.items():
             lf = LoadFactor(load = l, load_factor = 1.0, add_info = '')
             results.append(lf)
 
@@ -164,6 +300,26 @@ class LoadGroup:
         # LoadGroup without change.
         return f'{type(self).__name__}: {self.group_name}, loads: {self.loads}'
 
+    def __eq__(self, other):
+        """
+        Override the equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        """
+        Override the non-equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+
+        return NotImplemented
+
 
 # next define more complex load groups as subclasses.
 class FactoredGroup(LoadGroup):
@@ -173,7 +329,7 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads: List[Load],
+    def __init__(self, *, group_name: str, loads: List[Load],
                  factors: Tuple[float, ...] = (1.0,), abbrev: str = ''):
         """
         Creates a LoadGroup object.
@@ -199,7 +355,7 @@ class FactoredGroup(LoadGroup):
         return self._factors
 
     @factors.setter
-    def factors(self, factors: Tuple[float]):
+    def factors(self, factors: Tuple[float, ...]):
         """
         load_factors contains the list of load factors in the group.
 
@@ -223,7 +379,7 @@ class FactoredGroup(LoadGroup):
             # have the same factor
 
             results = []
-            for l in self.loads:
+            for k, l in self.loads.items():
                 # then iterate through the load_factors
 
                 lf = LoadFactor(load = l, load_factor = f, add_info = '')
@@ -263,7 +419,7 @@ class ScaledGroup(FactoredGroup):
         value - for example, scaling all floor loads to 2.5kPa.
     """
 
-    def __init__(self, *, group_name, loads: List[ScalableLoad],
+    def __init__(self, *, group_name: str, loads: List[ScalableLoad],
                  factors: Tuple[float, ...], scale_to: float,
                  scale: bool = True,
                  abbrev: str = ''):
@@ -323,6 +479,25 @@ class ScaledGroup(FactoredGroup):
         """
         self._scale = scale
 
+    def scale_factors(self,
+                      scale_func: Callable[[float, float], float] = None)\
+            -> Dict[int, float]:
+        """
+        This function returns a dictionary containing all the scale factors that
+        will be applied to the loads in the group.
+
+        :param scale_func: A function can be provided to determine the scale
+            factor. This should take 2x inputs: scale_to, load_value, and return
+            a float as a return value.
+        :return: returns a dictionary of loads mapped against the scale factor
+            that will be applied to them: ``{load_no: scale_factor}``.
+        """
+
+        return {k: l.scale_factor(scale_to = self.scale_to,
+                                  scale_func = scale_func,
+                                  scale = self.scale)
+                for k, l in self.loads.items()}
+
     def generate_cases(self,
                        scale_func: Callable[[float, float], float] = None):
         """
@@ -341,6 +516,12 @@ class ScaledGroup(FactoredGroup):
             (load, load_factor, add_info), ...)
         """
 
+        # get the dictionary of scale_factors for the loads. These are
+        # independent of the group factors and can therefore be grabbed
+        # early using a separate method to simplify this generator.
+
+        scale_factors = self.scale_factors(scale_func)
+
         # first iterate through the load factors so that all loads have the same
         # factor
         for f in self.factors:
@@ -348,12 +529,12 @@ class ScaledGroup(FactoredGroup):
             results = []
 
             # then iterate through the loads
-            for l in self.loads:
-                # call the load's scale_factor method to determine the scale
-                # factor to scale the load by.
-                scale_factor = l.scale_factor(scale_to = self.scale_to,
-                                              scale_func = scale_func,
-                                              scale = self.scale)
+            for k, l in self.loads.items():
+                # Grab the load's scale factor from the dictionary
+
+                scale_factor = scale_factors[k]
+
+                #generate the return load factor object.
 
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
@@ -414,16 +595,19 @@ class ExclusiveGroup(ScaledGroup):
             (load, load_factor, add_info), ...)
         """
 
+        # get the dictionary of scale_factors for the loads. These are
+        # independent of the group factors and can therefore be grabbed
+        # early using a separate method to simplify this generator.
+
+        scale_factors = self.scale_factors(scale_func)
+
         # first iterate through the load factors
         for f in self.factors:
 
             # then iterate through the loads and get a return.
-            for l in self.loads:
-                # call the load's scale_factor method to determine the scale
-                # factor to scale the load by.
-                scale_factor = l.scale_factor(scale_to = self.scale_to,
-                                              scale_func = scale_func,
-                                              scale = self.scale)
+            for k, l in self.loads.items():
+                # get the load's scale factor from the dictionary.
+                scale_factor = scale_factors[k]
 
                 lf = LoadFactor(load = l, load_factor = scale_factor * f,
                                 add_info = f'(scaled: {self.scale_to})')
@@ -439,7 +623,7 @@ class RotationalGroup(ScaledGroup):
     at which the interpolation is carried out.
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad],
+    def __init__(self, *, group_name: str, loads: List[RotatableLoad],
                  factors: Tuple[float, ...], scale_to: float, scale: bool,
                  req_angles: Tuple[float, ...],
                  interp_func: Callable = sine_interp_90,
@@ -475,52 +659,124 @@ class RotationalGroup(ScaledGroup):
         self.interp_func = interp_func
         self.req_angles = req_angles
 
-    @LoadGroup.loads.setter
-    def loads(self, loads):
+    def add_load(self, load: Union[Dict[int, Load], List[Load], Load]):
         """
-        Set the loads. This setter overrides the parent class' method to allow
-        for the list of loads to be sorted.
+        A method to add loads into the self.loads that make up the group,
+        without having to overwrite the entire self.loads dictionary.
 
-        :param loads: The loads that form part of the group. the loads will be
-            sorted, and if half_list is True they must all have angles <=180.
-        """
-
-        # store loads as a sorted list
-        loads.sort(key = lambda x: x.angle)
-        self._loads = loads
-
-    def add_load(self, load: Load):
-        """
-        A method to add a single load into the loads that make up the group.
-
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to provide logic when adding the loads in
-        through the "loads" property, to allow for checking that loads don't
-        already exist etc. and to allow migration of the internal storage
-        from a list to a dictionary.
-
-        :param load: The load to add.
+        :param load: The load to add. Can be a single ``Load`` object, a
+            ``Dict[int, Load]`` or a ``List[Load]``.
         """
 
-        raise NotImplementedError
+        if isinstance(load, Dict):
 
-    def del_load(self, load_no: int = None, load_name: str = None,
-                 abbrev: str = None):
+            # iterate through all the dictionary items and add_load
+            for k in load:
+                self.add_load(load[k])
+
+        elif isinstance(load, List):
+            # if the load is a List then iterate through the List and add all
+            # loads.
+
+            for l in load:
+                self.add_load(l)
+
+        else:
+            #first check if the load exists in the self._loads dictionary
+            if self.load_exists(load = load) == False:
+
+                # need to check that the angle does not already exist in the
+                # self.loads dictionary.
+                if not self.check_angle(load.angle):
+
+                    self._loads[load.load_no] = load
+                else:
+
+                    raise AngleExistsException(f'Attempted to add a load to the'
+                                     + f' RotationalGroup where a load already '
+                                     + f'exists at the given angle. Angle is '
+                                     + f'{load.angle}, load being added is: '
+                                     + f'{load.load_no}.')
+            else:
+                raise LoadExistsException(f'Attempted to add a load to the '
+                                          + f'LoadGroup that already exists. '
+                                          + f'Load: {str(load)}, '
+                                          + f'LoadGroup: {str(self)}.')
+
+
+    def check_angle(self, angle: float) -> bool:
         """
-        A method to delete a single load from the loads list.
+        Checks if a load already exists in the ``self.loads`` dictionary which
+        matches the given angle to check.
 
-        This is a place-holder method currently. Eventually it is planned to
-        use this method to allow deletion of a single load at a time from the
-        group.
-
-        Loads should be able to be deleted optionally via their no., name or
-        abbrev.
-
-        :param load_no: The load_no of the load to delete.
-        :param load_name: The load_name of the load to delete.
-        :param abbrev:  The abbrev of the load to delete.
+        :param angle: An angle to check against the list of loads in the
+            ``self.loads`` dictionary.
+        :return: ``True`` if the angle exists in a load in the ``self.loads``
+            dictionary, ``False`` otherwise.
         """
-        raise NotImplementedError
+
+        if angle in self.angles:
+            return True
+        else:
+            return False
+
+    @property
+    def angles(self) -> Dict[float, int]:
+        """
+        Returns a dictionary of all the angles covered by the loads in the
+        ``self.loads`` dictionary, and their corresponding loads.
+
+        Does not return angles which are covered by symmetry - refer to the
+        ``self.angles_with_symmetry`` property if these are required.
+
+        :return: a dictionary of all the angles covered by the loads in the
+            ``self.loads`` dictionary, and their corresponding loads, in the
+            format ``{angle: load_no}``.
+        """
+
+        return {l.angle: k for k, l in self.loads.items()}
+
+    @property
+    def angles_with_symmetry(self) -> Dict[float, Tuple[int, float]]:
+        """
+        Returns a dictionary of all the angles covered by the loads in the
+        ``self.loads`` dictionary, and their corresponding loads. This includes
+        angles that are covered by symmetric properties of loads, however
+        preference is always given to directly specified angles.
+
+        :return: a dictionary of all the angles covered by the loads in the
+            ``self.loads`` dictionary, and their corresponding loads, in the
+            format ``{angle: (load_no, symmetry_factor)}``. Symmetry factor will
+            either be 1.0 or -1.0.
+        """
+
+        #first get a dictionary of angles with their initial symmetry factors.
+
+        return_dict = {l.angle: (k, 1.0) for k, l in self.loads.items()}
+
+        # next check the special case of 0.0 and 360.0 which are identical
+        # but not handled by the wrapping ability of the % function.
+
+        if 0.0 in return_dict and 360.0 not in return_dict:
+            return_dict[360.0] = (return_dict[0.0][0], 1.0)
+
+        if 360.0 in return_dict and 0.0 not in return_dict:
+            return_dict[0.0] = (return_dict[360.0][0], 1.0)
+
+        # next go through all load elements again and test for symmetric angles
+
+        for k, l in self.loads.items():
+
+            if l.symmetrical:
+
+                #get the new angle of the load
+                new_angle = (l.angle + 180.0) % 360.0
+
+                #if not already in the dictionary add it in.
+                if new_angle not in return_dict:
+                    return_dict[new_angle] = (k, -1.0)
+
+        return return_dict
 
     @property
     def interp_func(self) -> Callable[[float, float], Tuple[float, float]]:
@@ -573,6 +829,77 @@ class RotationalGroup(ScaledGroup):
 
         self._req_angles = req_angles_list(req_angles)
 
+    def nearest_angles(self, angle: float) -> Dict[float, Tuple[int, float]]:
+        """
+        Get the loads on either side of a given angle.
+
+        i.e. if the loads list contains angles at 0, 90, 180 and 270 degrees
+        and ``angle = 45`` is the input parameter to this function the return
+        value will be a dictionary:
+        ``{0: (load, symmetry factor), 90.0: (load, symmetry factor)}``.
+
+        Where ``angle`` is already in the ``self.loads`` dictionary the return
+        dictionary from this function will only contain the matching load.
+
+        :param angle:
+        :return: Returns a dictionary
+            ``{angle: (load, symmetry factor), angle: (load, symmetry factor)}``
+            Symmetry factor will be either 1.0 or -1.0.
+        """
+
+        #first get the list of angles with their symmetry
+        angles = self.angles_with_symmetry
+
+        # first check for the case that angle is already in the list of angles
+        # to shortcut some of the logic in this method.
+
+        if angle in angles:
+            # simply return the
+
+            return {angle: angles[angle]}
+
+        # else need to check the full range of 360.0 degrees. First get a list
+        # of all the angles already in the dictionary.
+
+        angles_list = sorted(angles.keys())
+
+        # Next check for the case where 0 and 360 are not in the dictionary.
+        # as it is necessary that we be able to wrap around the full 0-360deg
+        # range.
+
+        if 0.0 not in angles:
+            # if 0.0 not in the angles dictionary we need to get the highest
+            # angle in the list and wrap it a full -360 degrees
+
+            max_angle = max(angles_list)
+
+            angles[max_angle - 360.0] = angles[max_angle]
+
+            # note that changing the symmetry factor is not necessary as we
+            # are rotating through 360.0 degrees.
+
+        if 360.0 not in angles:
+            # if 360.0 not in the angles dictionary we need to get the lowest
+            # angle in the list and wrap it a full 360 degrees
+
+            min_angle = min(angles_list)
+
+            angles[min_angle + 360.0] = angles[min_angle]
+
+            # note that changing the symmetry factor is not necessary as we
+            # are rotating through 360.0 degrees.
+
+        #re-calculate the angles list
+        angles_list = sorted(angles.keys())
+
+        # get the angle from the list that is smaller & larger than the
+        # input parameter angle
+        angle_below =  max([x for x in angles_list if x <= angle])
+        angle_above = min([x for x in angles_list if x >= angle])
+
+        return {angle_below: angles[angle_below],
+                angle_above: angles[angle_above]}
+
     def generate_cases(self, scale_func: Callable[[float, float], float] = None):
         """
         Generates an iterator that iterates through the potential cases that
@@ -593,132 +920,82 @@ class RotationalGroup(ScaledGroup):
             (load, load_factor, add_info), ...)
         """
 
-        # first build a dictionary of loads mapped to their angles:
-        load_dict = {l.angle: l for l in self.loads}
-        sym_dict = {l.angle: 1.0 for l in self.loads}
+        # first get the scale factors required.
+        scale_factors = self.scale_factors(scale_func)
 
-        # next go through each load and check if it can be reversed.
-        for l in self.loads:
-
-            if l.symmetrical:
-                # if l is symmetrical then need to check if the angle already
-                # exists in the dictionary
-
-                angle = (l.angle + 180.0) % 360
-
-                if angle not in load_dict:
-                    # only add to the load dict if there isn't already an angle
-
-                    l_new = deepcopy(l)
-                    # note: don't change the angle for the copied load, as this
-                    # would change the load itself
-
-                    load_dict[angle] = l_new
-                    sym_dict[angle] = -1.0
-
-        # next check if 0 or 360 exist in the load dictionary, and wrap them
-        # around if necessary
-
-        if 0.0 in load_dict and 360.0 not in load_dict:
-            # need to wrap 0.0 to 360.0
-
-            l_new = deepcopy(load_dict[0.0])
-
-            # note don't change the angle for the copied load as this would
-            # change the load
-
-            load_dict[360.0] = l_new
-            sym_dict[360.0] = 1.0
-
-        if 360.0 in load_dict and 0.0 not in load_dict:
-            # need to wrap 360.0 to 0.0
-
-            l_new = deepcopy(load_dict[360.0])
-
-            # note don't change the angle for the copied load as this would
-            # change the load
-
-            load_dict[0.0] = l_new
-            sym_dict[0.0] = 1.0
-
-        # next need to get a list of angles rather than a dictionary so we can
-        # easily slice
-        list_angles = sorted(load_dict.keys())
-
-        # next we need to iterate through the load factors:
+        # next iterate through the load factors:
         for f in self.factors:
 
             # next iterate through the angles that loads are required from
             for a in self.req_angles:
 
-                # first check if a is already in the list of angles
-                if a in list_angles:
-                    # if so, we can simply return load_a
-                    load_a = load_dict[a]
-                    sym_a = sym_dict[a]
+                #then get the nearest angles
+                nearest = self.nearest_angles(a)
 
-                    scale_a = load_a.scale_factor(scale_to = self.scale_to,
-                                                  scale_func = scale_func,
-                                                  scale = self.scale)
+                # if only 1x element in nearest angles then the return value can
+                # be determined directly.
 
-                    lf1 = LoadFactor(load = load_a,
-                                     load_factor = scale_a * sym_a * f,
+                if len(nearest) == 1:
+
+                    # get the load no, the symmetry factor and the scale factor.
+                    load_no = nearest[a][0]
+                    sym_fact = nearest[a][1]
+                    scale_fact = scale_factors[load_no]
+
+                    #determine an overall load factor
+                    load_factor = sym_fact * scale_fact * f
+
+                    #build a LoadFactor object to return
+                    lf1 = LoadFactor(load = self.loads[load_no],
+                                     load_factor = load_factor,
                                      add_info = f'(Rotated: {a})')
-                    ret_val = (lf1,)
+                    ret_val = (lf1, ) #final return value
 
                 else:
-                    # if not, we need to interpolate between angles.
-                    list_min = [x for x in list_angles if x <= a]
+                    # if there are 2 x elements in the nearest angles dictionary
+                    # we need to do a bit more processing
 
-                    if len(list_min) == 0:
-                        # if there are no elements less than or == a, then we
-                        # need to get the last element and wrap it round
-                        l_min = list_angles[-1]
-                        load_min = load_dict[l_min]
-                        sym_min = sym_dict[l_min]
-                        l_min = l_min.angle - 360.0
-                    else:
-                        # else, the next smallest angle will do.
-                        l_min = list_min[-1]
-                        load_min = load_dict[l_min]
-                        sym_min = sym_dict[l_min]
+                    # get the minimum and maximum angles.
+                    a_min = min(nearest.keys())
+                    a_max = max(nearest.keys())
 
-                    scale_min = load_min.scale_factor(scale_to = self.scale_to,
-                                                      scale_func = scale_func,
-                                                      scale = self.scale)
+                    # get the load nos.
+                    load_min = nearest[a_min][0]
+                    load_max = nearest[a_max][0]
 
-                    list_max = [x for x in list_angles if x >= a]
+                    # get the symmetry and scale factors
+                    sym_min = nearest[a_min][1]
+                    sym_max = nearest[a_max][1]
 
-                    if len(list_max) == 0:
-                        # if there are no angles in the list larger than a
-                        # we need to take the smallest and wrap it around
-                        l_max = list_angles[0]
-                        load_max = load_dict[l_max]
-                        sym_max = sym_dict[l_max]
-                        l_max = l_max + 360.0
-                    else:
-                        # else the next largest angle will do
-                        l_max = list_max[0]
-                        load_max = load_dict[l_max]
-                        sym_max = sym_dict[l_max]
+                    scale_min = scale_factors[load_min]
+                    scale_max = scale_factors[load_max]
 
-                    scale_max = load_max.scale_factor(scale_to = self.scale_to,
-                                                      scale_func = scale_func,
-                                                      scale = self.scale)
+                    # build an overall load factor
+                    load_factor_min = sym_min * scale_min * f
+                    load_factor_max = sym_max * scale_max * f
 
-                    gap = l_max - l_min
-                    x = a - l_min
+                    # get the interpolation between the angles
+                    gap = a_max - a_min
+                    x = a - a_min
 
                     factors = self.interp_func(gap, x)
 
-                    lf1 = LoadFactor(load = load_min,
-                                     load_factor = scale_min * sym_min * f * factors.left,
-                                     add_info = f'(Rotated: {a})')
-                    lf2 = LoadFactor(load = load_max,
-                                     load_factor = scale_max * sym_max * f * factors.right,
-                                     add_info = f'(Rotated: {a})')
+                    # and update the load factors with the interpolation
+                    load_factor_min *= factors.left
+                    load_factor_max *= factors.right
 
-                    ret_val = (lf1, lf2)
+                    # finally build the return load factors
+
+                    lf_min = LoadFactor(load = self.loads[load_min],
+                                        load_factor = load_factor_min,
+                                        add_info = f'(Rotated: {a})')
+
+                    lf_max = LoadFactor(load = self.loads[load_max],
+                                        load_factor = load_factor_max,
+                                        add_info = f'(Rotated: {a})')
+
+                    # build the final return tuple
+                    ret_val = (lf_min, lf_max)
 
                 yield ret_val
 
@@ -757,7 +1034,7 @@ class WindGroup(RotationalGroup):
         4.0, whereas a RotationalGroup object will return 2.
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad],
+    def __init__(self, *, group_name: str, loads: List[RotatableLoad],
                  factors: Tuple[float, ...], scale_speed: float, scale: bool,
                  req_angles: Tuple[float, ...],
                  interp_func: Callable = wind_interp_85,
