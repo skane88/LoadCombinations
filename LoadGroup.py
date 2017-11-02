@@ -329,7 +329,7 @@ class FactoredGroup(LoadGroup):
     returned with a given list of load factors.
     """
 
-    def __init__(self, *, group_name, loads: List[Load],
+    def __init__(self, *, group_name: str, loads: List[Load],
                  factors: Tuple[float, ...] = (1.0,), abbrev: str = ''):
         """
         Creates a LoadGroup object.
@@ -355,7 +355,7 @@ class FactoredGroup(LoadGroup):
         return self._factors
 
     @factors.setter
-    def factors(self, factors: Tuple[float]):
+    def factors(self, factors: Tuple[float, ...]):
         """
         load_factors contains the list of load factors in the group.
 
@@ -419,7 +419,7 @@ class ScaledGroup(FactoredGroup):
         value - for example, scaling all floor loads to 2.5kPa.
     """
 
-    def __init__(self, *, group_name, loads: List[ScalableLoad],
+    def __init__(self, *, group_name: str, loads: List[ScalableLoad],
                  factors: Tuple[float, ...], scale_to: float,
                  scale: bool = True,
                  abbrev: str = ''):
@@ -623,7 +623,7 @@ class RotationalGroup(ScaledGroup):
     at which the interpolation is carried out.
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad],
+    def __init__(self, *, group_name: str, loads: List[RotatableLoad],
                  factors: Tuple[float, ...], scale_to: float, scale: bool,
                  req_angles: Tuple[float, ...],
                  interp_func: Callable = sine_interp_90,
@@ -829,6 +829,77 @@ class RotationalGroup(ScaledGroup):
 
         self._req_angles = req_angles_list(req_angles)
 
+    def nearest_angles(self, angle: float) -> Dict[float, Tuple[int, float]]:
+        """
+        Get the loads on either side of a given angle.
+
+        i.e. if the loads list contains angles at 0, 90, 180 and 270 degrees
+        and ``angle = 45`` is the input parameter to this function the return
+        value will be a dictionary:
+        ``{0: (load, symmetry factor), 90.0: (load, symmetry factor)}``.
+
+        Where ``angle`` is already in the ``self.loads`` dictionary the return
+        dictionary from this function will only contain the matching load.
+
+        :param angle:
+        :return: Returns a dictionary
+            ``{angle: (load, symmetry factor), angle: (load, symmetry factor)}``
+            Symmetry factor will be either 1.0 or -1.0.
+        """
+
+        #first get the list of angles with their symmetry
+        angles = self.angles_with_symmetry
+
+        # first check for the case that angle is already in the list of angles
+        # to shortcut some of the logic in this method.
+
+        if angle in angles:
+            # simply return the
+
+            return {angle: angles[angle]}
+
+        # else need to check the full range of 360.0 degrees. First get a list
+        # of all the angles already in the dictionary.
+
+        angles_list = sorted(angles.keys())
+
+        # Next check for the case where 0 and 360 are not in the dictionary.
+        # as it is necessary that we be able to wrap around the full 0-360deg
+        # range.
+
+        if 0.0 not in angles:
+            # if 0.0 not in the angles dictionary we need to get the highest
+            # angle in the list and wrap it a full -360 degrees
+
+            max_angle = max(angles_list)
+
+            angles[max_angle - 360.0] = angles[max_angle]
+
+            # note that changing the symmetry factor is not necessary as we
+            # are rotating through 360.0 degrees.
+
+        if 360.0 not in angles:
+            # if 360.0 not in the angles dictionary we need to get the lowest
+            # angle in the list and wrap it a full 360 degrees
+
+            min_angle = min(angles_list)
+
+            angles[min_angle + 360.0] = angles[min_angle]
+
+            # note that changing the symmetry factor is not necessary as we
+            # are rotating through 360.0 degrees.
+
+        #re-calculate the angles list
+        angles_list = sorted(angles.keys())
+
+        # get the angle from the list that is smaller & larger than the
+        # input parameter angle
+        angle_below =  max([x for x in angles_list if x <= angle])
+        angle_above = min([x for x in angles_list if x >= angle])
+
+        return {angle_below: angles[angle_below],
+                angle_above: angles[angle_above]}
+
     def generate_cases(self, scale_func: Callable[[float, float], float] = None):
         """
         Generates an iterator that iterates through the potential cases that
@@ -849,135 +920,82 @@ class RotationalGroup(ScaledGroup):
             (load, load_factor, add_info), ...)
         """
 
-        raise NotImplementedError
+        # first get the scale factors required.
+        scale_factors = self.scale_factors(scale_func)
 
-        # first build a dictionary of loads mapped to their angles
-        # and a matching dictionary of symmetry factors.
-        load_dict = {l.angle: l for k, l in self.loads.items()}
-        sym_dict = {l.angle: 1.0 for k, l in self.loads.items()}
-
-        # next go through each load and check if it can be reversed.
-        for k, l in self.loads.items():
-
-            if l.symmetrical:
-                # if l is symmetrical then need to check if the angle already
-                # exists in the dictionary
-
-                angle = (l.angle + 180.0) % 360
-
-                if angle not in load_dict:
-                    # only add to the load dict if there isn't already an angle
-
-                    l_new = deepcopy(l)
-                    # note: don't change the angle for the copied load, as this
-                    # would change the load itself
-
-                    load_dict[angle] = l_new
-                    sym_dict[angle] = -1.0
-
-        # next check if 0 or 360 exist in the load dictionary, and wrap them
-        # around if necessary
-
-        if 0.0 in load_dict and 360.0 not in load_dict:
-            # need to wrap 0.0 to 360.0
-
-            l_new = deepcopy(load_dict[0.0])
-
-            # note don't change the angle for the copied load as this would
-            # change the load
-
-            load_dict[360.0] = l_new
-            sym_dict[360.0] = 1.0
-
-        if 360.0 in load_dict and 0.0 not in load_dict:
-            # need to wrap 360.0 to 0.0
-
-            l_new = deepcopy(load_dict[360.0])
-
-            # note don't change the angle for the copied load as this would
-            # change the load
-
-            load_dict[0.0] = l_new
-            sym_dict[0.0] = 1.0
-
-        # next need to get a list of angles rather than a dictionary so we can
-        # easily slice
-        list_angles = sorted(load_dict.keys())
-
-        # next we need to iterate through the load factors:
+        # next iterate through the load factors:
         for f in self.factors:
 
             # next iterate through the angles that loads are required from
             for a in self.req_angles:
 
-                # first check if a is already in the list of angles
-                if a in list_angles:
-                    # if so, we can simply return load_a
-                    load_a = load_dict[a]
-                    sym_a = sym_dict[a]
+                #then get the nearest angles
+                nearest = self.nearest_angles(a)
 
-                    scale_a = load_a.scale_factor(scale_to = self.scale_to,
-                                                  scale_func = scale_func,
-                                                  scale = self.scale)
+                # if only 1x element in nearest angles then the return value can
+                # be determined directly.
 
-                    lf1 = LoadFactor(load = load_a,
-                                     load_factor = scale_a * sym_a * f,
+                if len(nearest) == 1:
+
+                    # get the load no, the symmetry factor and the scale factor.
+                    load_no = nearest[a][0]
+                    sym_fact = nearest[a][1]
+                    scale_fact = scale_factors[load_no]
+
+                    #determine an overall load factor
+                    load_factor = sym_fact * scale_fact * f
+
+                    #build a LoadFactor object to return
+                    lf1 = LoadFactor(load = self.loads[load_no],
+                                     load_factor = load_factor,
                                      add_info = f'(Rotated: {a})')
-                    ret_val = (lf1,)
+                    ret_val = (lf1, ) #final return value
 
                 else:
-                    # if not, we need to interpolate between angles.
-                    list_min = [x for x in list_angles if x <= a]
+                    # if there are 2 x elements in the nearest angles dictionary
+                    # we need to do a bit more processing
 
-                    if len(list_min) == 0:
-                        # if there are no elements less than or == a, then we
-                        # need to get the last element and wrap it round
-                        l_min = list_angles[-1]
-                        load_min = load_dict[l_min]
-                        sym_min = sym_dict[l_min]
-                        l_min = l_min.angle - 360.0
-                    else:
-                        # else, the next smallest angle will do.
-                        l_min = list_min[-1]
-                        load_min = load_dict[l_min]
-                        sym_min = sym_dict[l_min]
+                    # get the minimum and maximum angles.
+                    a_min = min(nearest.keys())
+                    a_max = max(nearest.keys())
 
-                    scale_min = load_min.scale_factor(scale_to = self.scale_to,
-                                                      scale_func = scale_func,
-                                                      scale = self.scale)
+                    # get the load nos.
+                    load_min = nearest[a_min][0]
+                    load_max = nearest[a_max][0]
 
-                    list_max = [x for x in list_angles if x >= a]
+                    # get the symmetry and scale factors
+                    sym_min = nearest[a_min][1]
+                    sym_max = nearest[a_max][1]
 
-                    if len(list_max) == 0:
-                        # if there are no angles in the list larger than a
-                        # we need to take the smallest and wrap it around
-                        l_max = list_angles[0]
-                        load_max = load_dict[l_max]
-                        sym_max = sym_dict[l_max]
-                        l_max = l_max + 360.0
-                    else:
-                        # else the next largest angle will do
-                        l_max = list_max[0]
-                        load_max = load_dict[l_max]
-                        sym_max = sym_dict[l_max]
+                    scale_min = scale_factors[load_min]
+                    scale_max = scale_factors[load_max]
 
-                    scale_max = load_max.scale_factor(scale_to = self.scale_to,
-                                                      scale_func = scale_func,
-                                                      scale = self.scale)
+                    # build an overall load factor
+                    load_factor_min = sym_min * scale_min * f
+                    load_factor_max = sym_max * scale_max * f
 
-                    gap = l_max - l_min
-                    x = a - l_min
+                    # get the interpolation between the angles
+                    gap = a_max - a_min
+                    x = a - a_min
 
                     factors = self.interp_func(gap, x)
 
-                    lf1 = LoadFactor(load = load_min,
-                                     load_factor = scale_min * sym_min * f * factors.left,
-                                     add_info = f'(Rotated: {a})')
-                    lf2 = LoadFactor(load = load_max,
-                                     load_factor = scale_max * sym_max * f * factors.right,
-                                     add_info = f'(Rotated: {a})')
+                    # and update the load factors with the interpolation
+                    load_factor_min *= factors.left
+                    load_factor_max *= factors.right
 
-                    ret_val = (lf1, lf2)
+                    # finally build the return load factors
+
+                    lf_min = LoadFactor(load = self.loads[load_min],
+                                        load_factor = load_factor_min,
+                                        add_info = f'(Rotated: {a})')
+
+                    lf_max = LoadFactor(load = self.loads[load_max],
+                                        load_factor = load_factor_max,
+                                        add_info = f'(Rotated: {a})')
+
+                    # build the final return tuple
+                    ret_val = (lf_min, lf_max)
 
                 yield ret_val
 
@@ -1016,7 +1034,7 @@ class WindGroup(RotationalGroup):
         4.0, whereas a RotationalGroup object will return 2.
     """
 
-    def __init__(self, *, group_name, loads: List[RotatableLoad],
+    def __init__(self, *, group_name: str, loads: List[RotatableLoad],
                  factors: Tuple[float, ...], scale_speed: float, scale: bool,
                  req_angles: Tuple[float, ...],
                  interp_func: Callable = wind_interp_85,

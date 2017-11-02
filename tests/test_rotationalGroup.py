@@ -337,6 +337,113 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.interp_func, second = linear_interp)
 
+    def test_nearest_angles(self):
+        """
+        Test the nearest_angles method.
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1, load_value = 1.25, angle = 0.0,
+                           symmetrical = False, abbrev = 'R1')
+
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2, load_value = 2.5, angle = 90,
+                           symmetrical = False, abbrev = 'R2')
+
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 10.0, angle = 180.0,
+                           symmetrical = False, abbrev = 'R3')
+
+        l4 = RotatableLoad(load_name = 'R4 - Rotating Load, 2.5 kPa',
+                           load_no = 4, load_value = 2.5, angle = 270.0,
+                           symmetrical = False, abbrev = 'R4')
+
+        group_name = 'Group 1'
+        loads = [l1, l4, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (0.0, 90.0, 180.0, 270.0)
+        abbrev = 'GP 1'
+
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        angle = 0
+        expected = {0.0: (1, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 45
+        expected =  {0.0: (1, 1.0), 90.0: (2, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 335
+        expected = {270.: (4, 1.0), 360.0: (1, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 360
+        expected = {360.0: (1, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+
+    def test_nearest_angles_with_symmetry(self):
+        """
+        Test the nearest_angles method when the ``self.loads`` dictionary relies
+        on symmetry to return a full list of angles.
+        """
+
+        l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
+                           load_no = 1, load_value = 1.25, angle = 15.0,
+                           symmetrical = True, abbrev = 'R1')
+
+        l2 = RotatableLoad(load_name = 'R2 - Rotating Load, 2.5 kPa',
+                           load_no = 2, load_value = 2.5, angle = 105.0,
+                           symmetrical = True, abbrev = 'R2')
+
+        l3 = RotatableLoad(load_name = 'R3 - Rotating Load, 2.5 kPa',
+                           load_no = 3, load_value = 10.0, angle = 180.0,
+                           symmetrical = True, abbrev = 'R3')
+
+
+        group_name = 'Group 1'
+        loads = [l1, l3, l2]
+        load_factors = (-1.0, 1.0)
+        scale_to = 5.0
+        scale = True
+        req_angles = (0.0, 90.0, 180.0, 270.0)
+        abbrev = 'GP 1'
+
+        LG = RotationalGroup(group_name = group_name, loads = loads,
+                             factors = load_factors, scale_to = scale_to,
+                             scale = scale, req_angles = req_angles,
+                             interp_func = sine_interp, abbrev = abbrev)
+
+        angle = 0
+        expected = {0.0: (3, -1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 45
+        expected = {15.0: (1, 1.0), 105.0: (2, 1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 335
+        expected = {285.0: (2, -1.0), 360.0: (3, -1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
+        angle = 360
+        expected = {360.0: (3, -1.0)}
+
+        self.assertEqual(first = LG.nearest_angles(angle), second = expected)
+
 
     def test_generate_cases_simple(self):
         '''
