@@ -26,3 +26,19 @@ class AngleExistsException(LoadExistsException):
     """
 
     pass
+
+class LoadGroupExistsException(Exception):
+    """
+    This exception is raised when a ``LoadGroup`` already exists in a
+    ``LoadCase`` object.
+    """
+
+    pass
+
+class LoadGroupNotPresentException(Exception):
+    """
+    This exception is raised when a ``LoadGroup`` does not exist in a
+    ``LoadCase`` object but is expected by a method.
+    """
+
+    pass
