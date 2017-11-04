@@ -30,28 +30,60 @@ class LoadCase:
 
     @property
     def case_name(self) -> str:
+        """
+        Get / set the ``LoadCase`` name.
+
+        :return: The ``LoadCase`` name.
+        """
         return self._case_name
 
     @case_name.setter
     def case_name(self, case_name: str):
+        """
+        Get / set the ``LoadCase`` name.
+
+        :param case_name: The ``LoadCase`` name.
+        """
         self._case_name = case_name
 
     @property
     def case_no(self) -> int:
+        """
+        Get/set the ``LoadCase`` ``case_no``.
+
+        :return: The ``LoadCase`` ``case_no``.
+        """
         return self._case_no
 
     @case_no.setter
     def case_no(self, case_no: int):
+        """
+        Get/set the ``LoadCase`` ``case_no``.
+
+        :param case_no: The ``LoadCase`` ``case_no``.
+        """
         self._case_no = case_no
 
     @property
     def load_groups(self) -> Dict[str, LoadGroup]:
+        """
+        Get / set the ``LoadCase`` ``load_groups``.
+
+        :return: The ``LoadCase`` ``load_groups`` which is a dictionary of the
+            form ``{group_name: LoadGroup}``.
+        """
+
         return self._load_groups
 
     @load_groups.setter
     def load_groups(self,
                     load_groups: Union[Dict[str, LoadGroup],
                                       List[LoadGroup], LoadGroup]):
+        """
+        Get / set the ``LoadCase`` ``load_groups``.
+
+        :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
+        """
 
         # if setting via load_groups, the assumption is that the entire
         # self._load_groups object is being overwritten:
