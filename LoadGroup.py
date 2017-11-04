@@ -126,7 +126,7 @@ class LoadGroup:
                 raise LoadExistsException(f'Attempted to add a load to the '
                                           + f'LoadGroup that already exists. '
                                           + f'Load: {str(load)}, '
-                                          + f'LoadGroup: {str(self)}.')
+                                          + f'self.loads: {str(self._loads)}.')
 
 
     def del_load(self, *, load_no: int = None, load_name: str = None,
@@ -161,8 +161,8 @@ class LoadGroup:
             self._loads.pop(load_present)
 
         else:
-            raise LoadNotPresentException(f'To delete a load a load needs to be'
-                             + f'provided. No load information provided.')
+            raise LoadNotPresentException(f'To delete a Load a Load needs to be'
+                             + f'present. Load not present.')
 
 
     def load_exists(self, *, load_no: int = None, load_name: str = None,
@@ -240,7 +240,7 @@ class LoadGroup:
             return False
 
         else:
-            raise ValueError(f'To check if a load exists a load needs to be'
+            raise ValueError(f'To check if a Load exists a Load needs to be'
                              + f'provided. No load information provided.')
 
 
@@ -701,7 +701,7 @@ class RotationalGroup(ScaledGroup):
                 raise LoadExistsException(f'Attempted to add a load to the '
                                           + f'LoadGroup that already exists. '
                                           + f'Load: {str(load)}, '
-                                          + f'LoadGroup: {str(self)}.')
+                                          + f'self.loads: {str(self._loads)}.')
 
 
     def check_angle(self, angle: float) -> bool:
