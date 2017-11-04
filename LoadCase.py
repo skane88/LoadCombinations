@@ -19,11 +19,13 @@ class LoadCase:
     def __init__(self, case_name: str, case_no: int,
                  load_groups: Union[Dict[str, LoadGroup],
                                     List[LoadGroup], LoadGroup],
+                 load_factors: List[float],
                  abbrev: str = ''):
 
         self.case_name = case_name
         self.case_no = case_no
         self.load_groups = load_groups
+        self.load_factors = load_factors
         self.abbrev = abbrev
 
     @property
@@ -129,6 +131,14 @@ class LoadCase:
         else:
             raise ValueError(f'To check if a LoadGroup exists a LoadGroup needs'
                              + f' to be provided. No information provided.')
+
+    @property
+    def load_factors(self) -> List[float]:
+        return self._load_factors
+
+    @load_factors.setter
+    def load_factors(self, load_factors: List[float]):
+        self._load_factors = load_factors
 
     @property
     def abbrev(self) -> str:
