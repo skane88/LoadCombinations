@@ -345,6 +345,10 @@ class LoadCase:
 
         self._abbrev = abbrev
 
+    def generate_sets(self):
+
+        raise NotImplementedError
+
     def __str__(self):
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __str__ method to be accepted for subclasses of
