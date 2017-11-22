@@ -110,7 +110,7 @@ class TestScaledGroup(TestCase):
 
     def test_generate_cases(self):
         """
-        Test the generate_cases method.
+        Test the generate_groups method.
         """
 
         l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
@@ -192,13 +192,13 @@ class TestScaledGroup(TestCase):
         print(LC[1])
         print(LC[2])
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         print(LC_act[0])
         print(LC_act[1])
         print(LC_act[2])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
         
     def test_scale_factors(self):
         l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,

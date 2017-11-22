@@ -80,7 +80,7 @@ class TestFactoredGroup(TestCase):
 
     def test_generate_cases(self):
         """
-        Test the generate_cases function that generates the return load
+        Test the generate_groups function that generates the return load
         combinations
         """
 
@@ -130,10 +130,10 @@ class TestFactoredGroup(TestCase):
         print(LC[1])
         print(LC[2])
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         print(LC_act[0])
         print(LC_act[1])
         print(LC_act[2])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)

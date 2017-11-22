@@ -30,7 +30,7 @@ class LoadCase:
             This should be a dictionary of the following format:
             ``{group_name: (LoadGroup, load_factor)}`` where ``load_factor`` is
             a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_cases`` method. I.e. for a LoadCase which is
+            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
             1.35 x Dead Load + 1.5 x Live Load the load_groups would be
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
@@ -91,7 +91,7 @@ class LoadCase:
             ``{groupname: (LoadGroup, load_factor)}``
 
             where ``load_factor`` is a multiplier that will be applied to the
-            results from the ``LoadGroup.generate_cases`` method.
+            results from the ``LoadGroup.generate_groups`` method.
             I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
             the load_groups would be
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
@@ -111,7 +111,7 @@ class LoadCase:
             This should be a dictionary of the following format:
             ``{groupname: (LoadGroup, load_factor)}`` where ``load_factor`` is
             a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_cases`` method. I.e. for a LoadCase which is
+            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
             1.35 x Dead Load + 1.5 x Live Load the load_groups would be
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
@@ -129,7 +129,9 @@ class LoadCase:
         # etc.
         self.add_group(load_groups)
 
-    def add_group(self, load_group: Union[Dict[str, Tuple[LoadGroup, float]], List[Tuple[LoadGroup, float]], Tuple[LoadGroup, float]]):
+    def add_group(self, load_group: Union[Dict[str, Tuple[LoadGroup, float]],
+                                          List[Tuple[LoadGroup, float]],
+                                          Tuple[LoadGroup, float]]):
         """
         Add a ``LoadGroup`` into the LoadCase.
 
@@ -137,7 +139,7 @@ class LoadCase:
             This should be a dictionary of the following format:
             ``{groupname: (LoadGroup, load_factor)}`` where ``load_factor`` is
             a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_cases`` method. I.e. for a LoadCase which is
+            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
             1.35 x Dead Load + 1.5 x Live Load the load_groups would be
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
@@ -345,7 +347,7 @@ class LoadCase:
 
         self._abbrev = abbrev
 
-    def generate_sets(self):
+    def generate_cases(self):
 
         raise NotImplementedError
 
@@ -363,9 +365,11 @@ class LoadCase:
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadCase without change.
 
+        pass
+
         return (f'{type(self).__name__}('
                 + f'case_name = {repr(self.case_name)}, '
-                + f'case_no = {repr(self.case_no))}, '
+                + f'case_no = {repr(self.case_no)}, '
                 + f'load_groups = {repr(self.load_groups)}, '
                 + f'abbrev = {repr(self.abbrev)}'
                 + ')')

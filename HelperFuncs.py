@@ -47,7 +47,7 @@ def sine_interp_90(range: float, x: float):
     range should not be specified (it is always 90) but for compatibility with
     other interpolation functions (where the range could be specified) it is
     left in as an argument so that the RotationalGroup and WindGroup
-    generate_cases functions do not have to be customised.
+    generate_groups functions do not have to be customised.
 
     :param range: The range to interpolate between.
     :param x: An interim value within the range.
@@ -107,7 +107,7 @@ def wind_interp_85(range: float, x: float):
     range should not be specified (it is always 90) but for compatibility with
     other interpolation functions (where the range could be specified) it is
     left in as an argument so that the RotationalGroup and WindGroup
-    generate_cases functions do not have to be customised.
+    generate_groups functions do not have to be customised.
 
     :param range: The range to interpolate between.
     :param x: An interim value within the range.

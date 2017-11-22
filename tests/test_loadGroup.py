@@ -133,7 +133,7 @@ class TestLoadGroup(TestCase):
 
     def test_generate_cases(self):
         """
-        Test the generate_cases method.
+        Test the generate_groups method.
         """
 
         l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
@@ -169,9 +169,9 @@ class TestLoadGroup(TestCase):
                     # possible load combinations.
 
         print(LC)
-        print(tuple(LG.generate_cases()))
+        print(tuple(LG.generate_groups()))
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
 
     def test_add_load(self):

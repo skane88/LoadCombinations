@@ -141,7 +141,7 @@ class TestWindGroup(TestCase):
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         for i in range(len(LC)):
             print(f'LC1_tst[{i}]: ' + str(LC[i]))
@@ -151,7 +151,7 @@ class TestWindGroup(TestCase):
             print(LC[i][0].add_info == LC_act[i][0].add_info)
             print(LC[i] == LC_act[i])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
 
     def test_generate_cases_rotated (self):
@@ -223,7 +223,7 @@ class TestWindGroup(TestCase):
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         for i in range(len(LC)):
             print(f'LC1_tst[{i}]: ' + str(LC[i]))
@@ -233,7 +233,7 @@ class TestWindGroup(TestCase):
             print(LC[i][0].add_info == LC_act[i][0].add_info)
             print(LC[i] == LC_act[i])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
         req_angles = (15.0, 333.0)
         load_factors = (1.0,)
@@ -262,7 +262,7 @@ class TestWindGroup(TestCase):
 
         LC = (LC1, LC4)
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         for i in range(len(LC)):
             print(f'LC1_tst[{i}]: ' + str(LC[i]))
@@ -272,7 +272,7 @@ class TestWindGroup(TestCase):
             print(LC[i][0].add_info == LC_act[i][0].add_info)
             print(LC[i] == LC_act[i])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
 
     def test_generate_cases_symmetric (self):
@@ -340,7 +340,7 @@ class TestWindGroup(TestCase):
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         for i in range(len(LC)):
             print(f'LC1_tst[{i}]: ' + str(LC[i]))
@@ -350,7 +350,7 @@ class TestWindGroup(TestCase):
             print(LC[i][0].add_info == LC_act[i][0].add_info)
             print(LC[i] == LC_act[i])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
         req_angles = (15.0, 333.0)
         load_factors = (1.0,)
@@ -373,7 +373,7 @@ class TestWindGroup(TestCase):
 
         LC = (LC1, LC4)
 
-        LC_act = tuple(LG.generate_cases())
+        LC_act = tuple(LG.generate_groups())
 
         for i in range(len(LC)):
             print(f'LC1_tst[{i}]: ' + str(LC[i]))
@@ -383,6 +383,6 @@ class TestWindGroup(TestCase):
             print(LC[i][0].add_info == LC_act[i][0].add_info)
             print(LC[i] == LC_act[i])
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
 

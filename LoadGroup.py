@@ -264,7 +264,7 @@ class LoadGroup:
 
         self._abbrev = abbrev
 
-    def generate_cases(self):
+    def generate_groups(self):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -363,7 +363,7 @@ class FactoredGroup(LoadGroup):
         """
         self._factors = factors
 
-    def generate_cases(self):
+    def generate_groups(self):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -498,8 +498,8 @@ class ScaledGroup(FactoredGroup):
                                   scale = self.scale)
                 for k, l in self.loads.items()}
 
-    def generate_cases(self,
-                       scale_func: Callable[[float, float], float] = None):
+    def generate_groups(self,
+                        scale_func: Callable[[float, float], float] = None):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -571,14 +571,14 @@ class ExclusiveGroup(ScaledGroup):
     """
     A subclass of ScaledGroup. In an ExclusiveGroup only 1x load case will be
     reported at any time. The only difference from ScaledGroup is the method
-    generate_cases returns exclusive results.
+    generate_groups returns exclusive results.
     """
 
     # no need to call __init__ as it shares all the same properties as a scaled
-    # group, only calls the generate_cases method differently.
+    # group, only calls the generate_groups method differently.
 
-    def generate_cases(self,
-                       scale_func: Callable[[float, float], float] = None):
+    def generate_groups(self,
+                        scale_func: Callable[[float, float], float] = None):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -900,7 +900,7 @@ class RotationalGroup(ScaledGroup):
         return {angle_below: angles[angle_below],
                 angle_above: angles[angle_above]}
 
-    def generate_cases(self, scale_func: Callable[[float, float], float] = None):
+    def generate_groups(self, scale_func: Callable[[float, float], float] = None):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -1027,7 +1027,7 @@ class WindGroup(RotationalGroup):
     A subclass of a RotatableGroup. The only differences are that:
 
     property scale_speed is provided as an alias to scale_to
-    The generate_cases function overrides the parent case to provide a
+    The generate_groups function overrides the parent case to provide a
         scale_func that scales the loads based on the wind speed. Wind load
         scales on the square of wind speed and therefore if a load is input
         at 10m/s and is scaled to 20m/s the scale factor returned is
@@ -1098,7 +1098,7 @@ class WindGroup(RotationalGroup):
 
         self._scale_to = scale_speed
 
-    def generate_cases(self):
+    def generate_groups(self):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -1124,7 +1124,7 @@ class WindGroup(RotationalGroup):
         def scale_func(scale_to, scale_from):
             return (scale_to ** 2) / (scale_from ** 2)
 
-        return super(WindGroup, self).generate_cases(scale_func)
+        return super(WindGroup, self).generate_groups(scale_func)
 
     def __str__(self):
 

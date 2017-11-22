@@ -136,9 +136,9 @@ class TestExclusiveGroup(TestCase):
         LC = ((LC_1,), (LC_2,), (LC_3,), (LC_4,), (LC_5,), (LC_6,),
               (LC_7,), (LC_8,), (LC_9,))
 
-        LC_ACT = tuple(LG.generate_cases())
+        LC_ACT = tuple(LG.generate_groups())
 
         print(LC)
         print(LC_ACT)
 
-        self.assertEqual(first = tuple(LG.generate_cases()), second = LC)
+        self.assertEqual(first = tuple(LG.generate_groups()), second = LC)

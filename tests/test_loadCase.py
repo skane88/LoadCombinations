@@ -41,5 +41,5 @@ class TestLoadCase(TestCase):
     def test_abbrev(self):
         self.fail()
 
-    def test_abbrev(self):
+    def test_generate_cases(self):
         self.fail()
