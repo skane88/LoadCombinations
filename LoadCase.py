@@ -17,9 +17,10 @@ class LoadCase:
     to generate appropriate load combinations.
     """
 
-    def __init__(self, case_name: str, case_no: int,
+    def __init__(self, *, case_name: str, case_no: int,
                  load_groups: Union[Dict[str, Tuple[LoadGroup, float]],
-                                    List[Tuple[LoadGroup, float]]],
+                                          List[Tuple[LoadGroup, float]],
+                                          Tuple[LoadGroup, float]],
                  abbrev: str = ''):
         """
         The constructor for a ``LoadCase`` object.
@@ -103,7 +104,8 @@ class LoadCase:
     @load_groups.setter
     def load_groups(self,
                     load_groups: Union[Dict[str, Tuple[LoadGroup, float]],
-                                       List[Tuple[LoadGroup, float]]]):
+                                          List[Tuple[LoadGroup, float]],
+                                          Tuple[LoadGroup, float]]):
         """
         Get / set the ``LoadCase`` ``load_groups``.
 
@@ -160,9 +162,23 @@ class LoadCase:
 
         else:
 
-            if self.group_exists(load_group = load_group) == False:
+            if self.group_exists(load_group = load_group[0]) == False:
 
-                self._load_groups[load_group.group_name] = load_group
+                if not isinstance(load_group, Tuple):
+                    # raise error if the load_group isn't the right
+                    # sort of object
+
+                    raise ValueError(f'Expected load_group to be a '
+                                     + f'Tuple[LoadGroup, float]. '
+                                     + f' Actual value: {load_group}.')
+                elif not isinstance(load_group[0], LoadGroup) \
+                            or not isinstance(load_group[1], float):
+
+                    raise ValueError(f'Expected load_group to be a '
+                                     + f'Tuple[LoadGroup, float]. '
+                                     + f' Actual value: {load_group}.')
+
+                self._load_groups[load_group[0].group_name] = load_group
 
             else:
 
@@ -258,7 +274,7 @@ class LoadCase:
 
             for k, lg in self.load_groups.items():
 
-                if load_group.group_name == k or lg == load_group:
+                if load_group.group_name == k or lg[0] == load_group:
                     return k
 
             # else haven't found it so return False

@@ -35,9 +35,13 @@ class TestLoadCase(TestCase):
         LG2 = LoadGroup(group_name = group_name2, loads = loads2,
                         abbrev = abbrev2)
 
-        LGs = [LG1, LG2]
+        case_name = 'Test Case'
+        case_no = 1
+        LGs = [(LG1, 1.0), (LG2, 2.0)]
+        abbrev = 'TC'
 
-        LC = LoadCase('Test Case', 2, LGs)
+        LC = LoadCase(case_name = case_name, case_no = case_no,
+                      load_groups = LGs, abbrev = abbrev)
 
         print(LC)
 
@@ -51,7 +55,41 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = str(LC), second = str(LC2))
 
     def test_case_name(self):
-        self.fail()
+        """
+        Test the case name getter / setter.
+        """
+
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0,
+                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1, l2, l3, l4]
+        abbrev = 'Gp 1'
+
+        LG1 = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+
+        case_name = 'Test Case'
+        case_no = 1
+        LGs = (LG1, 1.0)
+        abbrev = 'TC'
+
+        LC = LoadCase(case_name = case_name, case_no = case_no,
+                      load_groups = LGs, abbrev = abbrev)
+
+        self.assertEqual(first = case_name, second = LC.case_name)
+
+        case_name = 'Test Case 2'
+        LC.case_name =  case_name
+
+        self.assertEqual(first = case_name, second = LC.case_name)
 
     def test_case_no(self):
         self.fail()
