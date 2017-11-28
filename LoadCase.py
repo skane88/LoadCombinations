@@ -160,9 +160,9 @@ class LoadCase:
 
         else:
 
-            if self.group_exists(load_group = load_group[0]) == False:
+            if self.group_exists(load_group = load_group) == False:
 
-                self._load_groups[load_group[0].group_name] = load_group
+                self._load_groups[load_group.group_name] = load_group
 
             else:
 
