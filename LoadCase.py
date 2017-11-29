@@ -6,9 +6,10 @@ LoadGroup objects and use them to output relevant load combinations within the
 case.
 """
 
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union
 from LoadGroup import LoadGroup
-from exceptions import LoadGroupExistsException, LoadGroupNotPresentException
+from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
+                        InvalidCombinationFactor)
 
 
 class LoadCase:
@@ -18,9 +19,9 @@ class LoadCase:
     """
 
     def __init__(self, *, case_name: str, case_no: int,
-                 load_groups: Union[Dict[str, Tuple[LoadGroup, float]],
-                                          List[Tuple[LoadGroup, float]],
-                                          Tuple[LoadGroup, float]],
+                 load_groups: Union[Dict[str, List[Union[LoadGroup, float]]],
+                                          List[List[Union[LoadGroup, float]]],
+                                          List[Union[LoadGroup, float]]],
                  abbrev: str = ''):
         """
         The constructor for a ``LoadCase`` object.
@@ -29,15 +30,16 @@ class LoadCase:
         :param case_no: The ``LoadCase`` ``case_no``.
         :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
-            ``{group_name: (LoadGroup, load_factor)}`` where ``load_factor`` is
-            a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
+            ``{group_name: [LoadGroup, combination_factor]}`` where
+            ``combination_factor`` is a multiplier that will be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is
             1.35 x Dead Load + 1.5 x Live Load the load_groups would be
-            ``{'Dead Load': (Dead Load LoadGroup, 1.35),
-               'Live Load': (Live Load LoadGroup, 1.50)}``.
+            ``{'Dead Load': [Dead Load LoadGroup, 1.35],
+               'Live Load': [Live Load LoadGroup, 1.50]}``.
 
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
-            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
+            Alternatively a List of ``[[LoadGroup, load_factor], ...]``
+            or a List ``[LoadGroup, load_factor]`` can be provided.
         :param abbrev: The abbreviation of the ``LoadCase``.
         """
 
@@ -83,7 +85,7 @@ class LoadCase:
         self._case_no = case_no
 
     @property
-    def load_groups(self) -> Dict[str, Tuple[LoadGroup, float]]:
+    def load_groups(self) -> Dict[str, List[Union[LoadGroup, float]]]:
         """
         Get / set the ``LoadCase`` ``load_groups``.
 
@@ -103,23 +105,24 @@ class LoadCase:
 
     @load_groups.setter
     def load_groups(self,
-                    load_groups: Union[Dict[str, Tuple[LoadGroup, float]],
-                                          List[Tuple[LoadGroup, float]],
-                                          Tuple[LoadGroup, float]]):
+                    load_groups: Union[Dict[str, List[Union[LoadGroup, float]]],
+                                          List[List[Union[LoadGroup, float]]],
+                                          List[Union[LoadGroup, float]]]):
         """
         Get / set the ``LoadCase`` ``load_groups``.
 
         :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
-            ``{groupname: (LoadGroup, load_factor)}`` where ``load_factor`` is
-            a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
+            ``{group_name: [LoadGroup, combination_factor]}`` where
+            ``combination_factor`` is a multiplier that will be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is
             1.35 x Dead Load + 1.5 x Live Load the load_groups would be
-            ``{'Dead Load': (Dead Load LoadGroup, 1.35),
-               'Live Load': (Live Load LoadGroup, 1.50)}``.
+            ``{'Dead Load': [Dead Load LoadGroup, 1.35],
+               'Live Load': [Live Load LoadGroup, 1.50]}``.
 
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
-            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
+            Alternatively a List of ``[[LoadGroup, load_factor], ...]``
+            or a List ``[LoadGroup, load_factor]`` can be provided.
         """
 
         # if setting via load_groups, the assumption is that the entire
@@ -131,23 +134,24 @@ class LoadCase:
         # etc.
         self.add_group(load_groups)
 
-    def add_group(self, load_group: Union[Dict[str, Tuple[LoadGroup, float]],
-                                          List[Tuple[LoadGroup, float]],
-                                          Tuple[LoadGroup, float]]):
+    def add_group(self, load_group: Union[Dict[str, List[Union[LoadGroup, float]]],
+                                          List[List[Union[LoadGroup, float]]],
+                                          List[Union[LoadGroup, float]]]):
         """
         Add a ``LoadGroup`` into the LoadCase.
 
-        :param load_group: The ``load_groups`` to add to the ``LoadCase``.
+        :param load_group:  The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
-            ``{groupname: (LoadGroup, load_factor)}`` where ``load_factor`` is
-            a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
+            ``{group_name: [LoadGroup, combination_factor]}`` where
+            ``combination_factor`` is a multiplier that will be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is
             1.35 x Dead Load + 1.5 x Live Load the load_groups would be
-            ``{'Dead Load': (Dead Load LoadGroup, 1.35),
-               'Live Load': (Live Load LoadGroup, 1.50)}``.
+            ``{'Dead Load': [Dead Load LoadGroup, 1.35],
+               'Live Load': [Live Load LoadGroup, 1.50]}``.
 
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]`` can be
-            provided, or a single Tuple ``(LoadGroup, load_factor)``.
+            Alternatively a List of ``[[LoadGroup, load_factor], ...]``
+            or a List ``[LoadGroup, load_factor]`` can be provided.
         """
 
         if isinstance(load_group, Dict):
@@ -162,21 +166,23 @@ class LoadCase:
 
         else:
 
+            if not isinstance(load_group, List):
+                # raise error if the load_group object isn't a List.
+
+                raise InvalidCombinationFactor(f'Expected load_group to be '
+                                               + f'a List[LoadGroup, float]. '
+                                               + f' Actual value: {load_group}.')
+
+            if not isinstance(load_group[0], LoadGroup) \
+                    or not isinstance(load_group[1], float):
+                # next raise error if the first or last values are not
+                # a LoadGroup or a float
+
+                raise InvalidCombinationFactor(f'Expected load_group to be '
+                                               + f'a List[LoadGroup, float]. '
+                                               + f' Actual value: {load_group}.')
+
             if self.group_exists(load_group = load_group[0]) == False:
-
-                if not isinstance(load_group, Tuple):
-                    # raise error if the load_group isn't the right
-                    # sort of object
-
-                    raise ValueError(f'Expected load_group to be a '
-                                     + f'Tuple[LoadGroup, float]. '
-                                     + f' Actual value: {load_group}.')
-                elif not isinstance(load_group[0], LoadGroup) \
-                            or not isinstance(load_group[1], float):
-
-                    raise ValueError(f'Expected load_group to be a '
-                                     + f'Tuple[LoadGroup, float]. '
-                                     + f' Actual value: {load_group}.')
 
                 self._load_groups[load_group[0].group_name] = load_group
 

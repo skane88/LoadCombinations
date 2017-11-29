@@ -42,3 +42,11 @@ class LoadGroupNotPresentException(Exception):
     """
 
     pass
+
+class InvalidCombinationFactor(Exception):
+    """
+    This exception is raised when the value passed into a ``LoadCase`` for the
+    ``(LoadGroup, combination_factor)`` is not a ``Tuple[LoadGroup, float]``.
+    """
+
+    pass
