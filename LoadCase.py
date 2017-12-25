@@ -30,16 +30,19 @@ class LoadCase:
         :param case_no: The ``LoadCase`` ``case_no``.
         :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
-            ``{group_name: [LoadGroup, combination_factor]}`` where
-            ``combination_factor`` is a multiplier that will be applied to the
-            results from the ``LoadGroup.generate_groups`` method.
-            I.e. for a LoadCase which is
-            1.35 x Dead Load + 1.5 x Live Load the load_groups would be
-            ``{'Dead Load': [Dead Load LoadGroup, 1.35],
-               'Live Load': [Live Load LoadGroup, 1.50]}``.
 
-            Alternatively a List of ``[[LoadGroup, load_factor], ...]``
-            or a List ``[LoadGroup, load_factor]`` can be provided.
+            ``{group_name: (LoadGroup, load_factor)}``
+
+            where ``load_factor`` is a multiplier that will be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
+            the load_groups would be:
+
+            ``{'Dead Load': (Dead Load LoadGroup, 1.35),
+               'Live Load': (Live Load LoadGroup, 1.50)}``.
+
+            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
+            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
         :param abbrev: The abbreviation of the ``LoadCase``.
         """
 
@@ -89,16 +92,19 @@ class LoadCase:
         """
         Get / set the ``LoadCase`` ``load_groups``.
 
-        :return: The ``LoadCase`` ``load_groups`` which is a dictionary of the
-            following format:
-            ``{groupname: (LoadGroup, load_factor)}``
+        :return: The ``load_groups`` in the ``LoadCase``.
+            This will be a dictionary of the following format:
+
+            ``{group_name: (LoadGroup, load_factor)}``
 
             where ``load_factor`` is a multiplier that will be applied to the
             results from the ``LoadGroup.generate_groups`` method.
             I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
-            the load_groups would be
+            the load_groups would be:
+
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
+
         """
 
         return self._load_groups
@@ -114,16 +120,19 @@ class LoadCase:
 
         :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
-            ``{group_name: [LoadGroup, combination_factor]}`` where
-            ``combination_factor`` is a multiplier that will be applied to the
-            results from the ``LoadGroup.generate_groups`` method.
-            I.e. for a LoadCase which is
-            1.35 x Dead Load + 1.5 x Live Load the load_groups would be
-            ``{'Dead Load': [Dead Load LoadGroup, 1.35],
-               'Live Load': [Live Load LoadGroup, 1.50]}``.
 
-            Alternatively a List of ``[[LoadGroup, load_factor], ...]``
-            or a List ``[LoadGroup, load_factor]`` can be provided.
+            ``{group_name: (LoadGroup, load_factor)}``
+
+            where ``load_factor`` is a multiplier that will be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
+            the load_groups would be:
+
+            ``{'Dead Load': (Dead Load LoadGroup, 1.35),
+               'Live Load': (Live Load LoadGroup, 1.50)}``.
+
+            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
+            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
         """
 
         # if setting via load_groups, the assumption is that the entire
@@ -144,14 +153,19 @@ class LoadCase:
         Add a ``LoadGroup`` into the LoadCase.
         :param load_group: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
-            ``{groupname: (LoadGroup, load_factor)}`` where ``load_factor`` is
-            a multiplier that will be applied to the results from the
-            ``LoadGroup.generate_groups`` method. I.e. for a LoadCase which is
-            1.35 x Dead Load + 1.5 x Live Load the load_groups would be
+
+            ``{group_name: (LoadGroup, load_factor)}``
+
+            where ``load_factor`` is a multiplier that will be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
+            the load_groups would be:
+
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]`` can be
-            provided, or a single Tuple ``(LoadGroup, load_factor)``.
+
+            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
+            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
         """
 
         if isinstance(load_group, Dict):
@@ -219,7 +233,7 @@ class LoadCase:
 
         :param group_name: The load_name of the load to delete.
         :param abbrev:  The abbreviation of the load to delete.
-        :param load_group: A ``Load`` object to check for.
+        :param load_group: A ``LoadGroup`` object to check for.
         """
 
         group_present = self.group_exists(group_name = group_name,
@@ -248,7 +262,7 @@ class LoadCase:
 
         :param group_name: The load_name of the load to delete.
         :param abbrev:  The abbreviation of the load to delete.
-        :param load_group: A ``Load`` object to check for.
+        :param load_group: A ``LoadGroup`` object to check for.
         :returns: Either the ``group_name`` of the load_group object (if found)
             or ``False``.
         """
