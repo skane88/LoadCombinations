@@ -39,7 +39,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = [[LG1, 1.0], [LG2, 2.0]]
+        LGs = [(LG1, 1.0), (LG2, 2.0)]
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -80,7 +80,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = [LG1, 1.0]
+        LGs = (LG1, 1.0)
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -117,7 +117,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = [LG1, 1.0]
+        LGs = (LG1, 1.0)
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -160,7 +160,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = {group_name: [LG1, 1.0], group_name2: [LG2, 2.0]}
+        LGs = {group_name: (LG1, 1.0), group_name2: (LG2, 2.0)}
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -217,7 +217,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = {group_name: [LG1, 1.0]}
+        LGs = {group_name: (LG1, 1.0)}
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -227,8 +227,8 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = LGs, second = LC.load_groups)
 
         #next add a new load group
-        LC.add_group([LG2, 2.0])
-        LGs = {group_name: [LG1, 1.0], group_name2: [LG2, 2.0]}
+        LC.add_group((LG2, 2.0))
+        LGs = {group_name: (LG1, 1.0), group_name2: (LG2, 2.0)}
 
         self.assertEqual(first = LGs, second = LC.load_groups)
 
@@ -237,8 +237,8 @@ class TestLoadCase(TestCase):
         LC.del_group(load_group = LG1)
         LC.del_group(load_group = LG2)
 
-        #now add 2x load gropus at once.
-        LGs2 = [[LG1, 1.0], [LG2, 2.0]]
+        #now add 2x load groups at once.
+        LGs2 = [(LG1, 1.0), (LG2, 2.0)]
         LC.add_group(LGs2)
 
         self.assertEqual(first = LGs, second = LC.load_groups)
@@ -252,7 +252,7 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = LGs, second = LC.load_groups)
 
         # next test that an error is raised if the same group is added
-        self.assertRaises(LoadGroupExistsException, LC.add_group, [LG2, 1.0])
+        self.assertRaises(LoadGroupExistsException, LC.add_group, (LG2, 1.0))
 
         # next delete the group so we can test some other potential errors
         LC.del_group(load_group = LG2)
@@ -291,7 +291,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = {group_name: [LG1, 1.0], group_name2: [LG2, 2.0]}
+        LGs = {group_name: (LG1, 1.0), group_name2: (LG2, 2.0)}
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -302,18 +302,18 @@ class TestLoadCase(TestCase):
 
         #test a basic delete
         LC.del_group(load_group = LG2)
-        LGs2 = {group_name: [LG1, 1.0]}
+        LGs2 = {group_name: (LG1, 1.0)}
 
         self.assertEqual(first = LGs2, second = LC.load_groups)
 
         #add LG2 back in and re-test
-        LC.add_group([LG2, 2.0])
+        LC.add_group((LG2, 2.0))
         self.assertEqual(first = LGs, second = LC.load_groups)
         LC.del_group(group_name = LG2.group_name)
         self.assertEqual(first = LGs2, second = LC.load_groups)
 
         # add LG2 back in and re-test
-        LC.add_group([LG2, 2.0])
+        LC.add_group((LG2, 2.0))
         self.assertEqual(first = LGs, second = LC.load_groups)
         LC.del_group(abbrev = LG2.abbrev)
         self.assertEqual(first = LGs2, second = LC.load_groups)
@@ -352,7 +352,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = {group_name: [LG1, 1.0], group_name2: [LG2, 2.0]}
+        LGs = {group_name: (LG1, 1.0), group_name2: (LG2, 2.0)}
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -371,7 +371,7 @@ class TestLoadCase(TestCase):
 
         # now test for something that should return false
         LC.del_group(load_group = LG2)
-        LGs = {group_name: [LG1, 1.0]}
+        LGs = {group_name: (LG1, 1.0)}
 
         # did hte delete work:
         self.assertEqual(first = LGs, second = LC.load_groups)
@@ -411,7 +411,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = {group_name: [LG1, 1.0], group_name2: [LG2, 2.0]}
+        LGs = {group_name: (LG1, 1.0), group_name2: (LG2, 2.0)}
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -459,7 +459,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = {group_name: [LG1, 1.0], group_name2: [LG2, 2.0]}
+        LGs = {group_name: (LG1, 1.0), group_name2: (LG2, 2.0)}
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
@@ -499,7 +499,7 @@ class TestLoadCase(TestCase):
 
         case_name = 'Test Case'
         case_no = 1
-        LGs = [LG1, 1.0]
+        LGs = (LG1, 1.0)
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
