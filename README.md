@@ -19,8 +19,8 @@ to be considered in say 4x different directions, to be specified as a single
 1. Finally, each ``LoadCase`` object will output a Load Combination consisting
 of ``Load`` objects with their associated load factors, for each possible 
 combination. This corresponds the real design combinations - for instance in the
-1.2G + 1.5Q + 1.0Wu case listed above, if wind is specifid as 4x different load
-cases (Wux, Wuz, Wu-x, Wu-z), the load combinations returned may be:
+1.2G + 1.5Q + 1.0Wu case listed above, if wind is specified as 4x different 
+load cases (Wux, Wuz, Wu-x, Wu-z), the load combinations returned may be:
     * 1.2G + 1.5Q + 1.0Wux
     * 1.2G + 1.5Q + 1.0Wuz
     * 1.2G + 1.5Q + 1.0Wu-x
