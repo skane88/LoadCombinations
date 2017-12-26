@@ -10,3 +10,11 @@ class GroupFactor:
     This class is a helper class that combines a ``LoadGroup`` with a factor to
     multiply the resulting combinations with.
     """
+    pass
+
+class LoadFactor:
+    """
+    This class is a helper class that combines a ``Load`` with factors for the
+    final combination.
+    """
+    pass
