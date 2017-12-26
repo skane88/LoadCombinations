@@ -404,8 +404,6 @@ class LoadCase:
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadCase without change.
 
-        pass
-
         return (f'{type(self).__name__}('
                 + f'case_name = {repr(self.case_name)}, '
                 + f'case_no = {repr(self.case_no)}, '
