@@ -15,7 +15,7 @@ class GroupFactor:
     """
     pass
 
-    def __init__(self, load_group: LoadGroup, group_factor: float = 1.0):
+    def __init__(self, *, load_group: LoadGroup, group_factor: float = 1.0):
         """
         Constructor for the ``GroupFactor`` object.
 
@@ -67,7 +67,6 @@ class GroupFactor:
         # LoadGroup without change.
 
         return (f'{type(self).__name__}: '
-                + f'{self.case_name}, '
                 + f'load_group: {self.load_group}, '
                 + f'factor: {self.group_factor}'
                 )
