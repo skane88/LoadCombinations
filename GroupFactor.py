@@ -75,8 +75,6 @@ class GroupFactor:
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadCase without change.
 
-        pass
-
         return (f'{type(self).__name__}('
                 + f'load_group = {repr(self.load_group)}, '
                 + f'group_factor = {repr(self.group_factor)}'

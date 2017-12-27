@@ -219,6 +219,30 @@ class LoadFactor:
         self._info[key] = value
 
 
+    def __str__(self):
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __str__ method to be accepted for subclasses of
+        # LoadGroup without change.
+
+        return (f'{type(self).__name__}: '
+                + f'load_group: {self.load}, '
+                + f'factor: {self.factor()}'
+                )
+
+    def __repr__(self):
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __repr__ method to be accepted for subclasses of
+        # LoadCase without change.
+
+        return (f'{type(self).__name__}('
+                + f'Load = {repr(self.load)}, '
+                + f'base_factor = {repr(self.base_factor)}'
+                + f'scale_factor = {repr(self.scale_factor)}'
+                + f'rotational_factor = {repr(self.rotational_factor)}'
+                + f'symmetry_factor = {repr(self.symmetry_factor)}'
+                + f'info = {repr(self.info)}'
+                + ')')
+
     def __eq__(self, other):
         """
         Override the equality test.
