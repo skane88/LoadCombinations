@@ -6,7 +6,7 @@ from LoadGroup import LoadGroup
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
-from Factors import GroupFactor, LoadFactor
+from GroupFactor import GroupFactor
 
 class TestLoadCase(TestCase):
 

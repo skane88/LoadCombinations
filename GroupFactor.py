@@ -1,12 +1,11 @@
 # coding=utf-8
 
 """
-This module contains a pair of helper classes for ``LoadCase`` factors and
-``LoadGroup`` factors.
+This module contains a helper class that associates a ``LoadGroup`` with
+combination factors.
 """
 
-import LoadGroup
-
+from LoadGroup import LoadGroup
 
 class GroupFactor:
     """
@@ -102,11 +101,3 @@ class GroupFactor:
             return not self.__eq__(other)
 
         return NotImplemented
-
-
-class LoadFactor:
-    """
-    This class is a helper class that combines a ``Load`` with factors for the
-    final combination.
-    """
-    pass

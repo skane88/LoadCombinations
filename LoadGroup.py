@@ -12,6 +12,7 @@ from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
 from copy import deepcopy
 from exceptions import LoadExistsException, LoadNotPresentException
 from exceptions import AngleExistsException
+from LoadFactor import LoadFactor
 
 # define a named tuple for returning results.
 LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])

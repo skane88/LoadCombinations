@@ -1,5 +1,5 @@
 from unittest import TestCase
-from Factors import GroupFactor
+from GroupFactor import GroupFactor
 from LoadGroup import LoadGroup
 from Load import Load
 
