@@ -25,7 +25,7 @@ class LoadGroup:
     This is the base class, and will be inherited by other sorts of load groups.
 
     This class simply returns all loads in its self.loads method in a single
-    valued iterator.
+    valued iterator, with load factors of 1.0.
     """
 
     def __init__(self, *, group_name: str,
@@ -166,7 +166,7 @@ class LoadGroup:
 
 
     def load_exists(self, *, load_no: int = None, load_name: str = None,
-                    abbrev: str = None, load: Load = None) -> bool:
+                    abbrev: str = None, load: Load = None) -> Union[bool, int]:
         """
         This method searches the self.loads property of the ``LoadGroup`` to
         determine if a ``Load`` exists in it. It will search by either the
