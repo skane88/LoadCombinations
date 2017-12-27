@@ -10,8 +10,7 @@ from typing import Dict, List, Union, Tuple
 from LoadGroup import LoadGroup
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
-from GroupFactor import GroupFactor, LoadFactor
-
+from GroupFactor import GroupFactor
 
 class LoadCase:
     """

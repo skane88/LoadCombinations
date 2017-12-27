@@ -5,6 +5,7 @@ This file contains a helper class to associate a ``Load`` with combination
 factors.
 """
 
+from Load import Load
 
 class LoadFactor:
     """
