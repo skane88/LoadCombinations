@@ -14,9 +14,30 @@ class LoadFactor:
     final combination.
     """
 
-    def __init__(self):
+    def __init__(self, *, load: Load, base_factor: float = 1.0,
+                 scale_factor: float = 1.0, rotational_factor: float = 1.0,
+                 symmetry_factor: float = 1.0, info: Dict[str, str] = None):
+        """
+        Constructor for the ``LoadFactor`` object.
+
+        :param base_factor: The base factor to apply to the load
+        :param scale_factor: The ``scale_factor`` that adjusts the load for
+            scaling effects (such as scaling a 2.5kPa load case to 5kPa).
+        :param rotational_factor: The rotational load factor to be applied. This
+            is the factor that is applied based on a required angle in a
+            ``RotationalGroup``.
+        :param symmetry_factor: The symmetry factor based on the required angle
+            in a ``RotationalGroup`` - either 1.0 or -1.0.
+        :param info: Additional information to be stored with the load factor.
+            This should be a dictionary of the form {str: str}.
+        """
 
         self._factors = {}
+        self.base_factor = base_factor
+        self.scale_factor = scale_factor
+        self.rotational_factor = rotational_factor
+        self.symmetry_factor = symmetry_factor
+        self.info = info
 
     @property
     def load(self):
@@ -78,7 +99,8 @@ class LoadFactor:
         adjusts the load for scaling effects (such as scaling a 2.5kPa load case
         to 5kPa).
 
-        :param scale_factor: The ``scale_factor``.
+        :param scale_factor: The ``scale_factor`` that adjusts the load for
+            scaling effects (such as scaling a 2.5kPa load case to 5kPa).
         """
 
         self._factors['scale_factor'] = scale_factor
@@ -100,7 +122,9 @@ class LoadFactor:
         Sets the rotational factor applied to the load. This is the factor that
         is applied based on a required angle in a ``RotationalGroup``.
 
-        :param rotational_factor: The rotational load factor to be applied.
+        :param rotational_factor: The rotational load factor to be applied. This
+            is the factor that is applied based on a required angle in a
+            ``RotationalGroup``.
         """
 
         self._factors['rot_factor'] = rotational_factor
@@ -126,7 +150,8 @@ class LoadFactor:
 
         This value is either 1.0 or -1.0.
 
-        :param symmetry_factor: The symmetry factor - either 1.0 or -1.0.
+        :param symmetry_factor: The symmetry factor based on the required angle
+            in a ``RotationalGroup`` - either 1.0 or -1.0.
         """
 
         if symmetry_factor not in [-1.0, 1.0]:
@@ -171,8 +196,9 @@ class LoadFactor:
 
         self._info = {}
 
-        for k, v in info.items():
-            self.add_info(k, v)
+        if info != None:
+               for k, v in info.items():
+                    self.add_info(k, v)
 
     def add_info(self, key, value):
         """
@@ -191,3 +217,24 @@ class LoadFactor:
                              + f'following list: {all_keys}')
 
         self._info[key] = value
+
+
+    def __eq__(self, other):
+        """
+        Override the equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        """
+        Override the non-equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+
+        return NotImplemented

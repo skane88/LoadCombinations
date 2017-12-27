@@ -14,8 +14,6 @@ from exceptions import AngleExistsException
 from LoadFactor import LoadFactor
 
 # define a named tuple for returning results.
-LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
-
 
 class LoadGroup:
     """
@@ -277,7 +275,7 @@ class LoadGroup:
 
         results = []
         for k, l in self.loads.items():
-            lf = LoadFactor(load = l, load_factor = 1.0, add_info = '')
+            lf = LoadFactor(load = l, base_factor = 1.0)
             results.append(lf)
 
         results = tuple(results)
