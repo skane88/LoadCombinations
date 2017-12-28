@@ -213,11 +213,12 @@ class LoadFactor:
         :param value: The value to store.
         """
 
-        all_keys = ['scale_to', 'angle', 'symmetric']
+        all_keys = ['scale_to', 'is_scaled', 'angle', 'symmetric']
 
         if key not in all_keys:
-            raise ValueError(f'Additional information keys should be in the '
-                             + f'following list: {all_keys}')
+            raise ValueError(f'Key {key} is invalid. Additional information '
+                             + f'keys should be in the following list: '
+                             + f'{all_keys}')
 
         self._info[key] = value
 

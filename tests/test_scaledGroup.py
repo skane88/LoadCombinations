@@ -136,17 +136,20 @@ class TestScaledGroup(TestCase):
                            base_factor = load_factors[0],
                            scale_factor = l1.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
         LC2_1 = LoadFactor(load = l2,
                            base_factor = load_factors[0],
                            scale_factor = l2.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
         LC3_1 = LoadFactor(load = l3,
                            base_factor = load_factors[0],
                            scale_factor = l3.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
 
         LC_1 = (LC1_1, LC2_1, LC3_1)
 
@@ -154,17 +157,20 @@ class TestScaledGroup(TestCase):
                            base_factor = load_factors[1],
                            scale_factor = l1.scale_factor(scale_to = scale_to,
                                                          scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
         LC2_2 = LoadFactor(load = l2,
                            base_factor = load_factors[1],
                            scale_factor = l2.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
         LC3_2 = LoadFactor(load = l3,
                            base_factor = load_factors[1],
                            scale_factor = l3.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
 
         LC_2 = (LC1_2, LC2_2, LC3_2)
 
@@ -172,17 +178,20 @@ class TestScaledGroup(TestCase):
                            base_factor = load_factors[2],
                            scale_factor = l1.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
         LC2_3 = LoadFactor(load = l2,
                            base_factor = load_factors[2],
                            scale_factor = l2.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
         LC3_3 = LoadFactor(load = l3,
                            base_factor = load_factors[2],
                            scale_factor = l3.scale_factor(scale_to = scale_to,
                                                           scale = scale),
-                           info = {'scale_to': f'(scaled: {scale_to})'})
+                           info = {'scale_to': scale_to,
+                                   'is_scaled': scale})
 
         LC_3 = (LC1_3, LC2_3, LC3_3)
 

@@ -537,8 +537,8 @@ class ScaledGroup(FactoredGroup):
                 lf = LoadFactor(load = l,
                                 base_factor = f,
                                 scale_factor = scale_factor,
-                                info = {'scale_to':
-                                            f'(scaled: {self.scale_to})'})
+                                info = {'scale_to': self.scale_to,
+                                        'is_scaled': self.scale})
                 results.append(lf)
 
             results = tuple(results)
@@ -613,8 +613,8 @@ class ExclusiveGroup(ScaledGroup):
                 lf = LoadFactor(load = l,
                                 base_factor = f,
                                 scale_factor = scale_factor,
-                                info = {'scale_to':
-                                            f'(scaled: {self.scale_to})'})
+                                info = {'scale_to': self.scale_to,
+                                        'is_scaled': self.scale})
 
                 # yield at this level so each load is yielded exclusively.
                 yield (lf,)
@@ -962,7 +962,9 @@ class RotationalGroup(ScaledGroup):
                                      symmetry_factor = sym_fact,
                                      rotational_factor = 1.0,
                                      info = {'angle': a,
-                                             'symmetric': is_sym})
+                                             'symmetric': is_sym,
+                                             'scale_to': self.scale_to,
+                                             'is_scaled': self.scale})
                     ret_val = (lf1, ) #final return value
 
                 else:
@@ -1000,7 +1002,9 @@ class RotationalGroup(ScaledGroup):
                                         symmetry_factor =  sym_min,
                                         rotational_factor =  factors.left,
                                         info = {'angle': a,
-                                                'symmetric': is_sym_min})
+                                                'symmetric': is_sym_min,
+                                                'scale_to': self.scale_to,
+                                                'is_scaled': self.scale})
 
                     lf_max = LoadFactor(load = self.loads[load_max],
                                         base_factor = f,
@@ -1008,7 +1012,9 @@ class RotationalGroup(ScaledGroup):
                                         symmetry_factor =  sym_max,
                                         rotational_factor = factors.right,
                                         info = {'angle': a,
-                                                'symmetric': is_sym_max})
+                                                'symmetric': is_sym_max,
+                                                'scale_to': self.scale_to,
+                                                'is_scaled': self.scale})
 
                     # build the final return tuple
                     ret_val = (lf_min, lf_max)
