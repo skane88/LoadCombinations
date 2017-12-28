@@ -32,6 +32,7 @@ class LoadFactor:
             This should be a dictionary of the form {str: str}.
         """
 
+        self.load = Load
         self._factors = {}
         self.base_factor = base_factor
         self.scale_factor = scale_factor

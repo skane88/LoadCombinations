@@ -380,7 +380,7 @@ class FactoredGroup(LoadGroup):
             for k, l in self.loads.items():
                 # then iterate through the load_factors
 
-                lf = LoadFactor(load = l, load_factor = f, add_info = '')
+                lf = LoadFactor(load = l, base_factor = f)
                 results.append(lf)
 
             results = tuple(results)
@@ -534,8 +534,11 @@ class ScaledGroup(FactoredGroup):
 
                 #generate the return load factor object.
 
-                lf = LoadFactor(load = l, load_factor = scale_factor * f,
-                                add_info = f'(scaled: {self.scale_to})')
+                lf = LoadFactor(load = l,
+                                base_factor = f,
+                                scale_factor = scale_factor,
+                                info = {'scale_to':
+                                            f'(scaled: {self.scale_to})'})
                 results.append(lf)
 
             results = tuple(results)

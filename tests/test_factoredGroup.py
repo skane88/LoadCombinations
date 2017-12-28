@@ -103,24 +103,24 @@ class TestFactoredGroup(TestCase):
         LG = FactoredGroup(group_name = group_name, loads = loads,
                            factors = load_factors, abbrev = abbrev)
 
-        LC1_1 = LoadFactor(load = l1, load_factor = -1.0, add_info = '')
-        LC2_1 = LoadFactor(load = l2, load_factor = -1.0, add_info = '')
-        LC3_1 = LoadFactor(load = l3, load_factor = -1.0, add_info = '')
-        LC4_1 = LoadFactor(load = l4, load_factor = -1.0, add_info = '')
+        LC1_1 = LoadFactor(load = l1, base_factor = -1.0)
+        LC2_1 = LoadFactor(load = l2, base_factor = -1.0)
+        LC3_1 = LoadFactor(load = l3, base_factor = -1.0)
+        LC4_1 = LoadFactor(load = l4, base_factor = -1.0)
 
         LC_1 = (LC1_1, LC2_1, LC3_1, LC4_1)
 
-        LC1_2 = LoadFactor(load = l1, load_factor = 0.0, add_info = '')
-        LC2_2 = LoadFactor(load = l2, load_factor = 0.0, add_info = '')
-        LC3_2 = LoadFactor(load = l3, load_factor = 0.0, add_info = '')
-        LC4_2 = LoadFactor(load = l4, load_factor = 0.0, add_info = '')
+        LC1_2 = LoadFactor(load = l1, base_factor = 0.0)
+        LC2_2 = LoadFactor(load = l2, base_factor = 0.0)
+        LC3_2 = LoadFactor(load = l3, base_factor = 0.0)
+        LC4_2 = LoadFactor(load = l4, base_factor = 0.0)
 
         LC_2 = (LC1_2, LC2_2, LC3_2, LC4_2)
 
-        LC1_3 = LoadFactor(load = l1, load_factor = 1.0, add_info = '')
-        LC2_3 = LoadFactor(load = l2, load_factor = 1.0, add_info = '')
-        LC3_3 = LoadFactor(load = l3, load_factor = 1.0, add_info = '')
-        LC4_3 = LoadFactor(load = l4, load_factor = 1.0, add_info = '')
+        LC1_3 = LoadFactor(load = l1, base_factor = 1.0)
+        LC2_3 = LoadFactor(load = l2, base_factor = 1.0)
+        LC3_3 = LoadFactor(load = l3, base_factor = 1.0)
+        LC4_3 = LoadFactor(load = l4, base_factor = 1.0)
 
         LC_3 = (LC1_3, LC2_3, LC3_3, LC4_3)
 
