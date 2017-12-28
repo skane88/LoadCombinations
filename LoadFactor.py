@@ -5,7 +5,7 @@ This file contains a helper class to associate a ``Load`` with combination
 factors.
 """
 
-from typing import Dict
+from typing import Dict, Union
 from Load import Load
 
 class LoadFactor:
@@ -16,7 +16,8 @@ class LoadFactor:
 
     def __init__(self, *, load: Load, base_factor: float = 1.0,
                  scale_factor: float = 1.0, rotational_factor: float = 1.0,
-                 symmetry_factor: float = 1.0, info: Dict[str, str] = None):
+                 symmetry_factor: float = 1.0,
+                 info: Dict[str, Union[str, float, bool]] = None):
         """
         Constructor for the ``LoadFactor`` object.
 
@@ -162,6 +163,7 @@ class LoadFactor:
         self._factors['sym_factor'] = symmetry_factor
 
 
+    @property
     def factor(self) -> float:
         """
         Returns the final load factor to apply to the ``Load``.
@@ -178,7 +180,7 @@ class LoadFactor:
 
 
     @property
-    def info(self) -> Dict[str, str]:
+    def info(self) -> Dict[str, Union[str, float, bool]]:
         """
         Gets the dictionary containing additional information.
 
@@ -188,7 +190,7 @@ class LoadFactor:
         return self._info
 
     @info.setter
-    def info(self, info: Dict[str, str]):
+    def info(self, info: Dict[str, Union[str, float, bool]]):
         """
         Sets the dictionary containing additional information.
 
@@ -201,7 +203,7 @@ class LoadFactor:
                for k, v in info.items():
                     self.add_info(k, v)
 
-    def add_info(self, key, value):
+    def add_info(self, key: str, value: Union[str, float, bool]):
         """
         Adds information into the ``self.info`` dictionary.
 
@@ -211,7 +213,7 @@ class LoadFactor:
         :param value: The value to store.
         """
 
-        all_keys = ['scale_to', 'rotate_to', 'symmetric']
+        all_keys = ['scale_to', 'angle', 'symmetric']
 
         if key not in all_keys:
             raise ValueError(f'Additional information keys should be in the '
@@ -227,7 +229,7 @@ class LoadFactor:
 
         return (f'{type(self).__name__}: '
                 + f'load_group: {self.load}, '
-                + f'factor: {self.factor()}'
+                + f'factor: {self.factor}'
                 )
 
     def __repr__(self):
