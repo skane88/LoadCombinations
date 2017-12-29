@@ -38,7 +38,7 @@ class LoadFactor:
             This should be a dictionary of the form {str: str}.
         """
 
-        self.load = Load
+        self.load = load
         self._factors = {}
         self.base_factor = base_factor
         self.scale_factor = scale_factor
@@ -227,9 +227,9 @@ class LoadFactor:
 
         if info != None:
                for k, v in info.items():
-                    self.add_info(k, v)
+                    self.add_info(key = k, value = v)
 
-    def add_info(self, key: str, value: Union[str, float, bool]):
+    def add_info(self, *, key: str, value: Union[str, float, bool]):
         """
         Adds information into the ``self.info`` dictionary.
 
@@ -265,11 +265,12 @@ class LoadFactor:
         # LoadCase without change.
 
         return (f'{type(self).__name__}('
-                + f'Load = {repr(self.load)}, '
+                + f'load = {repr(self.load)}, '
                 + f'base_factor = {repr(self.base_factor)}, '
                 + f'scale_factor = {repr(self.scale_factor)}, '
                 + f'rotational_factor = {repr(self.rotational_factor)}, '
                 + f'symmetry_factor = {repr(self.symmetry_factor)}, '
+                + f'group_factor = {repr(self.group_factor)}, '
                 + f'info = {repr(self.info)}'
                 + ')')
 
