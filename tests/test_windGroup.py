@@ -119,15 +119,87 @@ class TestWindGroup(TestCase):
                              scale = scale, req_angles = req_angles,
                              interp_func = wind_interp_85, abbrev = abbrev)
 
-        LC1_1 = LoadFactor(l1, -((69.0 * 69.0) / (25.0 * 25.0)), '(Rotated: 0.0)')
-        LC2_1 = LoadFactor(l2, -((69.0 * 69.0) / (40.0 * 40.0)), '(Rotated: 90.0)')
-        LC3_1 = LoadFactor(l3, -((69.0 * 69.0) / (50.0 * 50.0)), '(Rotated: 180.0)')
-        LC4_1 = LoadFactor(l4, -((69.0 * 69.0) / (69.0 * 69.0)), '(Rotated: 270.0)')
+        LC1_1 = LoadFactor(load = l1,
+                           base_factor = load_factors[0],
+                           scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 0.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
+        LC2_1 = LoadFactor(load = l2,
+                           base_factor = load_factors[0],
+                           scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 90.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
+        LC3_1 = LoadFactor(load = l3,
+                           base_factor = load_factors[0],
+                           scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 180.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
+        LC4_1 = LoadFactor(load = l4,
+                           base_factor = load_factors[0],
+                           scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 270.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
 
-        LC1_2 = LoadFactor(l1, ((69.0 * 69.0) / (25.0 * 25.0)), '(Rotated: 0.0)')
-        LC2_2 = LoadFactor(l2, ((69.0 * 69.0) / (40.0 * 40.0)), '(Rotated: 90.0)')
-        LC3_2 = LoadFactor(l3, ((69.0 * 69.0) / (50.0 * 50.0)), '(Rotated: 180.0)')
-        LC4_2 = LoadFactor(l4, ((69.0 * 69.0) / (69.0 * 69.0)), '(Rotated: 270.0)')
+        LC1_2 = LoadFactor(load = l1,
+                           base_factor = load_factors[1],
+                           scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 0.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
+        LC2_2 = LoadFactor(load = l2,
+                           base_factor = load_factors[1],
+                           scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 90.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
+        LC3_2 = LoadFactor(load = l3,
+                           base_factor = load_factors[1],
+                           scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 180.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
+        LC4_2 = LoadFactor(load = l4,
+                           base_factor = load_factors[1],
+                           scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           info = {'angle': 270.0,
+                                   'symmetric': False,
+                                   'scale_to': scale_to,
+                                   'is_scaled': True}
+                           )
 
         LC1 = (LC1_1,)
         LC2 = (LC2_1,)
@@ -142,14 +214,6 @@ class TestWindGroup(TestCase):
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
         LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-            print(LC[i][0].add_info == LC_act[i][0].add_info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
@@ -187,51 +251,179 @@ class TestWindGroup(TestCase):
 
         rad45 = math.radians(45.0)
 
-        LC1 = (LoadFactor(l1, -((69**2) / (25**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'),
-               LoadFactor(l2, -((69**2) / (40**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'))
-        LC2 = (LoadFactor(l2, -((69**2) / (40**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 135.0)'),
-               LoadFactor(l3, -((69**2) / (50**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 135.0)'))
-        LC3 = (LoadFactor(l3, -((69**2) / (50**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 225.0)'),
-               LoadFactor(l4, -((69**2) / (69**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 225.0)'))
-        LC4 = (LoadFactor(l4, -((69**2) / (69**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 315.0)'),
-               LoadFactor(l1, -((69**2) / (25**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 315.0)'))
+        LC1 = (LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC2 = (LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l3,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC3 = (LoadFactor(load = l3,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l4,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
 
-        LC5 = (LoadFactor(l1, ((69**2) / (25**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'),
-               LoadFactor(l2, ((69**2) / (40**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'))
-        LC6 = (LoadFactor(l2, ((69**2) / (40**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 135.0)'),
-               LoadFactor(l3, ((69**2) / (50**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 135.0)'))
-        LC7 = (LoadFactor(l3, ((69**2) / (50**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 225.0)'),
-               LoadFactor(l4, ((69**2) / (69**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 225.0)'))
-        LC8 = (LoadFactor(l4, ((69**2) / (69**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 315.0)'),
-               LoadFactor(l1, ((69**2) / (25**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 315.0)'))
+                          )
+               )
+        LC4 = (LoadFactor(load = l4,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+        )
+
+        LC5 = (LoadFactor(load = l1,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+
+                          )
+               )
+        LC6 = (LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l3,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+        )
+        LC7 = (LoadFactor(load = l3,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l4,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+        )
+        LC8 = (LoadFactor(load = l4,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+        )
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
-
-        LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-            print(LC[i][0].add_info == LC_act[i][0].add_info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
@@ -251,26 +443,50 @@ class TestWindGroup(TestCase):
 
         # The floats in the following function are calculated from the
         # wind_interp_85 function.
-        LC1 = (LoadFactor(l1, ((69**2) / (25**2)) * 0.9920769026062272,
-                          '(Rotated: 15.0)'),
-               LoadFactor(l2, ((69**2) / (40**2)) * 0.2658262048829081,
-                          '(Rotated: 15.0)'))
-        LC4 = (LoadFactor(l4, ((69**2) / (69**2)) * 0.49180807008686556,
-                          '(Rotated: 333.0)'),
-               LoadFactor(l1, ((69**2) / (25**2)) * 0.9652276850446957,
-                          '(Rotated: 333.0)'))
+        LC1 = (LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = 0.9920769026062272,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 15.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = 0.2658262048829081,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 15.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC4 = (LoadFactor(load = l4,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l4.wind_speed**2),
+                          rotational_factor = 0.49180807008686556,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 333.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = 0.9652276850446957,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 333.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
 
         LC = (LC1, LC4)
-
-        LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-            print(LC[i][0].add_info == LC_act[i][0].add_info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
@@ -304,51 +520,177 @@ class TestWindGroup(TestCase):
 
         rad45 = math.radians(45.0)
 
-        LC1 = (LoadFactor(l1, -((69.0**2) / (25.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'),
-               LoadFactor(l2, -((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'))
-        LC2 = (LoadFactor(l2, -((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 135.0)'),
-               LoadFactor(l3, -((69.0**2) / (50.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 135.0)'))
-        LC3 = (LoadFactor(l3, -((69.0**2) / (50.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 225.0)'),
-               LoadFactor(l2, ((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 225.0)'))
-        LC4 = (LoadFactor(l2, ((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 315.0)'),
-               LoadFactor(l1, -((69.0**2) / (25.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 315.0)'))
+        LC1 = (LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC2 = (LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l3,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC3 = (LoadFactor(load = l3,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = -1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': True,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC4 = (LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = -1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': True,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
 
-        LC5 = (LoadFactor(l1, ((69.0**2) / (25.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 45.0)'),
-               LoadFactor(l2, ((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                          '(Rotated: 45.0)'))
-        LC6 = (LoadFactor(l2, ((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 135.0)'),
-               LoadFactor(l3, ((69.0**2) / (50.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 135.0)'))
-        LC7 = (LoadFactor(l3, ((69.0**2) / (50.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 225.0)'),
-               LoadFactor(l2, -((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 225.0)'))
-        LC8 = (LoadFactor(l2, -((69.0**2) / (40.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 315.0)'),
-               LoadFactor(l1, ((69.0**2) / (25.0**2)) * math.sin(rad45) * 1.20208,
-                        '(Rotated: 315.0)'))
+        LC5 = (LoadFactor(load = l1,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC6 = (LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l3,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC7 = (LoadFactor(load = l3,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l3.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = -1.0,
+                          info = {'angle': 225.0,
+                                  'symmetric': True,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                           )
+               )
+        LC8 = (LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = -1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': True,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[1],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = math.sin(rad45) * 1.20208,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
-
-        LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-            print(LC[i][0].add_info == LC_act[i][0].add_info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
@@ -366,22 +708,50 @@ class TestWindGroup(TestCase):
         cos63 = math.cos(rad63)
         sin63 = math.sin(rad63)
 
-        LC1 = (LoadFactor(l1, ((69.0**2) / (25.0**2)) * 0.9920769026062272, '(Rotated: 15.0)'),
-               LoadFactor(l2, ((69.0**2) / (40.0**2)) * 0.2658262048829081, '(Rotated: 15.0)'))
-        LC4 = (LoadFactor(l2, -((69.0**2) / (40.0**2)) * 0.49180807008686556, '(Rotated: 333.0)'),
-               LoadFactor(l1, ((69.0**2) / (25.0**2)) * 0.9652276850446957, '(Rotated: 333.0)'))
+        LC1 = (LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = 0.9920769026062272,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 15.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = 0.2658262048829081,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 15.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
+        LC4 = (LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l2.wind_speed**2),
+                          rotational_factor = 0.49180807008686556,
+                          symmetry_factor = -1.0,
+                          info = {'angle': 333.0,
+                                  'symmetric': True,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = (scale_to**2) / (l1.wind_speed**2),
+                          rotational_factor = 0.9652276850446957,
+                          symmetry_factor = 1.0,
+                          info = {'angle': 333.0,
+                                  'symmetric': False,
+                                  'scale_to': scale_to,
+                                  'is_scaled': True}
+                          )
+               )
 
         LC = (LC1, LC4)
-
-        LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].load_factor == LC_act[i][0].load_factor)
-            print(LC[i][0].add_info == LC_act[i][0].add_info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 

@@ -7,15 +7,13 @@ appropriate list of loads through an iterator method.
 
 from typing import Dict, List, Tuple, Union, Callable
 from collections import namedtuple
-from Load import Load, ScalableLoad, RotatableLoad, WindLoad
+from Load import Load, ScalableLoad, RotatableLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
-from copy import deepcopy
 from exceptions import LoadExistsException, LoadNotPresentException
 from exceptions import AngleExistsException
+from LoadFactor import LoadFactor
 
 # define a named tuple for returning results.
-LoadFactor = namedtuple('LoadFactor', ['load', 'load_factor', 'add_info'])
-
 
 class LoadGroup:
     """
@@ -25,7 +23,7 @@ class LoadGroup:
     This is the base class, and will be inherited by other sorts of load groups.
 
     This class simply returns all loads in its self.loads method in a single
-    valued iterator.
+    valued iterator, with load factors of 1.0.
     """
 
     def __init__(self, *, group_name: str,
@@ -166,7 +164,7 @@ class LoadGroup:
 
 
     def load_exists(self, *, load_no: int = None, load_name: str = None,
-                    abbrev: str = None, load: Load = None) -> bool:
+                    abbrev: str = None, load: Load = None) -> Union[bool, int]:
         """
         This method searches the self.loads property of the ``LoadGroup`` to
         determine if a ``Load`` exists in it. It will search by either the
@@ -277,7 +275,7 @@ class LoadGroup:
 
         results = []
         for k, l in self.loads.items():
-            lf = LoadFactor(load = l, load_factor = 1.0, add_info = '')
+            lf = LoadFactor(load = l, base_factor = 1.0)
             results.append(lf)
 
         results = tuple(results)
@@ -382,7 +380,7 @@ class FactoredGroup(LoadGroup):
             for k, l in self.loads.items():
                 # then iterate through the load_factors
 
-                lf = LoadFactor(load = l, load_factor = f, add_info = '')
+                lf = LoadFactor(load = l, base_factor = f)
                 results.append(lf)
 
             results = tuple(results)
@@ -536,8 +534,11 @@ class ScaledGroup(FactoredGroup):
 
                 #generate the return load factor object.
 
-                lf = LoadFactor(load = l, load_factor = scale_factor * f,
-                                add_info = f'(scaled: {self.scale_to})')
+                lf = LoadFactor(load = l,
+                                base_factor = f,
+                                scale_factor = scale_factor,
+                                info = {'scale_to': self.scale_to,
+                                        'is_scaled': self.scale})
                 results.append(lf)
 
             results = tuple(results)
@@ -609,8 +610,11 @@ class ExclusiveGroup(ScaledGroup):
                 # get the load's scale factor from the dictionary.
                 scale_factor = scale_factors[k]
 
-                lf = LoadFactor(load = l, load_factor = scale_factor * f,
-                                add_info = f'(scaled: {self.scale_to})')
+                lf = LoadFactor(load = l,
+                                base_factor = f,
+                                scale_factor = scale_factor,
+                                info = {'scale_to': self.scale_to,
+                                        'is_scaled': self.scale})
 
                 # yield at this level so each load is yielded exclusively.
                 yield (lf,)
@@ -746,22 +750,24 @@ class RotationalGroup(ScaledGroup):
 
         :return: a dictionary of all the angles covered by the loads in the
             ``self.loads`` dictionary, and their corresponding loads, in the
-            format ``{angle: (load_no, symmetry_factor)}``. Symmetry factor will
-            either be 1.0 or -1.0.
+            format ``{angle: (load_no, symmetry_factor, is_symmetrical)}``.
+            Symmetry factor will either be 1.0 or -1.0.
+            is_symmetrical will be a boolean, True if the symmetrical load is
+            used.
         """
 
         #first get a dictionary of angles with their initial symmetry factors.
 
-        return_dict = {l.angle: (k, 1.0) for k, l in self.loads.items()}
+        return_dict = {l.angle: (k, 1.0, False) for k, l in self.loads.items()}
 
         # next check the special case of 0.0 and 360.0 which are identical
         # but not handled by the wrapping ability of the % function.
 
         if 0.0 in return_dict and 360.0 not in return_dict:
-            return_dict[360.0] = (return_dict[0.0][0], 1.0)
+            return_dict[360.0] = (return_dict[0.0][0], 1.0, False)
 
         if 360.0 in return_dict and 0.0 not in return_dict:
-            return_dict[0.0] = (return_dict[360.0][0], 1.0)
+            return_dict[0.0] = (return_dict[360.0][0], 1.0, False)
 
         # next go through all load elements again and test for symmetric angles
 
@@ -774,7 +780,7 @@ class RotationalGroup(ScaledGroup):
 
                 #if not already in the dictionary add it in.
                 if new_angle not in return_dict:
-                    return_dict[new_angle] = (k, -1.0)
+                    return_dict[new_angle] = (k, -1.0, True)
 
         return return_dict
 
@@ -843,8 +849,10 @@ class RotationalGroup(ScaledGroup):
 
         :param angle:
         :return: Returns a dictionary
-            ``{angle: (load, symmetry factor), angle: (load, symmetry factor)}``
+            ``{angle: (load, symmetry factor, is_symmetrical), angle: (load, symmetry factor, is_symmetrical)}``
             Symmetry factor will be either 1.0 or -1.0.
+            is_symmetrical will be True if the symmetrical version of a load is
+            used.
         """
 
         #first get the list of angles with their symmetry
@@ -940,6 +948,8 @@ class RotationalGroup(ScaledGroup):
                     # get the load no, the symmetry factor and the scale factor.
                     load_no = nearest[a][0]
                     sym_fact = nearest[a][1]
+                    is_sym = nearest[a][2]
+
                     scale_fact = scale_factors[load_no]
 
                     #determine an overall load factor
@@ -947,8 +957,14 @@ class RotationalGroup(ScaledGroup):
 
                     #build a LoadFactor object to return
                     lf1 = LoadFactor(load = self.loads[load_no],
-                                     load_factor = load_factor,
-                                     add_info = f'(Rotated: {a})')
+                                     base_factor = f,
+                                     scale_factor = scale_fact,
+                                     symmetry_factor = sym_fact,
+                                     rotational_factor = 1.0,
+                                     info = {'angle': a,
+                                             'symmetric': is_sym,
+                                             'scale_to': self.scale_to,
+                                             'is_scaled': self.scale})
                     ret_val = (lf1, ) #final return value
 
                 else:
@@ -966,13 +982,11 @@ class RotationalGroup(ScaledGroup):
                     # get the symmetry and scale factors
                     sym_min = nearest[a_min][1]
                     sym_max = nearest[a_max][1]
+                    is_sym_min = nearest[a_min][2]
+                    is_sym_max = nearest[a_max][2]
 
                     scale_min = scale_factors[load_min]
                     scale_max = scale_factors[load_max]
-
-                    # build an overall load factor
-                    load_factor_min = sym_min * scale_min * f
-                    load_factor_max = sym_max * scale_max * f
 
                     # get the interpolation between the angles
                     gap = a_max - a_min
@@ -980,19 +994,27 @@ class RotationalGroup(ScaledGroup):
 
                     factors = self.interp_func(gap, x)
 
-                    # and update the load factors with the interpolation
-                    load_factor_min *= factors.left
-                    load_factor_max *= factors.right
-
                     # finally build the return load factors
 
                     lf_min = LoadFactor(load = self.loads[load_min],
-                                        load_factor = load_factor_min,
-                                        add_info = f'(Rotated: {a})')
+                                        base_factor = f,
+                                        scale_factor = scale_min,
+                                        symmetry_factor =  sym_min,
+                                        rotational_factor =  factors.left,
+                                        info = {'angle': a,
+                                                'symmetric': is_sym_min,
+                                                'scale_to': self.scale_to,
+                                                'is_scaled': self.scale})
 
                     lf_max = LoadFactor(load = self.loads[load_max],
-                                        load_factor = load_factor_max,
-                                        add_info = f'(Rotated: {a})')
+                                        base_factor = f,
+                                        scale_factor = scale_max,
+                                        symmetry_factor =  sym_max,
+                                        rotational_factor = factors.right,
+                                        info = {'angle': a,
+                                                'symmetric': is_sym_max,
+                                                'scale_to': self.scale_to,
+                                                'is_scaled': self.scale})
 
                     # build the final return tuple
                     ret_val = (lf_min, lf_max)

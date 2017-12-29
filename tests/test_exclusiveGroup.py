@@ -71,67 +71,76 @@ class TestExclusiveGroup(TestCase):
                             scale = scale, abbrev = abbrev)
 
         LC_1 = LoadFactor(load = loads[0],
-                          load_factor = factors[0]
-                                        * loads[0].scale_factor(scale_to =
+                          base_factor = factors[0],
+                          scale_factor = loads[0].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_2 = LoadFactor(load = loads[1],
-                          load_factor = factors[0]
-                                        * loads[1].scale_factor(scale_to =
+                          base_factor = factors[0],
+                          scale_factor = loads[1].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_3 = LoadFactor(load = loads[2],
-                          load_factor = factors[0]
-                                        * loads[2].scale_factor(scale_to =
+                          base_factor = factors[0],
+                          scale_factor = loads[2].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_4 = LoadFactor(load = loads[0],
-                          load_factor = factors[1]
-                                        * loads[0].scale_factor(scale_to =
+                          base_factor = factors[1],
+                          scale_factor = loads[0].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_5 = LoadFactor(load = loads[1],
-                          load_factor = factors[1]
-                                        * loads[1].scale_factor(scale_to =
+                          base_factor = factors[1],
+                          scale_factor = loads[1].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_6 = LoadFactor(load = loads[2],
-                          load_factor = factors[1]
-                                        * loads[2].scale_factor(scale_to =
+                          base_factor = factors[1],
+                          scale_factor = loads[2].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_7 = LoadFactor(load = loads[0],
-                          load_factor = factors[2]
-                                        * loads[0].scale_factor(scale_to =
+                          base_factor = factors[2],
+                          scale_factor = loads[0].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_8 = LoadFactor(load = loads[1],
-                          load_factor = factors[2]
-                                        * loads[1].scale_factor(scale_to =
+                          base_factor = factors[2],
+                          scale_factor = loads[1].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC_9 = LoadFactor(load = loads[2],
-                          load_factor = factors[2]
-                                        * loads[2].scale_factor(scale_to =
+                          base_factor = factors[2],
+                          scale_factor = loads[2].scale_factor(scale_to =
                                                                 scale_to,
                                                                 scale = scale),
-                          add_info = f'(scaled: {scale_to})')
+                          info = {'scale_to': scale_to,
+                                  'is_scaled': scale})
 
         LC = ((LC_1,), (LC_2,), (LC_3,), (LC_4,), (LC_5,), (LC_6,),
               (LC_7,), (LC_8,), (LC_9,))

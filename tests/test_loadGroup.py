@@ -155,10 +155,10 @@ class TestLoadGroup(TestCase):
         # next build the list of expected return loads. This is simply all of
         # the loads in a LoadFactor object.
 
-        LF1 = LoadFactor(load = l1, load_factor = 1.0, add_info = '')
-        LF2 = LoadFactor(load = l2, load_factor = 1.0, add_info = '')
-        LF3 = LoadFactor(load = l3, load_factor = 1.0, add_info = '')
-        LF4 = LoadFactor(load = l4, load_factor = 1.0, add_info = '')
+        LF1 = LoadFactor(load = l1, base_factor = 1.0)
+        LF2 = LoadFactor(load = l2, base_factor = 1.0)
+        LF3 = LoadFactor(load = l3, base_factor = 1.0)
+        LF4 = LoadFactor(load = l4, base_factor = 1.0)
 
         # create a tuple of load factors. This is one "load combination"
         LC = (LF1, LF2, LF3, LF4)

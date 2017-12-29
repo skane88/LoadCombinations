@@ -10,7 +10,7 @@ from typing import Dict, List, Union, Tuple
 from LoadGroup import LoadGroup
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
-
+from GroupFactor import GroupFactor
 
 class LoadCase:
     """
@@ -19,9 +19,9 @@ class LoadCase:
     """
 
     def __init__(self, *, case_name: str, case_no: int,
-                 load_groups: Union[Dict[str, Tuple[LoadGroup, float]],
-                                          List[Tuple[LoadGroup, float]],
-                                          Tuple[LoadGroup, float]],
+                 load_groups: Union[Dict[str, GroupFactor],
+                                          List[GroupFactor],
+                                          GroupFactor],
                  abbrev: str = ''):
         """
         The constructor for a ``LoadCase`` object.
@@ -31,9 +31,10 @@ class LoadCase:
         :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
 
-            ``{group_name: (LoadGroup, load_factor)}``
+            ``{group_name: GroupFactor}``
 
-            where ``load_factor`` is a multiplier that will be applied to the
+            where ``GroupFactor`` is a ``GroupFactor`` object containing a
+            ``LoadGroup`` object and the factor to be applied to the
             results from the ``LoadGroup.generate_groups`` method.
             I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
             the load_groups would be:
@@ -41,8 +42,8 @@ class LoadCase:
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
 
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
-            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
+            Alternatively a List of ``[GroupFactor, ...]``
+            or a single ``GroupFactor`` can be provided.
         :param abbrev: The abbreviation of the ``LoadCase``.
         """
 
@@ -88,32 +89,32 @@ class LoadCase:
         self._case_no = case_no
 
     @property
-    def load_groups(self) -> Dict[str, Tuple[LoadGroup, float]]:
+    def load_groups(self) -> Dict[str, GroupFactor]:
         """
         Get / set the ``LoadCase`` ``load_groups``.
 
         :return: The ``load_groups`` in the ``LoadCase``.
             This will be a dictionary of the following format:
 
-            ``{group_name: (LoadGroup, load_factor)}``
+            ``{group_name: GroupFactor}``
 
-            where ``load_factor`` is a multiplier that will be applied to the
+            where ``GroupFactor`` is a ``GroupFactor`` object containing a
+            ``LoadGroup`` object and the factor to be applied to the
             results from the ``LoadGroup.generate_groups`` method.
             I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
             the load_groups would be:
 
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
-
         """
 
         return self._load_groups
 
     @load_groups.setter
     def load_groups(self,
-                    load_groups: Union[Dict[str, Tuple[LoadGroup, float]],
-                                          List[Tuple[LoadGroup, float]],
-                                          Tuple[LoadGroup, float]]
+                    load_groups: Union[Dict[str, GroupFactor],
+                                          List[GroupFactor],
+                                          GroupFactor]
                     ):
         """
         Get / set the ``LoadCase`` ``load_groups``.
@@ -121,9 +122,10 @@ class LoadCase:
         :param load_groups: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
 
-            ``{group_name: (LoadGroup, load_factor)}``
+            ``{group_name: GroupFactor}``
 
-            where ``load_factor`` is a multiplier that will be applied to the
+            where ``GroupFactor`` is a ``GroupFactor`` object containing a
+            ``LoadGroup`` object and the factor to be applied to the
             results from the ``LoadGroup.generate_groups`` method.
             I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
             the load_groups would be:
@@ -131,8 +133,8 @@ class LoadCase:
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
 
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
-            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
+            Alternatively a List of ``[GroupFactor, ...]``
+            or a single ``GroupFactor`` can be provided.
         """
 
         # if setting via load_groups, the assumption is that the entire
@@ -145,18 +147,19 @@ class LoadCase:
         self.add_group(load_groups)
 
     def add_group(self,
-                  load_group: Union[Dict[str, Tuple[LoadGroup, float]],
-                                          List[Tuple[LoadGroup, float]],
-                                          Tuple[LoadGroup, float]]
+                  load_group: Union[Dict[str, GroupFactor],
+                                          List[GroupFactor],
+                                          GroupFactor]
                   ):
         """
         Add a ``LoadGroup`` into the LoadCase.
         :param load_group: The ``load_groups`` to add to the ``LoadCase``.
             This should be a dictionary of the following format:
 
-            ``{group_name: (LoadGroup, load_factor)}``
+            ``{group_name: GroupFactor}``
 
-            where ``load_factor`` is a multiplier that will be applied to the
+            where ``GroupFactor`` is a ``GroupFactor`` object containing a
+            ``LoadGroup`` object and the factor to be applied to the
             results from the ``LoadGroup.generate_groups`` method.
             I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
             the load_groups would be:
@@ -164,8 +167,8 @@ class LoadCase:
             ``{'Dead Load': (Dead Load LoadGroup, 1.35),
                'Live Load': (Live Load LoadGroup, 1.50)}``.
 
-            Alternatively a List of ``[(LoadGroup, load_factor), ...]``
-            or a Tuple ``(LoadGroup, load_factor)`` can be provided.
+            Alternatively a List of ``[GroupFactor, ...]``
+            or a single ``GroupFactor`` can be provided.
         """
 
         if isinstance(load_group, Dict):
@@ -180,35 +183,36 @@ class LoadCase:
 
         else:
 
-            if not isinstance(load_group, Tuple):
-                # raise error if the load_group object isn't a Tuple.
+            if not isinstance(load_group, GroupFactor):
+                # raise error if the load_group object isn't a GroupFactor
+                # object.
 
                 raise InvalidCombinationFactor(f'Expected load_group to be '
-                                               + f'a Tuple[LoadGroup, float]. '
+                                               + f'a GroupFactor object. '
                                                + f' Actual value: {load_group}.'
                                                )
 
-            if not isinstance(load_group[0], LoadGroup) \
-                    or not isinstance(load_group[1], float):
+            if not isinstance(load_group.load_group, LoadGroup) \
+                    or not isinstance(load_group.group_factor, float):
                 # next raise error if the first or last values are not
                 # a LoadGroup or a float
 
                 raise InvalidCombinationFactor(f'Expected load_group to be '
-                                               + f'a Tuple[LoadGroup, float]. '
+                                               + f'a GroupFactor object. '
                                                + f' Actual value: {load_group}.'
                                                )
 
 
-            if self.group_exists(load_group = load_group[0]) == False:
+            if self.group_exists(load_group = load_group.load_group) == False:
 
-                self._load_groups[load_group[0].group_name] = load_group
+                self._load_groups[load_group.load_group.group_name] = load_group
 
             else:
 
                 raise LoadGroupExistsException(f'Attempted to add a LoadGroup'
                                                + f' that already exists to the'
                                                + f' LoadCase. LoadGroup:'
-                                               + f' {str(load_group[0])}'
+                                               + f' {str(load_group.load_group)}'
                                                + f', LoadCase.load_groups:'
                                                + f' {str(self.load_groups)}.')
 
@@ -287,7 +291,7 @@ class LoadCase:
 
             for k, lg in self.load_groups.items():
 
-                if abbrev == lg[0].abbrev:
+                if abbrev == lg.load_group.abbrev:
                     return k
 
             # else haven't found so return false
@@ -297,7 +301,7 @@ class LoadCase:
 
             for k, lg in self.load_groups.items():
 
-                if load_group.group_name == k or lg[0] == load_group:
+                if load_group.group_name == k or lg.load_group == load_group:
                     return k
 
             # else haven't found it so return False
@@ -308,7 +312,7 @@ class LoadCase:
                              + f' to be provided. No information provided.')
 
     def get_factor(self, *, group_name: str = None,
-                   load_group: LoadGroup = None):
+                   load_group: LoadGroup = None) -> float:
         """
         Gets the ``load_factor`` for a given ``LoadGroup`` from the
         ``self.load_groups`` dictionary.
@@ -334,7 +338,7 @@ class LoadCase:
             raise ValueError(f'To get a load_factor a LoadGroup needs to be '
                              + f'specified - none specified.')
 
-        return self.load_groups[group_name][1]
+        return self.load_groups[group_name].group_factor
 
 
     def set_factor(self, *, group_name: str = None,
@@ -365,7 +369,7 @@ class LoadCase:
             raise ValueError(f'To get a load_factor a LoadGroup needs to be '
                              + f'specified - none specified.')
 
-        self._load_groups[group_name][1] = load_factor
+        self._load_groups[group_name].group_factor = load_factor
 
     @property
     def abbrev(self) -> str:
@@ -403,8 +407,6 @@ class LoadCase:
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __repr__ method to be accepted for subclasses of
         # LoadCase without change.
-
-        pass
 
         return (f'{type(self).__name__}('
                 + f'case_name = {repr(self.case_name)}, '
