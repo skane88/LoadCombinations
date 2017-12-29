@@ -960,26 +960,94 @@ class TestRotationalGroup(TestCase):
                           )
                )
 
-        LC5 = (LoadFactor(load = l1, 2.0 * math.sin(rad45), '(Rotated: 45.0)'),
-               LoadFactor(load = l2, 2.0 * math.sin(rad45), '(Rotated: 45.0)'))
-        LC6 = (LoadFactor(load = l2, 2.0 * math.sin(rad45), '(Rotated: 135.0)'),
-               LoadFactor(load = l3, 2.0 * math.sin(rad45), '(Rotated: 135.0)'))
-        LC7 = (LoadFactor(load = l3, 2.0 * math.sin(rad45), '(Rotated: 225.0)'),
-               LoadFactor(load = l2, -2.0 * math.sin(rad45), '(Rotated: 225.0)'))
-        LC8 = (LoadFactor(load = l2, -2.0 * math.sin(rad45), '(Rotated: 315.0)'),
-               LoadFactor(load = l1, 2.0 * math.sin(rad45), '(Rotated: 315.0)'))
+        LC5 = (LoadFactor(load = l1,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 45.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 45,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          )
+               )
+        LC6 = (LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 135,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l3,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 135.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          )
+               )
+        LC7 = (LoadFactor(load = l3,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 225.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = -1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 225.0,
+                                  'symmetric': True,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          )
+               )
+        LC8 = (LoadFactor(load = l2,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = -1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 315.0,
+                                  'symmetric': True,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[1],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = math.sin(rad45),
+                          info = {'angle': 315.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          )
+               )
 
         LC = (LC1, LC2, LC3, LC4, LC5, LC6, LC7, LC8)
 
         LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].factor == LC_act[i][0].factor)
-            print(LC[i][0].info == LC_act[i][0].info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
@@ -997,21 +1065,51 @@ class TestRotationalGroup(TestCase):
         cos63 = math.cos(rad63)
         sin63 = math.sin(rad63)
 
-        LC1 = (LoadFactor(l1, 2.0 * cos15, '(Rotated: 15.0)'),
-               LoadFactor(l2, 2.0 * sin15, '(Rotated: 15.0)'))
-        LC4 = (LoadFactor(l2, -2.0 * cos63, '(Rotated: 333.0)'),
-               LoadFactor(l1, 2.0 * sin63, '(Rotated: 333.0)'))
+        LC1 = (LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = cos15,
+                          info = {'angle': 15.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = sin15,
+                          info = {'angle': 15.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          )
+               )
+        LC4 = (LoadFactor(load = l2,
+                          base_factor = load_factors[0],
+                          scale_factor = 2.0,
+                          symmetry_factor = -1.0,
+                          rotational_factor = cos63,
+                          info = {'angle': 333.0,
+                                  'symmetric': True,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          ),
+               LoadFactor(load = l1,
+                          base_factor = load_factors[0],
+                          scale_factor = 2.0,
+                          symmetry_factor = 1.0,
+                          rotational_factor = sin63,
+                          info = {'angle': 333.0,
+                                  'symmetric': False,
+                                  'scale_to': 5.0,
+                                  'is_scaled': True}
+                          )
+               )
 
         LC = (LC1, LC4)
 
         LC_act = tuple(LG.generate_groups())
-
-        for i in range(len(LC)):
-            print(f'LC1_tst[{i}]: ' + str(LC[i]))
-            print(f'LC1_act[{i}]: ' + str(LC_act[i]))
-            print(LC[i][0].load == LC_act[i][0].load)
-            print(LC[i][0].factor == LC_act[i][0].factor)
-            print(LC[i][0].info == LC_act[i][0].info)
-            print(LC[i] == LC_act[i])
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
