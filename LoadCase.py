@@ -11,6 +11,7 @@ from LoadGroup import LoadGroup
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
 from GroupFactor import GroupFactor
+import itertools
 
 class LoadCase:
     """
@@ -59,6 +60,7 @@ class LoadCase:
 
         :return: The ``LoadCase`` name.
         """
+
         return self._case_name
 
     @case_name.setter
@@ -68,6 +70,7 @@ class LoadCase:
 
         :param case_name: The ``LoadCase`` name.
         """
+
         self._case_name = case_name
 
     @property
@@ -77,6 +80,7 @@ class LoadCase:
 
         :return: The ``LoadCase`` ``case_no``.
         """
+
         return self._case_no
 
     @case_no.setter
@@ -86,6 +90,7 @@ class LoadCase:
 
         :param case_no: The ``LoadCase`` ``case_no``.
         """
+
         self._case_no = case_no
 
     @property
@@ -144,6 +149,7 @@ class LoadCase:
 
         # use the add_group method to add LoadGroups, to check for duplicates
         # etc.
+
         self.add_group(load_groups)
 
     def add_group(self,
@@ -391,6 +397,89 @@ class LoadCase:
         self._abbrev = abbrev
 
     def generate_cases(self):
+        """
+        Generates a generator that generates ``LoadCombination`` objects, which
+        generates all possible load combinations from the case.
+
+        :return: Returns a generator which generates all possible load
+            combinations from the case.
+        """
+
+        # first generate a list of all possible combinations then return them
+        # in the generator.
+
+        group_list = []
+
+        for k, g in self.load_groups.items():
+
+            # from each item in the list, make a temporary list. This will be a
+            # list of the following format:
+            # [(LF1, ..., LFn), (LF1, ..., LFn)]
+            # where each Tuple contains 1 or more ``LoadFactor`` objects, and
+            # corresponds to a separate group of possible loads that come out
+            # of the group.
+
+            temp_list = list(g.load_group.generate_groups())
+
+            # if the list has a length of 0 then just skip to the next group
+            if len(temp_list) == 0:
+                continue
+
+            # next update each load factor objects with a group_factor.
+            for LFT in temp_list:
+                for LF in LFT:
+                    LF.group_factor = g.group_factor
+
+            # finally add the list to the group_list
+            group_list.append(temp_list)
+
+        # we now have a list of all load factors that are output from the
+        # ``LoadGroups``, updated with the appropriate group_factors.
+        # we then need to develop all the possible combinations.
+
+        # first throw error if no combinations available at all.
+        if len(group_list) == 0:
+            raise ValueError(f'Expected at least 1x combination. No '
+                             + f'combinations generated.')
+
+        print(group_list)
+
+        # next generate a list to output the combinations
+
+        i = 1
+
+        for g in group_list:
+
+            i *= len(g)
+
+        comb_list = []
+
+        for j in range(i):
+            comb_list.append([])
+
+        print(comb_list)
+
+        # next, go through the list and append the group load factors
+        # by cycling through each element in the group_list. This will ensure.
+        # that the full list of combinations is generated.
+
+        for g in group_list:
+            cycle = itertools.cycle(g)
+            for i in comb_list:
+                i.append(next(cycle))
+
+        # we now have combinations that are in the following format:
+        # [[(LF1, ..., LFn), ...,(LF1, ..., LFn)],[(), ...()]
+        # where each list is a separate possible combination.
+
+        # these combinations now need to be flattened if possible.
+        for c in comb_list:
+            c = list(itertools.chain(*c))
+            print(c)
+
+        # we should now have a list of lists, containing the possible
+        # combinations in the load:
+        # [[combination_1], ..., [combination_n]]
 
         raise NotImplementedError
 

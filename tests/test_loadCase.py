@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 from LoadCase import LoadCase
-from LoadGroup import LoadGroup
+from LoadGroup import LoadGroup, FactoredGroup
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
@@ -523,4 +523,40 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = abbrev, second = LC.abbrev)
 
     def test_generate_cases(self):
+        l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
+                  abbrev = 'G1')
+        l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
+                          load_value = 5, abbrev = 'Q1')
+        l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
+                           load_value = 10, angle = 45.0, symmetrical = True,
+                           abbrev = 'R1')
+        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                      wind_speed = 69.0,
+                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+
+        group_name = 'Group 1'
+        loads = [l1]
+        abbrev = 'Gp 1'
+
+        group_name2 = 'Group 2'
+        loads2 = [l2]
+        abbrev2 = 'Gp 2'
+
+        LG1 = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
+        LG2 = FactoredGroup(group_name = group_name2,
+                            loads = loads2,
+                            factors = (-1.0, 1.0),
+                            abbrev = abbrev2)
+
+        case_name = 'Test Case'
+        case_no = 1
+        LGs = [GroupFactor(load_group = LG1, group_factor = 1.0),
+               GroupFactor(load_group = LG2, group_factor = 2.0)]
+        abbrev = 'TC'
+
+        LC = LoadCase(case_name = case_name, case_no = case_no,
+                      load_groups = LGs, abbrev = abbrev)
+
+        LC.generate_cases()
+
         self.fail()

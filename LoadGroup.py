@@ -6,7 +6,6 @@ appropriate list of loads through an iterator method.
 """
 
 from typing import Dict, List, Tuple, Union, Callable
-from collections import namedtuple
 from Load import Load, ScalableLoad, RotatableLoad
 from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
 from exceptions import LoadExistsException, LoadNotPresentException
