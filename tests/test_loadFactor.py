@@ -249,6 +249,26 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.info, second = info)
 
-        LF.add_info()
+        info = {'angle': 30.0,
+                'symmetric': True,
+                'scale_to': 5.0,
+                'is_scaled': True}
 
-        self.fail()
+        LF.add_info(key = 'angle', value = info['angle'])
+        LF.add_info(key = 'symmetric', value = info['symmetric'])
+        LF.add_info(key = 'scale_to', value = info['scale_to'])
+        LF.add_info(key = 'is_scaled', value = info['is_scaled'])
+
+        self.assertEqual(first = LF.info, second = info)
+
+        # the following should raise errors:
+
+        info = {'asdf': 12,
+                'qwer': True,
+                'zxcv': False}
+
+        for k, v in info.items():
+
+            with self.assertRaises(ValueError):
+
+                LF.add_info(key = k, value = v)
