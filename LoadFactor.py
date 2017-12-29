@@ -14,9 +14,12 @@ class LoadFactor:
     final combination.
     """
 
-    def __init__(self, *, load: Load, base_factor: float = 1.0,
-                 scale_factor: float = 1.0, rotational_factor: float = 1.0,
+    def __init__(self, *, load: Load,
+                 base_factor: float = 1.0,
+                 scale_factor: float = 1.0,
+                 rotational_factor: float = 1.0,
                  symmetry_factor: float = 1.0,
+                 group_factor: float = 1.0,
                  info: Dict[str, Union[str, float, bool]] = None):
         """
         Constructor for the ``LoadFactor`` object.
@@ -29,6 +32,8 @@ class LoadFactor:
             ``RotationalGroup``.
         :param symmetry_factor: The symmetry factor based on the required angle
             in a ``RotationalGroup`` - either 1.0 or -1.0.
+        :param group_factor: The group combination factor applied to the
+            ``LoadGroup`` in the ``LoadCase`` object.
         :param info: Additional information to be stored with the load factor.
             This should be a dictionary of the form {str: str}.
         """
@@ -39,6 +44,7 @@ class LoadFactor:
         self.scale_factor = scale_factor
         self.rotational_factor = rotational_factor
         self.symmetry_factor = symmetry_factor
+        self.group_factor = group_factor
         self.info = info
 
     @property
@@ -162,6 +168,26 @@ class LoadFactor:
 
         self._factors['sym_factor'] = symmetry_factor
 
+    @property
+    def group_factor(self) -> float:
+        """
+        Gets the group_factor property, applied from the group combination
+        factor.
+        :return: Returns the group combination factor.
+        """
+
+        return self._factors['group_factor']
+
+    @group_factor.setter
+    def group_factor(self, group_factor: float = 1.0):
+        """
+        Sets the group_factor property, applied from the group combination
+        factor.
+
+        :param group_factor: The group combination factor.
+        """
+
+        self._factors['group_factor'] = group_factor
 
     @property
     def factor(self) -> float:
@@ -240,10 +266,10 @@ class LoadFactor:
 
         return (f'{type(self).__name__}('
                 + f'Load = {repr(self.load)}, '
-                + f'base_factor = {repr(self.base_factor)}'
-                + f'scale_factor = {repr(self.scale_factor)}'
-                + f'rotational_factor = {repr(self.rotational_factor)}'
-                + f'symmetry_factor = {repr(self.symmetry_factor)}'
+                + f'base_factor = {repr(self.base_factor)}, '
+                + f'scale_factor = {repr(self.scale_factor)}, '
+                + f'rotational_factor = {repr(self.rotational_factor)}, '
+                + f'symmetry_factor = {repr(self.symmetry_factor)}, '
                 + f'info = {repr(self.info)}'
                 + ')')
 
