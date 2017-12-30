@@ -25,4 +25,5 @@ load cases (Wux, Wuz, Wu-x, Wu-z), the load combinations returned may be:
     * 1.2G + 1.5Q + 1.0Wuz
     * 1.2G + 1.5Q + 1.0Wu-x
     * 1.2G + 1.5Q + 1.0Wu-z
-1. Finally, the ``Combination`` objects will be combined into a ???
+1. Finally, the ``Combination`` objects will be combined into a
+``CombinationSet`` to return all final results.
