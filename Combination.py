@@ -22,6 +22,16 @@ class Combination:
     def add_load_factor(self, load_factors):
         raise NotImplementedError
 
+
+    @property
+    def allow_duplicates(self):
+        return self._allow_duplicates
+
+    @allow_duplicates.setter
+    def allow_duplicates(self, allow_duplicates):
+        self._allow_duplicates = allow_duplicates
+
+
     @property
     def combination_title(self):
         raise NotImplementedError
