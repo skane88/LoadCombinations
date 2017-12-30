@@ -419,16 +419,11 @@ class LoadCase:
             # corresponds to a separate group of possible loads that come out
             # of the group.
 
-            temp_list = list(g.load_group.generate_groups())
+            temp_list = list(g.load_group.generate_groups(group_factor = g.group_factor))
 
             # if the list has a length of 0 then just skip to the next group
             if len(temp_list) == 0:
                 continue
-
-            # next update each load factor objects with a group_factor.
-            for LFT in temp_list:
-                for LF in LFT:
-                    LF.group_factor = g.group_factor
 
             # finally add the list to the group_list
             group_list.append(temp_list)

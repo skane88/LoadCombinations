@@ -261,11 +261,14 @@ class LoadGroup:
 
         self._abbrev = abbrev
 
-    def generate_groups(self):
+    def generate_groups(self, group_factor: float = 1.0):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
 
+        :param group_factor: An optional parameter to enter the group_factor.
+            used by the ``LoadGroup`` object to ensure that the ``group_factor``
+            is included in the ``LoadFactor``.
         :return: returns a generator which will create a tuple of load factors,
             each of them in their own named tuple:
             ((load, load_factor, add_info),
@@ -274,7 +277,8 @@ class LoadGroup:
 
         results = []
         for k, l in self.loads.items():
-            lf = LoadFactor(load = l, base_factor = 1.0)
+            lf = LoadFactor(load = l, base_factor = 1.0,
+                            group_factor = group_factor)
             results.append(lf)
 
         results = tuple(results)
@@ -360,11 +364,14 @@ class FactoredGroup(LoadGroup):
         """
         self._factors = factors
 
-    def generate_groups(self):
+    def generate_groups(self, group_factor: float = 1.0):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
 
+        :param group_factor: An optional parameter to enter the group_factor.
+            used by the ``LoadGroup`` object to ensure that the ``group_factor``
+            is included in the ``LoadFactor``
         :return: returns a generator which will create a tuple of load factors,
             each of them in their own namedtuple:
             ((load, load_factor, add_info),
@@ -379,7 +386,8 @@ class FactoredGroup(LoadGroup):
             for k, l in self.loads.items():
                 # then iterate through the load_factors
 
-                lf = LoadFactor(load = l, base_factor = f)
+                lf = LoadFactor(load = l, base_factor = f,
+                                group_factor = group_factor)
                 results.append(lf)
 
             results = tuple(results)
@@ -496,7 +504,8 @@ class ScaledGroup(FactoredGroup):
                 for k, l in self.loads.items()}
 
     def generate_groups(self,
-                        scale_func: Callable[[float, float], float] = None):
+                        scale_func: Callable[[float, float], float] = None,
+                        group_factor: float = 1.0):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -507,6 +516,9 @@ class ScaledGroup(FactoredGroup):
         :param scale_func: A function can be provided to determine the scale
             factor. This should take 2x inputs: scale_to, load_value, and return
             a float as a return value.
+        :param group_factor: An optional parameter to enter the group_factor.
+            used by the ``LoadGroup`` object to ensure that the ``group_factor``
+            is included in the ``LoadFactor``
         :return: returns a generator which will create a tuple of load factors,
             each of them in their own namedtuple:
             ((load, load_factor, add_info),
@@ -536,6 +548,7 @@ class ScaledGroup(FactoredGroup):
                 lf = LoadFactor(load = l,
                                 base_factor = f,
                                 scale_factor = scale_factor,
+                                group_factor = group_factor,
                                 info = {'scale_to': self.scale_to,
                                         'is_scaled': self.scale})
                 results.append(lf)
@@ -578,7 +591,8 @@ class ExclusiveGroup(ScaledGroup):
     # group, only calls the generate_groups method differently.
 
     def generate_groups(self,
-                        scale_func: Callable[[float, float], float] = None):
+                        scale_func: Callable[[float, float], float] = None,
+                        group_factor: float = 1.0):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -589,6 +603,9 @@ class ExclusiveGroup(ScaledGroup):
         :param scale_func: A function can be provided to determine the scale
             factor. This should take 2x inputs: scale_to, load_value, and return
             a float as a return value.
+        :param group_factor: An optional parameter to enter the group_factor.
+            used by the ``LoadGroup`` object to ensure that the ``group_factor``
+            is included in the ``LoadFactor``
         :return: returns a generator which will create a tuple of load factors,
             each of them in their own namedtuple:
             ((load, load_factor, add_info),
@@ -612,6 +629,7 @@ class ExclusiveGroup(ScaledGroup):
                 lf = LoadFactor(load = l,
                                 base_factor = f,
                                 scale_factor = scale_factor,
+                                group_factor = group_factor,
                                 info = {'scale_to': self.scale_to,
                                         'is_scaled': self.scale})
 
@@ -907,7 +925,9 @@ class RotationalGroup(ScaledGroup):
         return {angle_below: angles[angle_below],
                 angle_above: angles[angle_above]}
 
-    def generate_groups(self, scale_func: Callable[[float, float], float] = None):
+    def generate_groups(self,
+                        scale_func: Callable[[float, float], float] = None,
+                        group_factor: float = 1.0):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -921,6 +941,9 @@ class RotationalGroup(ScaledGroup):
         :param scale_func: A function can be provided to determine the scale
             factor. This should take 2x inputs: scale_to, load_value, and return
             a float as a return value.
+        :param group_factor: An optional parameter to enter the group_factor.
+            used by the ``LoadGroup`` object to ensure that the ``group_factor``
+            is included in the ``LoadFactor``.
         :return: returns a generator which will create a tuple of load factors,
             each of them in their own namedtuple:
             ((load, load_factor, add_info),
@@ -960,6 +983,7 @@ class RotationalGroup(ScaledGroup):
                                      scale_factor = scale_fact,
                                      symmetry_factor = sym_fact,
                                      rotational_factor = 1.0,
+                                     group_factor = group_factor,
                                      info = {'angle': a,
                                              'symmetric': is_sym,
                                              'scale_to': self.scale_to,
@@ -1000,6 +1024,7 @@ class RotationalGroup(ScaledGroup):
                                         scale_factor = scale_min,
                                         symmetry_factor =  sym_min,
                                         rotational_factor =  factors.left,
+                                        group_factor = group_factor,
                                         info = {'angle': a,
                                                 'symmetric': is_sym_min,
                                                 'scale_to': self.scale_to,
@@ -1010,6 +1035,7 @@ class RotationalGroup(ScaledGroup):
                                         scale_factor = scale_max,
                                         symmetry_factor =  sym_max,
                                         rotational_factor = factors.right,
+                                        group_factor = group_factor,
                                         info = {'angle': a,
                                                 'symmetric': is_sym_max,
                                                 'scale_to': self.scale_to,
@@ -1119,7 +1145,7 @@ class WindGroup(RotationalGroup):
 
         self._scale_to = scale_speed
 
-    def generate_groups(self):
+    def generate_groups(self, group_factor: float = 1.0):
         """
         Generates an iterator that iterates through the potential cases that
         this group of loads can generate.
@@ -1136,6 +1162,9 @@ class WindGroup(RotationalGroup):
         is input at 10m/s and is scaled to 20m/s the scale factor returned is
         4.0, whereas a RotationalGroup object will return 2.0.
 
+        :param group_factor: An optional parameter to enter the group_factor.
+            used by the ``LoadGroup`` object to ensure that the ``group_factor``
+            is included in the ``LoadFactor``.
         :return: returns a generator which will create a tuple of load factors,
             each of them in their own namedtuple:
             ((load, load_factor, add_info),
@@ -1145,7 +1174,8 @@ class WindGroup(RotationalGroup):
         def scale_func(scale_to, scale_from):
             return (scale_to ** 2) / (scale_from ** 2)
 
-        return super(WindGroup, self).generate_groups(scale_func)
+        return super(WindGroup, self).generate_groups(scale_func = scale_func,
+                                                      group_factor = group_factor)
 
     def __str__(self):
 
