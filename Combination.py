@@ -4,31 +4,40 @@
 Contains a class to store the resulting load combinations.
 """
 
+from typing import Dict, List, Tuple, Union
+from LoadFactor import LoadFactor
+
 class Combination:
     """
     Stores the resulting load combinations output from a ``LoadCase`` object.
     """
 
     @property
-    def load_factors(self):
+    def load_factors(self) -> Dict[int, LoadFactor]:
         return self._load_factors
 
     @load_factors.setter
-    def load_factors(self, load_factors):
+    def load_factors(self, load_factors: Union[Dict[int, LoadFactor],
+                                               List[LoadFactor],
+                                               Tuple[LoadFactor,...],
+                                               LoadFactor]):
 
         self._load_factors = []
         self.add_load_factor(load_factors)
 
-    def add_load_factor(self, load_factors):
+    def add_load_factor(self, load_factors: Union[Dict[int, LoadFactor],
+                                                  List[LoadFactor],
+                                                  Tuple[LoadFactor,...],
+                                                  LoadFactor]):
         raise NotImplementedError
 
 
     @property
-    def allow_duplicates(self):
+    def allow_duplicates(self) -> bool:
         return self._allow_duplicates
 
     @allow_duplicates.setter
-    def allow_duplicates(self, allow_duplicates):
+    def allow_duplicates(self, allow_duplicates: bool = False):
         self._allow_duplicates = allow_duplicates
 
 
