@@ -286,23 +286,44 @@ class Combination:
         raise NotImplementedError
 
     @property
-    def list_load_factors(self):
+    def list_load_factors(self) -> List[LoadFactor]:
         """
         Return a list of all LoadFactors in the combination
 
         :return: Returns an unsorted list of all LoadFactors in the Combination.
         """
 
-        # simply iterate through the self.load_factors dictionary and append
-        # each list to the return list
+        # simply iterate through the self.load_factors dictionary
 
         ret_list = []
 
         for k, v in self.load_factors.items():
-            ret_list += v
+            # in case a LoadFactor is repeated in multiple locations
+            # (it shouldn't be but you never know...), iterate through the
+            # value, which is a List[LoadFactor]
+
+            for LF in v:
+                if LF not in ret_list
+                    ret_list.append(LF)
 
         return ret_list
 
     @property
-    def list_loads(self):
-        raise NotImplementedError
+    def list_loads(self) -> List[Load]:
+        """
+        Return a list of all Loads in the combination.
+
+        :return: Returns an unsorted list of all Loads in the combination.
+        """
+
+        ret_list = []
+
+        # simply iterate through all the load_factors in the self.load_factors
+        # dictionary. Use the self.list_load_factors method to simplify things.
+        for LF in self.list_load_factors:
+
+            if LF.load not in ret_list:
+
+                ret_list.append(LF.load)
+
+        return ret_list
