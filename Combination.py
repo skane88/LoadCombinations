@@ -214,7 +214,10 @@ class Combination:
 
         else:
             # if the load is provided as a Load object, need to iterate through
-            # the self.load_factors dictionary
+            # the self.load_factors dictionary.
+            # Note that as we have the load, we know the load_no and could
+            # simply jump to it, but in case of inappropriately added objects
+            # we will brute force search the dictionary.
 
             for k, v in self.load_factors.items():
                 # the value is a List[LoadFactor] and therefore will also have
@@ -230,8 +233,32 @@ class Combination:
 
             return False
 
-    def load_factor_exists(self, load_factor):
-        raise NotImplementedError
+    def load_factor_exists(self, load_factor: LoadFactor) -> Union[bool, int]:
+        """
+        Determines if a LoadFactor object exists in the self.load_factors
+        Dictionary.
+
+        :param load_factor: A LoadFactor object to search for.
+        :return: Returns False if the object is not found, otherwise returns the
+            key at which the LoadFactor can be found in the self.load_factors
+            Dictionary.
+        """
+
+        # to determine if load_factor exists, we iterate through the
+        # self.load_factors dictionary. Given we have the LoadFactor object we
+        # could jump straight to its location in the dictionary, but in case of
+        # mis-added objects we will brute force search the dictionary.
+
+        for k, v in self.load_factors.items():
+            # The values are a List[LoadFactor] and therefore we need to iterate
+            # through these as well:
+
+            for LF in v:
+                if LF == load_factor:
+                    return k
+
+        # only if we complete our iteration can be return False:
+        return False
 
     @property
     def allow_duplicates(self) -> bool:
