@@ -44,7 +44,8 @@ class Combination:
     def add_load_factor(self, load_factor: Union[Dict[int, List[LoadFactor]],
                                                  List[LoadFactor],
                                                  Tuple[LoadFactor,...],
-                                                 LoadFactor]):
+                                                 LoadFactor]
+                        ):
         """
         Adds a load_factor to the self.load_factors dictionary.
 
@@ -61,18 +62,23 @@ class Combination:
 
             if len(self._load_factors) == 0:
                 # if it doesn't, can simply assign load_factors to _load_factors
+
                 self._load_factors = load_factor
+
             else:
                 # otherwise, iterate through the items and recursively call this
                 # method
 
                 for k, v in load_factor.items():
                     self.add_load_factor(v)
+
         elif (isinstance(load_factor, List[LoadFactor]) or
               isinstance(load_factor, Tuple[LoadFactor,...])):
             # if a list of items, recursively call this method on each item.
+
             for i in load_factor:
                 self.add_load_factor(i)
+
         elif isinstance(load_factor, LoadFactor):
             # if a single load factor then add it to the LoadFactor dictionary
             # based on the rules about allowing multiple LoadFactors etc.
@@ -81,6 +87,7 @@ class Combination:
 
             if self.load_exists(load = load_factor.load):
                 # if it does, and multiple loads are not allowed, raise an error
+
                 if not self.allow_duplicates:
                     raise ValueError(f'Load already exists and Combination does'
                                      + f' not allow duplicates.')
@@ -92,6 +99,7 @@ class Combination:
             else:
                 # if the load doesn't already exist, then need to add the
                 # LoadFactor to the dictionary
+
                 self._load_factors[load_factor.load.load_no] = [load_factor]
 
         else:
@@ -100,8 +108,29 @@ class Combination:
                              + f'List[LoadFactor] or a Tuple[LoadFactor,...]. '
                              + f'Actual value received was: {load_factor}')
 
-    def del_load_factor(self, load_factor):
-        raise NotImplementedError
+    def del_load_factor(self, load_factor: LoadFactor):
+        """
+        Deletes all copies of a LoadFactor from the self.load_factors
+        dictionary.
+
+        :param load_factor: The LoadFactor object to remove from the
+            self.load_factors dictionary.
+        """
+
+        # first test if the load_factor exists at all:
+        lf_exists = self.load_factor_exists(load_factor = load_factor)
+
+        if not lf_exists:
+            raise ValueError(f'Attempted to delete {load_factor} but it does '
+                             + f'not exist in the self.load_factors Dict: '
+                             + f'{self.load_factors}')
+
+        # if the load factor exists, then need to delete it from the
+        # self.load_factors dictionary. Using a While loop to account for
+        # the presence of multiple copies of load_factors if
+        # self.allow_duplicates is true.
+        while load_factor in self.load_factors[lf_exists]:
+            self.load_factors[lf_exists].remove(load_factor)
 
     def del_load(self, load_no = None, load_name = None, load = None):
         raise NotImplementedError
@@ -114,6 +143,11 @@ class Combination:
 
     @property
     def allow_duplicates(self) -> bool:
+        """
+
+        :return:
+        """
+
         return self._allow_duplicates
 
     @allow_duplicates.setter
