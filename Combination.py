@@ -133,7 +133,37 @@ class Combination:
             self.load_factors[lf_exists].remove(load_factor)
 
     def del_load(self, load_no = None, load_name = None, load = None):
-        raise NotImplementedError
+        """
+        Delete a load from the self.load_factors dictionary entirely.
+
+        Note that the load can be specified via load_no, load_name or directly,
+        but if more than one way is provided only the first is actually used.
+
+        :param load_no: The no. of the load.
+        :param load_name: The name of the load.
+        :param load: A Load object to search for.
+        """
+
+        # first test if the load exists at all in the self.load_factors dict.
+        ld_exists = self.load_exists(load_no = load_no,
+                                     load_name = load_name,
+                                     load = load)
+
+        if not ld_exists:
+            if load_no != None:
+                ld_to_delete = f'Load no: {load_no}'
+            elif load_name != None:
+                ld_to_delete = f'Load name: {load_name}'
+            else:
+                ld_to_delete = f'Load: {load}'
+
+            raise ValueError(f'Attempted to delete load: ({ld_to_delete}) from '
+                             + f'the self.load_factors dictionary, but it does '
+                             + f'not exist. self.load_factors: '
+                             + f'{self.load_factors}.')
+
+        # if the load exists, then simply delete the key from the dictionary.
+        del self.load_factors[ld_exists]
 
     def load_exists(self, load_no = None, load_name = None, load = None):
         raise NotImplementedError
