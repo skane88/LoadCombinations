@@ -14,6 +14,14 @@ class Combination:
 
     @property
     def load_factors(self) -> Dict[int, List[LoadFactor]]:
+        """
+        Returns the self.load_factors dictionary.
+
+        :return: Returns a dictionary containing the load factors in the format
+            Dict[int, List[LoadFactor]] where int is the load number for each
+            LoadFactor.
+        """
+
         return self._load_factors
 
     @load_factors.setter
@@ -21,6 +29,14 @@ class Combination:
                                                List[LoadFactor],
                                                Tuple[LoadFactor,...],
                                                LoadFactor]):
+        """
+        Sets the self.load_factors property.
+
+        :param load_factors: The load_factor to be added. This is expected to be
+            a LoadFactor object, or: a Dict[int, List[LoadFactor]] (i.e. in the
+            same format as the self.load_factors dictionary), or a
+            List[LoadFactor] or Tuple[LoadFactor].
+        """
 
         self._load_factors = {}
         self.add_load_factor(load_factors)
@@ -29,6 +45,14 @@ class Combination:
                                                  List[LoadFactor],
                                                  Tuple[LoadFactor,...],
                                                  LoadFactor]):
+        """
+        Adds a load_factor to the self.load_factors dictionary.
+
+        :param load_factor: The load_factor to be added. This is expected to be
+            a LoadFactor object, or: a Dict[int, List[LoadFactor]] (i.e. in the
+            same format as the self.load_factors dictionary), or a
+            List[LoadFactor] or Tuple[LoadFactor].
+        """
 
         if isinstance(load_factor, Dict[int, List[LoadFactor]]):
             # if the load_factor list is supplied as a dictionary that already
