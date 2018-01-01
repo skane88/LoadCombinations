@@ -6,6 +6,7 @@ Contains a class to store the resulting load combinations.
 
 from typing import Dict, List, Tuple, Union
 from LoadFactor import LoadFactor
+from Load import Load
 
 class Combination:
     """
@@ -132,15 +133,16 @@ class Combination:
         while load_factor in self.load_factors[lf_exists]:
             self.load_factors[lf_exists].remove(load_factor)
 
-    def del_load(self, load_no = None, load_name = None, load = None):
+    def del_load(self, load_no: int = None, load_name: str = None,
+                 load: Load = None):
         """
         Delete a load from the self.load_factors dictionary entirely.
 
         Note that the load can be specified via load_no, load_name or directly,
         but if more than one way is provided only the first is actually used.
 
-        :param load_no: The no. of the load.
-        :param load_name: The name of the load.
+        :param load_no: The no. of the load to search for.
+        :param load_name: The name of the load to search for.
         :param load: A Load object to search for.
         """
 
@@ -165,8 +167,68 @@ class Combination:
         # if the load exists, then simply delete the key from the dictionary.
         del self.load_factors[ld_exists]
 
-    def load_exists(self, load_no = None, load_name = None, load = None):
-        raise NotImplementedError
+    def load_exists(self,
+                    load_no: int = None,
+                    load_name: str = None,
+                    load: Load = None) -> Union[bool, int]:
+        """
+        Search through the self.load_factors dictionary and determine if a load
+        exists.
+
+        Note that the load can be specified via load_no, load_name or directly,
+        but if more than one way is provided only the first is actually used.
+
+        :param load_no: The no. of the load to search for.
+        :param load_name: The name of the load to search for.
+        :param load: A Load object to search for.
+        :return: Return False if the load does not exist, alternatively return
+            the key at which the load exists in the self.load_factor dictionary.
+        """
+
+        if load_no != None:
+            # if the load_no is provided, a simple key lookup into the
+            # self.load_factors dictionary is all that is required.
+
+            if load_no in self.load_factors:
+                return load_no
+            else:
+                return False
+
+        elif load_name != None:
+            # if the load_name is provided, then the dictionary needs to be
+            # iterated over.
+
+            for k, v in self.load_factors.items():
+                # The value is a List[LoadFactor] and therefore will also have
+                # to be iterated over
+
+                for LF in v:
+
+                    if LF.load.load_name == load_name:
+                        return k
+
+            # only if we iterate entirely through the dictionary do we know that
+            # the load does not exist.
+
+            return False
+
+        else:
+            # if the load is provided as a Load object, need to iterate through
+            # the self.load_factors dictionary
+
+            for k, v in self.load_factors.items():
+                # the value is a List[LoadFactor] and therefore will also have
+                # to be iterated over
+
+                for LF in v:
+
+                    if LF.load == load:
+                        return k
+
+            # only if we complete the iteration do we know that the load
+            # does not exist
+
+            return False
 
     def load_factor_exists(self, load_factor):
         raise NotImplementedError
