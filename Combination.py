@@ -287,7 +287,21 @@ class Combination:
 
     @property
     def list_load_factors(self):
-        raise NotImplementedError
+        """
+        Return a list of all LoadFactors in the combination
+
+        :return: Returns an unsorted list of all LoadFactors in the Combination.
+        """
+
+        # simply iterate through the self.load_factors dictionary and append
+        # each list to the return list
+
+        ret_list = []
+
+        for k, v in self.load_factors.items():
+            ret_list += v
+
+        return ret_list
 
     @property
     def list_loads(self):
