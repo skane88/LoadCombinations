@@ -144,14 +144,21 @@ class Combination:
     @property
     def allow_duplicates(self) -> bool:
         """
-
-        :return:
+        Are duplicate load_factors allowed for each load in the combionation?
+        :return: Returns the allow_duplicates property.
         """
 
         return self._allow_duplicates
 
     @allow_duplicates.setter
     def allow_duplicates(self, allow_duplicates: bool = False):
+        """
+        Are duplicate load_factors allowed for each load in the combination?
+
+        :param allow_duplicates: A boolean specifying if duplicate load_factors
+            are allowed for each load in the combination?
+        """
+
         self._allow_duplicates = allow_duplicates
 
 
