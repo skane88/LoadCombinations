@@ -280,8 +280,27 @@ class Combination:
 
         self._allow_duplicates = allow_duplicates
 
-
     @property
+    def load_case(self) -> str:
+        """
+        Getter / setter for the self.load_case property.
+
+        :return: The title of the load case that generated the combination.
+        """
+
+        return self._load_case
+
+    @load_case.setter
+    def load_case(self, load_case: str):
+        """
+        Getter / setter for the self.load_case property.
+
+        :param load_case: The title of the load case that generated the
+            combination.
+        """
+
+        self._load_case = load_case
+
     def combination_title(self):
         raise NotImplementedError
 
