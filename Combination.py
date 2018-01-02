@@ -301,6 +301,29 @@ class Combination:
 
         self._load_case = load_case
 
+    @property
+    def load_case_abbrev(self) -> str:
+        """
+        Getter / setter for the self.load_case_abbrev property
+
+        :return: The abbreviation for the load case that generated the
+            combination
+        """
+
+        return self._load_case_abbrev
+
+    @load_case_abbrev.setter
+    def load_case_abbrev(self, load_case_abbrev: str):
+        """
+        Getter / setter for the self.load_case_abbrev parameter.
+
+        :param load_case_abbrev: The abbreviation for the load case that
+            generated the combination.
+        """
+
+        self._load_case_abbrev = load_case_abbrev
+
+
     def combination_title(self):
         raise NotImplementedError
 
