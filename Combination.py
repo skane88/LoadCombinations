@@ -13,6 +13,10 @@ class Combination:
     Stores the resulting load combinations output from a ``LoadCase`` object.
     """
 
+    def __init__(self):
+
+        raise NotImplementedError
+
     @property
     def load_factors(self) -> Dict[int, List[LoadFactor]]:
         """
@@ -323,9 +327,86 @@ class Combination:
 
         self._load_case_abbrev = load_case_abbrev
 
+    @property
+    def load_case_no(self) -> int:
+        """
+        Getter / setter for the load_case_no property
+        :return: Return the load case no. of the LoadCase that generated the
+            combination
+        """
 
-    def combination_title(self):
-        raise NotImplementedError
+        return self._load_case_no
+
+    @load_case_no.setter
+    def load_case_no(self, load_case_no: int):
+        """
+        Getter / setter for the load_case_no property.
+
+        :param load_case_no: The load case no. of the LoadCase that generated
+            the combination
+        """
+
+        self._load_case_no = load_case_no
+
+
+    def combination_title(self,
+                          abbreviate: bool = False,
+                          combine_same_loads: bool = True) -> str:
+        """
+        Generates a title for the combination based on the LoadFactors in it.
+
+        The resulting title will be sorted by the load_no.
+
+        :param abbreviate: Use abbreviations where possible.
+        :param combine_same_loads: Where multiple LoadFactors of the same Load
+            are included then combine them into a single factor
+        :return: Return a title for the combination based on the LoadFactors in
+            it.
+        """
+
+        title = '' # string for resulting title
+        load_list = self.list_loads_with_factors
+        load_nos = sorted(load_list.keys())
+
+        for i in load_nos:
+            data = load_list[i]
+
+            title_list = []
+
+            if len(data[2]) > 1 and not combine_same_loads:
+                # if there are multiple LoadFactors and
+                # combine_same_loads is False
+                # then we need multiple elements for each load factor
+
+                for LF in data[2]:
+                    case_factor = str(LF.factor)
+
+                    if abbreviate:
+                        case_title = LF.load.abbrev
+                    else:
+                        case_title = LF.load.load_name
+
+                    title_list.append(case_factor + case_title)
+
+            else:
+                # else we only have 1x name to make
+
+                if abbreviate:
+                    case_title = data[1].abbrev
+                else:
+                    case_title = data[1].load_name
+
+                case_factor = str(data[0])
+
+                title_list.append(case_factor + case_title)
+
+            # now we have a list of loads + factors to add together for the
+            # final title
+
+            for t in title_list:
+                title += '+' + t
+
+        return title
 
     @property
     def list_load_factors(self) -> List[LoadFactor]:
@@ -369,3 +450,48 @@ class Combination:
                 ret_list.append(LF.load)
 
         return ret_list
+
+    @property
+    def list_loads_with_factors(self) -> Dict[int,
+                                              Tuple[float,
+                                                    Load,
+                                                    List[LoadFactor]]]:
+        """
+        Returns a dictionary containing the loads and the factors applied to
+        them.
+
+        :return: Returns a Dictionary of the following format:
+            ``{load_no: (factor, Load, List[LoadFactor])}``
+
+            where ``factor`` is the total factor to apply to the load.
+        """
+
+        load_dict = {}
+
+        # to build the load list, iterate through all the load factors:
+
+        for LF in self.list_load_factors:
+
+            # if the load is already in the dictionary we just amend the
+            # dictionary
+
+            if LF.load.load_no in load_dict:
+                exist = load_dict[LF.load.load_no]
+
+                factor = exist[0]
+                load = exist[1]
+                lfs = exist[2]
+
+                new_factor = factor + LF.factor
+                new_lfs = lfs.append(LF)
+
+                new = (new_factor, load, new_lfs)
+
+                load_dict[LF.load.load_no] = new
+
+            else:
+                # else we create the entry in the load dictionary
+
+                load_dict[LF.load.load_no] = (LF.factor, LF.load, [LF])
+
+        return load_dict
