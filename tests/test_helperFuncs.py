@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import math
-from unittest import TestCase
+from unittest import TestCase, expectedFailure
 from HelperFuncs import linear_interp, sine_interp_90, sine_interp
 from HelperFuncs import wind_interp_85
 
@@ -166,18 +166,21 @@ class test_helper_funcs(TestCase):
         self.assertRaises(ValueError, wind_interp_85, 90, 95)
 
 
+    @expectedFailure
     def test_req_angles_int(self):
 
         print("Method req_angles_int not tested as not currently used.")
 
         self.fail()
 
+    @expectedFailure
     def test_req_angles_list(self):
 
         print("Method req_angles_list not tested as not currently used.")
 
         self.fail()
 
+    @expectedFailure
     def test_req_angles_chooser(self):
 
         print("Method req_angles_chooser not tested as not currently used.")
