@@ -136,7 +136,7 @@ class Combination:
 
         else:
             raise ValueError(f'Expected either a LoadFactor object to add, or '
-                             + f'a Dict[int, List[LoadFactor]], ''
+                             + f'a Dict[int, List[LoadFactor]], '
                              + f'List[LoadFactor] or a Tuple[LoadFactor,...]. '
                              + f'Actual value received was: {load_factor}')
 
@@ -453,7 +453,7 @@ class Combination:
             # value, which is a List[LoadFactor]
 
             for LF in v:
-                if LF not in ret_list
+                if LF not in ret_list:
                     ret_list.append(LF)
 
         return ret_list
