@@ -22,7 +22,7 @@ class TestCombination(TestCase):
         case_abbrev = 'C1'
         allow_duplicates = False
 
-        c = Combination(load_case_no = case_no,
+        C = Combination(load_case_no = case_no,
                         load_case = case_name,
                         load_case_abbrev = case_abbrev,
                         load_factors = LF,
@@ -46,7 +46,34 @@ class TestCombination(TestCase):
         self.fail()
 
     def test_allow_duplicates(self):
-        self.fail()
+        """
+        Test the allow_duplicates getter / setter
+        """
+
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = '')
+
+        LF = LoadFactor(load = l1)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = False
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = LF,
+                        allow_duplicates = allow_duplicates)
+
+        self.assertEqual(first = allow_duplicates, second = C.allow_duplicates)
+
+        allow_duplicates = True
+
+        C.allow_duplicates = allow_duplicates
+
+        self.assertEqual(first = allow_duplicates, second = C.allow_duplicates)
 
     def test_load_case(self):
         self.fail()
