@@ -13,9 +13,36 @@ class Combination:
     Stores the resulting load combinations output from a ``LoadCase`` object.
     """
 
-    def __init__(self):
+    def __init__(self, *,
+                 load_case_no: int,
+                 load_case: str,
+                 load_case_abbrev,
+                 load_factors:Union[Dict[int, List[LoadFactor]],
+                                    List[LoadFactor],
+                                    Tuple[LoadFactor,...],
+                                    LoadFactor],
+                 allow_duplicates: bool = False):
+        """
 
-        raise NotImplementedError
+        :param load_case_no: The load case no. of the LoadCase that generated
+            the combination
+        :param load_case: The title of the load case that generated the
+            combination.
+        :param load_case_abbrev: The abbreviation for the load case that
+            generated the combination.
+        :param load_factors: The load_factor to be added. This is expected to be
+            a LoadFactor object, or: a Dict[int, List[LoadFactor]] (i.e. in the
+            same format as the self.load_factors dictionary), or a
+            List[LoadFactor] or Tuple[LoadFactor].
+        :param allow_duplicates: A boolean specifying if duplicate load_factors
+            are allowed for each load in the combination?
+        """
+
+        self.load_case_no = load_case_no
+        self.load_case = load_case
+        self.load_case_abbrev = load_case_abbrev
+        self.allow_duplicates = allow_duplicates
+        self.load_factors = load_factors
 
     @property
     def load_factors(self) -> Dict[int, List[LoadFactor]]:
