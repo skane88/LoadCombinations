@@ -1,7 +1,34 @@
 from unittest import TestCase
-
+from Combination import Combination
+from LoadFactor import LoadFactor
+from Load import Load
 
 class TestCombination(TestCase):
+
+    def test_basic(self):
+        """
+        Basic test for the class - can it even be instantiated?
+        """
+
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = '')
+
+        LF = LoadFactor(load = l1)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = False
+
+        c = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = LF,
+                        allow_duplicates = allow_duplicates)
+
+        self.fail('Need to implement str & repr methods')
+
     def test_load_factors(self):
         self.fail()
 

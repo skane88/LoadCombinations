@@ -87,7 +87,7 @@ class Combination:
             List[LoadFactor] or Tuple[LoadFactor].
         """
 
-        if isinstance(load_factor, Dict[int, List[LoadFactor]]):
+        if isinstance(load_factor, dict):
             # if the load_factor list is supplied as a dictionary that already
             # matches the expected format for self._load_factors, then check
             # that load_factors already exists.
@@ -104,8 +104,8 @@ class Combination:
                 for k, v in load_factor.items():
                     self.add_load_factor(v)
 
-        elif (isinstance(load_factor, List[LoadFactor]) or
-              isinstance(load_factor, Tuple[LoadFactor,...])):
+        elif (isinstance(load_factor, list) or
+              isinstance(load_factor, tuple)):
             # if a list of items, recursively call this method on each item.
 
             for i in load_factor:
