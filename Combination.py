@@ -377,8 +377,10 @@ class Combination:
 
 
     def combination_title(self,
-                          abbreviate: bool = False,
-                          combine_same_loads: bool = True) -> str:
+                          abbreviate: bool = True,
+                          combine_same_loads: bool = True,
+                          times_sign: str = '×',
+                          decimals: int = 3) -> str:
         """
         Generates a title for the combination based on the LoadFactors in it.
 
@@ -406,14 +408,14 @@ class Combination:
                 # then we need multiple elements for each load factor
 
                 for LF in data[2]:
-                    case_factor = str(LF.factor)
+                    case_factor = ('{:-0.' + str(decimals) + 'f}').format(LF.factor)
 
                     if abbreviate:
                         case_title = LF.load.abbrev
                     else:
                         case_title = LF.load.load_name
 
-                    title_list.append(case_factor + case_title)
+                    title_list.append(case_factor + times_sign + case_title)
 
             else:
                 # else we only have 1x name to make
@@ -423,15 +425,19 @@ class Combination:
                 else:
                     case_title = data[1].load_name
 
-                case_factor = str(data[0])
+                case_factor = ('{:-0.' + str(decimals) + 'f}').format(data[0])
 
-                title_list.append(case_factor + case_title)
+                title_list.append(case_factor + times_sign + case_title)
 
             # now we have a list of loads + factors to add together for the
             # final title
 
             for t in title_list:
-                title += '+' + t
+
+                if title == '':
+                    title += t
+                else:
+                    title += ' + ' + t
 
         return title
 
@@ -440,7 +446,7 @@ class Combination:
         """
         Return a list of all LoadFactors in the combination
 
-        :return: Returns an unsorted list of all LoadFactors in the Combination.
+        :return: Returns a sorted list of all LoadFactors in the Combination.
         """
 
         # simply iterate through the self.load_factors dictionary
@@ -456,14 +462,14 @@ class Combination:
                 if LF not in ret_list:
                     ret_list.append(LF)
 
-        return ret_list
+        return sorted(ret_list, key = lambda x: x.load.load_no)
 
     @property
     def list_loads(self) -> List[Load]:
         """
         Return a list of all Loads in the combination.
 
-        :return: Returns an unsorted list of all Loads in the combination.
+        :return: Returns a sorted list of all Loads in the combination.
         """
 
         ret_list = []
@@ -476,7 +482,7 @@ class Combination:
 
                 ret_list.append(LF.load)
 
-        return ret_list
+        return sorted(ret_list, key = lambda x: x.load_no)
 
     @property
     def list_loads_with_factors(self) -> Dict[int,
@@ -510,7 +516,7 @@ class Combination:
                 lfs = exist[2]
 
                 new_factor = factor + LF.factor
-                new_lfs = lfs.append(LF)
+                new_lfs = lfs + [LF]
 
                 new = (new_factor, load, new_lfs)
 
