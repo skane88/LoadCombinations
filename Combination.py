@@ -648,6 +648,15 @@ class Combination:
         raise Exception('Unknown error occured trying to determine the load '
                         + 'that corresponds to the maximum no. of load factors')
 
+    def __str__(self):
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __str__ method to be accepted for subclasses of
+        # LoadGroup without change.
+
+        return (f'{type(self).__name__}: '
+                + f'{self.combination_title()}'
+                )
+
     def __eq__(self, other):
         """
         Override the equality test.

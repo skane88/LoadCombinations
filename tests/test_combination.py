@@ -16,7 +16,7 @@ class TestCombination(TestCase):
 
         l1 = Load(load_name = 'Test Load',
                   load_no = 1,
-                  abbrev = '')
+                  abbrev = 'TL1')
 
         LF = LoadFactor(load = l1)
 
@@ -31,7 +31,9 @@ class TestCombination(TestCase):
                         load_factors = LF,
                         allow_duplicates = allow_duplicates)
 
-        self.fail('Need to implement str & repr methods')
+        print(str(C))
+
+        self.fail('Need to implement repr method')
 
     def test_load_factors(self):
         """
