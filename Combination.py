@@ -379,6 +379,7 @@ class Combination:
     def combination_title(self,
                           abbreviate: bool = True,
                           combine_same_loads: bool = True,
+                          load_separator = ' + ',
                           times_sign: str = '×',
                           decimals: int = 3) -> str:
         """
@@ -397,10 +398,50 @@ class Combination:
         load_list = self.list_loads_with_factors
         load_nos = sorted(load_list.keys())
 
+        factor_format = '{:-0.' + str(decimals) + 'f}'
+
+        def case_title(*, load: Load,
+                       abbreviate: bool) -> str:
+            """
+            Defines a helper function to determine the case_title string.
+
+            :param load: The Load being considered.
+            :param abbreviate: Is the abbreviated load name to be used?
+            :return: Returns the case_title string used to describe each load
+                and its factors in the combination title.
+            """
+
+            if abbreviate:
+                return load.abbrev
+            else:
+                return load.load_name
+
+        def load_string(*, title: str,
+                        case_factor: str,
+                        case_title: str,
+                        times_sign: str,
+                        load_separator: str) -> str:
+            """
+            Defines a brief internal function for building the load_string for
+            each load.
+
+            :param title: the title string, used to determine if a
+                load_separator is appended to the start of the return string.
+            :param case_factor: The case_factor
+            :param case_title: The case title.
+            :param times_sign: The times sign string.
+            :param load_separator: The load separation string.
+            :return: The string that describes each load and its factor.
+            """
+            ret_string = case_factor + times_sign + case_title
+
+            if len(title) != 0:
+                ret_string = load_separator + ret_string
+
+            return ret_string
+
         for i in load_nos:
             data = load_list[i]
-
-            title_list = []
 
             if len(data[2]) > 1 and not combine_same_loads:
                 # if there are multiple LoadFactors and
@@ -408,36 +449,28 @@ class Combination:
                 # then we need multiple elements for each load factor
 
                 for LF in data[2]:
-                    case_factor = ('{:-0.' + str(decimals) + 'f}').format(LF.factor)
+                    case_factor = factor_format.format(LF.factor)
 
-                    if abbreviate:
-                        case_title = LF.load.abbrev
-                    else:
-                        case_title = LF.load.load_name
-
-                    title_list.append(case_factor + times_sign + case_title)
+                    title += load_string(title = title,
+                                         case_factor = case_factor,
+                                         case_title = case_title(
+                                             load = data[1],
+                                             abbreviate = abbreviate),
+                                         times_sign = times_sign,
+                                         load_separator = load_separator)
 
             else:
                 # else we only have 1x name to make
 
-                if abbreviate:
-                    case_title = data[1].abbrev
-                else:
-                    case_title = data[1].load_name
+                case_factor = factor_format.format(data[0])
 
-                case_factor = ('{:-0.' + str(decimals) + 'f}').format(data[0])
-
-                title_list.append(case_factor + times_sign + case_title)
-
-            # now we have a list of loads + factors to add together for the
-            # final title
-
-            for t in title_list:
-
-                if title == '':
-                    title += t
-                else:
-                    title += ' + ' + t
+                title += load_string(title = title,
+                                     case_factor = case_factor,
+                                     case_title = case_title(
+                                         load = data[1],
+                                         abbreviate = abbreviate),
+                                     times_sign = times_sign,
+                                     load_separator = load_separator)
 
         return title
 
