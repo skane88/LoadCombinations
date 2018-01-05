@@ -565,3 +565,40 @@ class Combination:
                 load_dict[LF.load.load_no] = (LF.factor, LF.load, [LF])
 
         return load_dict
+
+    @property
+    def count_load_factors(self) -> List[Tuple[LoadFactor, int]]:
+        """
+        Returns a List containing every LoadFactor and their count.
+        :return: Returns a List[Tuple[LoadFactor, int]] containing every
+            LoadFactor and their count.
+        """
+
+        ret_list = []
+        load_factors = self.list_load_factors
+
+        for LF in load_factors:
+            count = self.load_factors[LF.load.load_no].count(LF)
+            ret_list.append((LF, count))
+
+        return ret_list
+
+    def __eq__(self, other):
+        """
+        Override the equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        """
+        Override the non-equality test.
+        """
+
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+
+        return NotImplemented

@@ -472,6 +472,9 @@ class TestCombination(TestCase):
 
         self.fail('Need to add check for duplicates in existing LF dictionary')
 
+    def test_count_load_factors(self):
+        self.fail()
+
     def test_load_case(self):
         """
         Test the load_case getter / setter
