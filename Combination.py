@@ -38,6 +38,7 @@ class Combination:
             are allowed for each load in the combination?
         """
 
+        self._load_factors = {}
         self.load_case_no = load_case_no
         self.load_case = load_case
         self.load_case_abbrev = load_case_abbrev
@@ -315,6 +316,14 @@ class Combination:
 
         # if setting allow_duplicates to False, need to test that there are not
         # already duplicates in the library
+
+        if allow_duplicates == False:
+            if self._max_load_factors > 1:
+                load = self._load_with_max_factors
+                count = self._max_load_factors
+                raise ValueError(f'Error when attempting to set '
+                                 + f'allow_duplicates to False. Load no. '
+                                 + f'{load} has {count} LoadFactors.')
 
         self._allow_duplicates = allow_duplicates
 
@@ -599,6 +608,45 @@ class Combination:
             ret_dict[k] = len(v)
 
         return ret_dict
+
+    @property
+    def _max_load_factors(self) -> int:
+        """
+
+        :return: Returns the maximum no. of load_factors per load contained in
+            the self.load_factors dictionary
+        """
+
+        count = self.count_load_factors_per_load
+
+        if len(count) == 0:
+            # if count is empty, max() will fail - just return 0.
+            return 0
+
+        return max(count.values())
+
+    @property
+    def _load_with_max_factors(self) -> int:
+        """
+        Returns the load_no of the load with the max. no. of factors. If there
+        are more than 1x loads with the same no. of load factors this method
+        only returns the first that comes out of the count_load_factors_per_load
+        dictionary, which is not guaranteed to be in order.
+
+        :return: The load_no of the load with the max. no. of factors.
+        """
+
+        count = self.count_load_factors_per_load
+        max_factors = self._max_load_factors
+
+        # now need to iterate through the count dictionary to get the load no.
+
+        for k, v in count.items():
+            if v == max_factors:
+                return k
+
+        raise Exception('Unknown error occured trying to determine the load '
+                        + 'that corresponds to the maximum no. of load factors')
 
     def __eq__(self, other):
         """

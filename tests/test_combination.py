@@ -470,7 +470,48 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = allow_duplicates, second = C.allow_duplicates)
 
-        self.fail('Need to add check for duplicates in existing LF dictionary')
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = 'l1')
+
+        LF1_1 = LoadFactor(load = l1)
+        LF1_2 = LoadFactor(load = l1, base_factor = 2.0)
+
+        l2 = Load(load_name = 'Test Load 2',
+                  load_no = 2,
+                  abbrev = 'l2')
+
+        LF2_1 = LoadFactor(load = l2)
+
+        l3 = Load(load_name = 'Test Load 3',
+                  load_no = 3,
+                  abbrev = 'l3')
+
+        LF3_1 = LoadFactor(load = l3)
+
+        l4 = Load(load_name = 'Test Load 4',
+                  load_no = 4,
+                  abbrev = 'l4')
+
+        LF4_1 = LoadFactor(load = l4)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = True
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = load_factors,
+                        allow_duplicates = allow_duplicates)
+
+        with self.assertRaises(ValueError):
+            C.allow_duplicates = False
+
+        self.assertTrue(C.allow_duplicates)
 
     def test_load_case(self):
         """
