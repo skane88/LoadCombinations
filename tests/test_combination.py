@@ -472,9 +472,6 @@ class TestCombination(TestCase):
 
         self.fail('Need to add check for duplicates in existing LF dictionary')
 
-    def test_count_load_factors(self):
-        self.fail()
-
     def test_load_case(self):
         """
         Test the load_case getter / setter
@@ -670,7 +667,6 @@ class TestCombination(TestCase):
         self.assertEqual(first = C.combination_title(decimals = 5),
                          second = expected_title)
 
-
     def test_list_load_factors(self):
         """
         Test the list_load_factors method.
@@ -816,3 +812,49 @@ class TestCombination(TestCase):
                     4: (1.0, l4, [LF4_1])}
 
         self.assertEqual(first = C.list_loads_with_factors, second = out_list)
+
+    def test_count_load_factors(self):
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = 'l1')
+
+        LF1_1 = LoadFactor(load = l1)
+        LF1_2 = LoadFactor(load = l1, base_factor = 2.0)
+
+        l2 = Load(load_name = 'Test Load 2',
+                  load_no = 2,
+                  abbrev = 'l2')
+
+        LF2_1 = LoadFactor(load = l2)
+
+        l3 = Load(load_name = 'Test Load 3',
+                  load_no = 3,
+                  abbrev = 'l3')
+
+        LF3_1 = LoadFactor(load = l3)
+
+        l4 = Load(load_name = 'Test Load 4',
+                  load_no = 4,
+                  abbrev = 'l4')
+
+        LF4_1 = LoadFactor(load = l4)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = True
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = load_factors,
+                        allow_duplicates = allow_duplicates)
+
+        C.add_load_factor(LF1_1)
+        C.add_load_factor(LF1_1)
+        C.add_load_factor(LF3_1)
+
+        count = [(LF1_1, 3), (LF1_2, 1), (LF2_1, 1), (LF3_1, 2), (LF4_1, 1)]
+
+        self.assertEqual(first = C.count_load_factors, second = count)
