@@ -587,15 +587,18 @@ class Combination:
         return ret_list
 
     @property
-    def count_load_factors_per_load(self) -> List[Tuple[int, int]]:
+    def count_load_factors_per_load(self) -> Dict[int, int]:
         """
-        Returns a List countaining a count of the LoadFactors for each load.
-        :return: Returns a List[Tuple[int, int]] containing every load, and a
-            count of the no. of LoadFactors for each. The tuple is setup as
-            (load_no, count).
+        Returns a Dict containing a count of the LoadFactors for each load.
+        :return: Returns a Dictionary {load_no: count of LoadFactors}
         """
 
-        raise NotImplementedError
+        ret_dict = {}
+
+        for k, v in self.load_factors.items():
+            ret_dict[k] = len(v)
+
+        return ret_dict
 
     def __eq__(self, other):
         """
