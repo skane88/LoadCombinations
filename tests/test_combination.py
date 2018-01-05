@@ -1,3 +1,6 @@
+# coding=utf-8
+
+import math
 from unittest import TestCase, expectedFailure
 from Combination import Combination
 from LoadFactor import LoadFactor
@@ -86,6 +89,9 @@ class TestCombination(TestCase):
         self.fail()
 
     def test_del_load(self):
+        self.fail()
+
+    def test_del_load_factor(self):
         self.fail()
 
     def test_load_exists(self):
@@ -358,9 +364,68 @@ class TestCombination(TestCase):
                         load_factors = load_factors,
                         allow_duplicates = allow_duplicates)
 
-        print(C.combination_title())
+        expected_title = '3.000×l1 + 1.000×l2 + 1.000×l3 + 1.000×l4'
 
-        self.fail()
+        self.assertEqual(first = C.combination_title(), second = expected_title)
+
+        LF4_1 = LoadFactor(load = l4,
+                           base_factor = 0.3,
+                           scale_factor = 1.7,
+                           rotational_factor =  math.pi)
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = load_factors,
+                        allow_duplicates = allow_duplicates)
+
+        expected_title = '3.000×l1 + 1.000×l2 + 1.000×l3 + 1.602×l4'
+
+        self.assertEqual(first = C.combination_title(), second = expected_title)
+
+        expected_title = (f'3.000×{l1.load_name} + '
+                          + f'1.000×{l2.load_name} + '
+                          + f'1.000×{l3.load_name} + '
+                          + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.load_name}')
+
+        self.assertEqual(first = C.combination_title(abbreviate = False),
+                         second = expected_title)
+
+        expected_title = (f'1.000×{l1.abbrev} + '
+                          + f'2.000×{l1.abbrev} + '
+                          + f'1.000×{l2.abbrev} + '
+                          + f'1.000×{l3.abbrev} + '
+                          + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.abbrev}')
+
+        self.assertEqual(first = C.combination_title(combine_same_loads = False),
+                         second = expected_title)
+
+        expected_title = (f'3.000×{l1.abbrev}2p1'
+                          + f'1.000×{l2.abbrev}2p1'
+                          + f'1.000×{l3.abbrev}2p1'
+                          + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.abbrev}')
+
+        self.assertEqual(first = C.combination_title(load_separator = '2p1'),
+                         second = expected_title)
+
+        expected_title = (f'3.000-*-{l1.abbrev} + '
+                          + f'1.000-*-{l2.abbrev} + '
+                          + f'1.000-*-{l3.abbrev} + '
+                          + f'{0.3 * 1.7 * math.pi:0.3f}-*-{l4.abbrev}')
+
+        self.assertEqual(first = C.combination_title(times_sign = '-*-'),
+                         second = expected_title)
+
+        expected_title = (f'3.00000×{l1.abbrev} + '
+                          + f'1.00000×{l2.abbrev} + '
+                          + f'1.00000×{l3.abbrev} + '
+                          + f'{0.3 * 1.7 * math.pi:0.5f}×{l4.abbrev}')
+
+        self.assertEqual(first = C.combination_title(decimals = 5),
+                         second = expected_title)
+
 
     def test_list_load_factors(self):
         """
