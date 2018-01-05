@@ -313,6 +313,9 @@ class Combination:
             are allowed for each load in the combination?
         """
 
+        # if setting allow_duplicates to False, need to test that there are not
+        # already duplicates in the library
+
         self._allow_duplicates = allow_duplicates
 
     @property
@@ -582,6 +585,17 @@ class Combination:
             ret_list.append((LF, count))
 
         return ret_list
+
+    @property
+    def count_load_factors_per_load(self) -> List[Tuple[int, int]]:
+        """
+        Returns a List countaining a count of the LoadFactors for each load.
+        :return: Returns a List[Tuple[int, int]] containing every load, and a
+            count of the no. of LoadFactors for each. The tuple is setup as
+            (load_no, count).
+        """
+
+        raise NotImplementedError
 
     def __eq__(self, other):
         """
