@@ -6,11 +6,13 @@ LoadGroup objects and use them to output relevant load combinations within the
 case.
 """
 
+import copy
 from typing import Dict, List, Union, Tuple
 from LoadGroup import LoadGroup
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
 from GroupFactor import GroupFactor
+from Combination import Combination
 import itertools
 
 class LoadCase:
@@ -396,87 +398,81 @@ class LoadCase:
 
         self._abbrev = abbrev
 
-    def generate_cases(self):
+    def generate_cases(self) -> List[Combination]:
         """
-        Generates a generator that generates ``LoadCombination`` objects, which
+        Generates a generator that generates ``Combination`` objects, which
         generates all possible load combinations from the case.
 
         :return: Returns a generator which generates all possible load
             combinations from the case.
         """
 
-        # first generate a list of all possible combinations then return them
-        # in the generator.
-
-        group_list = []
-
-        for k, g in self.load_groups.items():
-
-            # from each item in the list, make a temporary list. This will be a
-            # list of the following format:
-            # [(LF1, ..., LFn), (LF1, ..., LFn)]
-            # where each Tuple contains 1 or more ``LoadFactor`` objects, and
-            # corresponds to a separate group of possible loads that come out
-            # of the group.
-
-            temp_list = list(g.load_group.generate_groups(group_factor = g.group_factor))
-
-            # if the list has a length of 0 then just skip to the next group
-            if len(temp_list) == 0:
-                continue
-
-            # finally add the list to the group_list
-            group_list.append(temp_list)
-
-        # we now have a list of all load factors that are output from the
-        # ``LoadGroups``, updated with the appropriate group_factors.
-        # we then need to develop all the possible combinations.
-
-        # first throw error if no combinations available at all.
-        if len(group_list) == 0:
-            raise ValueError(f'Expected at least 1x combination. No '
-                             + f'combinations generated.')
-
-        print(group_list)
-
-        # next generate a list to output the combinations
-
-        i = 1
-
-        for g in group_list:
-
-            i *= len(g)
-
         comb_list = []
 
-        for j in range(i):
-            comb_list.append([])
+        def copy_comb_list(comb_list: List[Combination]) -> List[Combination]:
+            """
+            Helper function that does a copy of a list of Combination objects.
 
-        print(comb_list)
+            :param comb_list: The list to copy.
+            :return: A copy of the list where each item is a shallow copy of the
+                original.
+            """
 
-        # next, go through the list and append the group load factors
-        # by cycling through each element in the group_list. This will ensure.
-        # that the full list of combinations is generated.
+            ret_list = []
 
-        for g in group_list:
-            cycle = itertools.cycle(g)
             for i in comb_list:
-                i.append(next(cycle))
+                ret_list.append(copy.deepcopy(i))
 
-        # we now have combinations that are in the following format:
-        # [[(LF1, ..., LFn), ...,(LF1, ..., LFn)],[(), ...()]
-        # where each list is a separate possible combination.
+            return ret_list
 
-        # these combinations now need to be flattened if possible.
-        for c in comb_list:
-            c = list(itertools.chain(*c))
-            print(c)
+        # iterate through all the load group items
+        for k, g in self.load_groups.items():
 
-        # we should now have a list of lists, containing the possible
-        # combinations in the load:
-        # [[combination_1], ..., [combination_n]]
+            # need to get a temporary list containing everything already in
+            # the comb_list
 
-        raise NotImplementedError
+            # if the list is empty, need to create combinations:
+
+            if len(comb_list) == 0:
+
+                # for each output of the load_group, create a LoadFactor.
+                for LF in g.load_group.generate_groups(group_factor = g.group_factor):
+
+                    #Using the LoadFactor, create the combination
+                    comb = Combination(load_case_no = self.case_no,
+                                       load_case = self.case_name,
+                                       load_case_abbrev = self.abbrev,
+                                       load_factors = LF
+                                       )
+
+                    # next append the combination object into comb_list:
+                    comb_list.append(comb)
+
+            else:
+                # if there are already combinations, we need to add the
+                # LoadFactors generated to the existing combinations
+
+                orig_list = copy_comb_list(comb_list)
+                comb_list = [] # cleared out so we can replace.
+
+                # for each output of the load_group, create a LoadFactor
+                for LF in g.load_group.generate_groups(group_factor = g.group_factor):
+
+                    # add this LoadFactor to each Combination in the original
+                    # comb_list object
+
+                    for C in orig_list:
+                        comb = copy.deepcopy(C) # do a copy so that any existing
+                                            # internal references (such as
+                                            # shared loads etc.) are maintained
+
+                        # add the LoadFactor into the combination.
+                        comb.add_load_factor(LF)
+
+                        # add the combination into the combination list
+                        comb_list.append(comb)
+
+        return comb_list
 
     def __str__(self):
         # use the {type(self).__name__} call to get the exact class name. This

@@ -523,6 +523,10 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = abbrev, second = LC.abbrev)
 
     def test_generate_cases(self):
+        """
+        Test the generate_cases method.
+        """
+
         l1 = Load(load_name = 'G1 - Mechanical Dead Load', load_no = 1,
                   abbrev = 'G1')
         l2 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 2,
@@ -557,6 +561,7 @@ class TestLoadCase(TestCase):
         LC = LoadCase(case_name = case_name, case_no = case_no,
                       load_groups = LGs, abbrev = abbrev)
 
-        LC.generate_cases()
+        for i in LC.generate_cases():
+            print(i)
 
         self.fail()
