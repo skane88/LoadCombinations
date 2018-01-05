@@ -164,6 +164,10 @@ class Combination:
         while load_factor in self.load_factors[lf_exists]:
             self.load_factors[lf_exists].remove(load_factor)
 
+        # finally, if this has emptied out the LF list, remove the entire load
+        if len(self.load_factors[lf_exists]) == 0:
+            self.del_load(load_no = lf_exists)
+
     def del_load(self, load_no: int = None, load_name: str = None,
                  load: Load = None):
         """

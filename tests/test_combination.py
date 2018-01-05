@@ -86,13 +86,249 @@ class TestCombination(TestCase):
         self.assertEqual(first = C.load_factors, second = load_factors)
 
     def test_add_load_factor(self):
-        self.fail()
+        """
+        Test the add_load_factor method.
+        """
+
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = 'l1')
+
+        LF1_1 = LoadFactor(load = l1)
+        LF1_2 = LoadFactor(load = l1, base_factor = 2.0)
+
+        l2 = Load(load_name = 'Test Load 2',
+                  load_no = 2,
+                  abbrev = 'l2')
+
+        LF2_1 = LoadFactor(load = l2)
+
+        l3 = Load(load_name = 'Test Load 3',
+                  load_no = 3,
+                  abbrev = 'l3')
+
+        LF3_1 = LoadFactor(load = l3)
+
+        l4 = Load(load_name = 'Test Load 4',
+                  load_no = 4,
+                  abbrev = 'l4')
+
+        LF4_1 = LoadFactor(load = l4)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = True
+
+        load_factors = {}
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = load_factors,
+                        allow_duplicates = allow_duplicates)
+
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        #test adding LoadFactors by adding a whole dictionary:
+        C.add_load_factor(load_factors)
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        # reset the load_factors dictionary
+        load_factors = {}
+        C.load_factors = load_factors
+
+        # test adding a list of LoadFactors:
+        load_factors = [LF1_1, LF1_2, LF2_1, LF3_1, LF4_1]
+        C.add_load_factor(load_factors)
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        # reset the load_factors dictionary
+        load_factors = {}
+        C.load_factors = load_factors
+
+        # test adding a tuple of load factors
+
+        load_factors = (LF1_1, LF1_2, LF2_1, LF3_1, LF4_1)
+        C.add_load_factor(load_factors)
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        # reset the load_factors dictionary
+        load_factors = {}
+        C.load_factors = load_factors
+
+        # test adding individual load factors
+        C.add_load_factor(LF1_1)
+
+        load_factors = {1: [LF1_1]}
+
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        # reset the load_factors dictionary
+        load_factors = {}
+        C.load_factors = load_factors
+
+        # test an error if a non-load factor object is added
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+        C.load_factors = load_factors
+
+        self.assertRaises(ValueError, C.add_load_factor, 2)
+
+        # test an error if attempting to add multiple load factors
+        load_factors = {1: [LF1_1], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+        C.load_factors = load_factors
+        C.allow_duplicates = False
+
+        self.assertRaises(ValueError, C.add_load_factor, LF1_1)
+        self.assertRaises(ValueError, C.add_load_factor, LF1_2)
 
     def test_del_load(self):
-        self.fail()
+        """
+        Test the del_load method.
+        """
+
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = 'l1')
+
+        LF1_1 = LoadFactor(load = l1)
+        LF1_2 = LoadFactor(load = l1, base_factor = 2.0)
+
+        l2 = Load(load_name = 'Test Load 2',
+                  load_no = 2,
+                  abbrev = 'l2')
+
+        LF2_1 = LoadFactor(load = l2)
+
+        l3 = Load(load_name = 'Test Load 3',
+                  load_no = 3,
+                  abbrev = 'l3')
+
+        LF3_1 = LoadFactor(load = l3)
+
+        l4 = Load(load_name = 'Test Load 4',
+                  load_no = 4,
+                  abbrev = 'l4')
+
+        LF4_1 = LoadFactor(load = l4)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = True
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = load_factors,
+                        allow_duplicates = allow_duplicates)
+
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load(load_no = 4)
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load(load_name = l3.load_name)
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load(load_no = 2)
+        load_factors = {1: [LF1_1, LF1_2]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load(load = l1)
+        load_factors = {}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        self.assertRaises(ValueError, C.del_load, 1)
 
     def test_del_load_factor(self):
-        self.fail()
+        """
+        Test the del_load_factor() method.
+        """
+
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = 'l1')
+
+        LF1_1 = LoadFactor(load = l1)
+        LF1_2 = LoadFactor(load = l1, base_factor = 2.0)
+
+        l2 = Load(load_name = 'Test Load 2',
+                  load_no = 2,
+                  abbrev = 'l2')
+
+        LF2_1 = LoadFactor(load = l2)
+
+        l3 = Load(load_name = 'Test Load 3',
+                  load_no = 3,
+                  abbrev = 'l3')
+
+        LF3_1 = LoadFactor(load = l3)
+
+        l4 = Load(load_name = 'Test Load 4',
+                  load_no = 4,
+                  abbrev = 'l4')
+
+        LF4_1 = LoadFactor(load = l4)
+
+        case_no = 1
+        case_name = 'Case 1'
+        case_abbrev = 'C1'
+        allow_duplicates = True
+
+        load_factors = {1: [LF1_1, LF1_2], 2: [LF2_1], 3: [LF3_1], 4: [LF4_1]}
+
+        C = Combination(load_case_no = case_no,
+                        load_case = case_name,
+                        load_case_abbrev = case_abbrev,
+                        load_factors = load_factors,
+                        allow_duplicates = allow_duplicates)
+
+        C.add_load_factor(LF1_1)
+
+        load_factors = {1: [LF1_1, LF1_2, LF1_1],
+                        2: [LF2_1],
+                        3: [LF3_1],
+                        4: [LF4_1]}
+
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load_factor(LF4_1)
+        load_factors = {1: [LF1_1, LF1_2, LF1_1],
+                        2: [LF2_1],
+                        3: [LF3_1]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load_factor(LF3_1)
+        load_factors = {1: [LF1_1, LF1_2, LF1_1],
+                        2: [LF2_1]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load_factor(LF2_1)
+        load_factors = {1: [LF1_1, LF1_2, LF1_1]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load_factor(LF1_1)
+        load_factors = {1: [LF1_2]}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        C.del_load_factor(LF1_2)
+        load_factors = {}
+        self.assertEqual(first = C.load_factors, second = load_factors)
+
+        self.assertRaises(ValueError, C.del_load_factor, LF1_1)
 
     def test_load_exists(self):
         """
@@ -137,6 +373,9 @@ class TestCombination(TestCase):
         self.assertTrue(C.load_exists(load_no = 2))
         self.assertTrue(C.load_exists(load_name = l2.load_name))
         self.assertTrue(C.load_exists(load = l2))
+
+        self.assertEqual(first = C.load_exists(load = l1), second = 1)
+        self.assertEqual(first = C.load_exists(load = l2), second = 2)
 
         C.del_load(load = l1)
 
@@ -189,9 +428,9 @@ class TestCombination(TestCase):
         self.assertTrue(C.load_factor_exists(LF1_2))
         self.assertTrue(C.load_factor_exists(LF2_1))
 
-        self.assertEqual(C.load_factor_exists(LF1_1), 1)
-        self.assertEqual(C.load_factor_exists(LF1_2), 1)
-        self.assertEqual(C.load_factor_exists(LF2_1), 2)
+        self.assertEqual(first = C.load_factor_exists(LF1_1), second = 1)
+        self.assertEqual(first = C.load_factor_exists(LF1_2), second = 1)
+        self.assertEqual(first = C.load_factor_exists(LF2_1), second = 2)
 
         C.del_load_factor(LF1_1)
         C.del_load_factor(LF2_1)
@@ -230,6 +469,8 @@ class TestCombination(TestCase):
         C.allow_duplicates = allow_duplicates
 
         self.assertEqual(first = allow_duplicates, second = C.allow_duplicates)
+
+        self.fail('Need to add check for duplicates in existing LF dictionary')
 
     def test_load_case(self):
         """
