@@ -248,6 +248,42 @@ class LoadFactor:
 
         self._info[key] = value
 
+    def generate_title(self, *, abbreviate: bool = True,
+                       times_sign: str = '×',
+                       decimals: int = 3,
+                       abs_factor: bool = False,
+                       factor_overload: float = None):
+        """
+        Generates a short title for the LoadFactor, intended to be used by the
+        Combination class to generate the combination title.
+
+        :param abbreviate:
+        :param times_sign:
+        :param decimals:
+        :param abs_factor:
+        :param factor_overload:
+        :return:
+        """
+
+        factor_format = '{:-0.' + str(decimals) + 'f}'
+
+        if factor_overload != None:
+            factor = factor_overload
+        else:
+            factor = self.factor
+
+        if abs_factor:
+            case_factor = factor_format.format(abs(factor))
+        else:
+            case_factor = factor_format.format(factor)
+
+        if abbreviate:
+            case_title = self.load.abbrev
+        else:
+            case_title = self.load.load_name
+
+        return case_factor + times_sign + case_title
+
     def __str__(self):
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __str__ method to be accepted for subclasses of

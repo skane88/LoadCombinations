@@ -392,7 +392,7 @@ class Combination:
         self._load_case_no = load_case_no
 
 
-    def combination_title(self,
+    def combination_title(self, *,
                           abbreviate: bool = True,
                           combine_same_loads: bool = True,
                           load_separator = ' + ',

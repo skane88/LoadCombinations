@@ -269,3 +269,19 @@ class TestLoadFactor(TestCase):
             with self.assertRaises(ValueError):
 
                 LF.add_info(key = k, value = v)
+
+    def test_generate_title(self):
+
+        l1 = Load(load_name = 'Test Load',
+                  load_no = 1,
+                  abbrev = 'TL1')
+
+        LF1 = LoadFactor(load = l1)
+
+        print(LF1.generate_title())
+
+        LF2 = LoadFactor(load = l1, base_factor = -1.0)
+
+        print(LF2.generate_title())
+
+        self.fail()
