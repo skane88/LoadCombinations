@@ -248,15 +248,14 @@ class LoadFactor:
 
         self._info[key] = value
 
-
     def __str__(self):
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __str__ method to be accepted for subclasses of
         # LoadGroup without change.
 
         return (f'{type(self).__name__}: '
-                + f'load_group: {self.load}, '
-                + f'factor: {self.factor}'
+                + f'load: ({str(self.load)}), '
+                + f'factor: {str(self.factor)}'
                 )
 
     def __repr__(self):

@@ -17,9 +17,6 @@ class TestLoadFactor(TestCase):
         LF = LoadFactor(load = l1)
 
         print(LF)
-
-        print(repr(l1))
-        print(repr(LF.load))
         print(repr(LF))
 
         LF2 = eval(repr(LF))

@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 from LoadCase import LoadCase
-from LoadGroup import LoadGroup, FactoredGroup
+from LoadGroup import LoadGroup, FactoredGroup, ScaledGroup, WindGroup
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
@@ -534,9 +534,18 @@ class TestLoadCase(TestCase):
         l3 = RotatableLoad(load_name = 'R1 - Rotating Load', load_no = 3,
                            load_value = 10, angle = 45.0, symmetrical = True,
                            abbrev = 'R1')
-        l4 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
-                      wind_speed = 69.0,
-                      angle = 0.0, symmetrical = True, abbrev = 'WUx')
+        l4_1 = WindLoad(load_name = 'WUx - Wind Load', load_no = 4,
+                        wind_speed = 69.0,
+                        angle = 0.0, symmetrical = True, abbrev = 'WUx')
+        l4_2 = WindLoad(load_name = 'WUz - Wind Load', load_no = 5,
+                        wind_speed = 69.0,
+                        angle = 90.0, symmetrical = True, abbrev = 'WUz')
+        l4_3 = WindLoad(load_name = 'WU-x - Wind Load', load_no = 6,
+                        wind_speed = 69.0,
+                        angle = 180.0, symmetrical = True, abbrev = 'WU-x')
+        l4_4 = WindLoad(load_name = 'WU-z - Wind Load', load_no = 7,
+                        wind_speed = 69.0,
+                        angle = 270.0, symmetrical = True, abbrev = 'WU-z')
 
         group_name = 'Group 1'
         loads = [l1]
@@ -544,18 +553,40 @@ class TestLoadCase(TestCase):
 
         group_name2 = 'Group 2'
         loads2 = [l2]
+        factors2 = (-1.0, 1.0)
         abbrev2 = 'Gp 2'
+
+        group_name3 = 'Group 3'
+        loads3 = [l3]
+        factors3 = (-1.0, 1.0)
+        abbrev3 = 'Gp 3'
+
+        group_name4 = 'Group 4'
+        loads4 = [l4_1, l4_2, l4_3, l4_4]
+        factors4 = (1.0,)
+        req_angles4 = (0.0,45.0,90.0)
+        abbrev4 = 'Gp 4'
 
         LG1 = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
         LG2 = FactoredGroup(group_name = group_name2,
                             loads = loads2,
-                            factors = (-1.0, 1.0),
+                            factors = factors2,
                             abbrev = abbrev2)
+        LG3 = ScaledGroup(group_name = group_name3,
+                          loads = loads3,
+                          factors = factors3,
+                          scale_to = 5,
+                          abbrev = abbrev3)
+        LG4 = WindGroup(group_name = group_name4, loads = loads4,
+                        factors = factors4, scale_speed = 25, scale = True,
+                        req_angles = req_angles4, abbrev = abbrev4)
 
         case_name = 'Test Case'
         case_no = 1
         LGs = [GroupFactor(load_group = LG1, group_factor = 1.0),
-               GroupFactor(load_group = LG2, group_factor = 2.0)]
+               GroupFactor(load_group = LG2, group_factor = 2.0),
+               GroupFactor(load_group = LG3, group_factor = 1.0),
+               GroupFactor(load_group = LG4, group_factor = 1.0)]
         abbrev = 'TC'
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
