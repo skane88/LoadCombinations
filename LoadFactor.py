@@ -248,27 +248,32 @@ class LoadFactor:
 
         self._info[key] = value
 
-    def generate_title(self, *, abbreviate: bool = True,
+    def factor_title(self, *, abbreviate: bool = True,
                        times_sign: str = '×',
                        decimals: int = 3,
                        abs_factor: bool = False,
-                       factor_overload: float = None):
+                       factor_override: float = None):
         """
         Generates a short title for the LoadFactor, intended to be used by the
         Combination class to generate the combination title.
 
-        :param abbreviate:
-        :param times_sign:
-        :param decimals:
-        :param abs_factor:
-        :param factor_overload:
-        :return:
+        :param abbreviate: Use the abbreviation for the load, or the full load
+            name?
+        :param times_sign: The multiplication sign used between the factor and
+            the name / abbreviation.
+        :param decimals: The no. of decimals to use to format the factor.
+        :param abs_factor: Use the absolute factor, or use a signed version of
+            the factor.
+        :param factor_override: Override the generated factor with a different
+            value.
+        :return: Returns a description of the LoadFactor for use in the
+            Combination.combination_title method.
         """
 
         factor_format = '{:-0.' + str(decimals) + 'f}'
 
-        if factor_overload != None:
-            factor = factor_overload
+        if factor_override != None:
+            factor = factor_override
         else:
             factor = self.factor
 
