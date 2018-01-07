@@ -249,10 +249,11 @@ class LoadFactor:
         self._info[key] = value
 
     def factor_title(self, *, abbreviate: bool = True,
-                       times_sign: str = '×',
-                       decimals: int = 3,
-                       abs_factor: bool = False,
-                       factor_override: float = None):
+                     times_sign: str = '×',
+                     precision: int = 3,
+                     no_type: str = 'f',
+                     abs_factor: bool = False,
+                     factor_override: float = None):
         """
         Generates a short title for the LoadFactor, intended to be used by the
         Combination class to generate the combination title.
@@ -261,7 +262,10 @@ class LoadFactor:
             name?
         :param times_sign: The multiplication sign used between the factor and
             the name / abbreviation.
-        :param decimals: The no. of decimals to use to format the factor.
+        :param precision: The no. of decimals to use to format the factor.
+        :param no_type: The number format type. Corresponds to the format code
+            in the standard Python string formatting. Only 'f', 'g' and 'e' are
+            accepted.
         :param abs_factor: Use the absolute factor, or use a signed version of
             the factor.
         :param factor_override: Override the self.factor with a different
@@ -270,7 +274,14 @@ class LoadFactor:
             Combination.combination_title method.
         """
 
-        factor_format = '{:-0.' + str(decimals) + 'f}'
+        no_type_allowed = ['f', 'g', 'e']
+
+        if no_type.lower() not in no_type_allowed:
+            raise ValueError(f'Parameter no_type should be in the list: '
+                             + f'{no_type_allowed}. Value entered was: '
+                             +  f'{no_type}.')
+
+        factor_format = '{:-0.' + str(precision) + no_type + '}'
 
         if factor_override != None:
             factor = factor_override

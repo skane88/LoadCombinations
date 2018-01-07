@@ -290,4 +290,55 @@ class TestLoadFactor(TestCase):
         self.assertEqual(first = LF1.factor_title(), second = ft1)
         self.assertEqual(first = LF2.factor_title(), second = ft2)
 
-        self.fail()
+        ft1 = f'1.000×{l1.load_name}'
+        ft2 = f'-1.000×{l1.load_name}'
+
+        self.assertEqual(first = LF1.factor_title(abbreviate = False),
+                         second = ft1)
+        self.assertEqual(first = LF2.factor_title(abbreviate = False),
+                         second = ft2)
+
+        ft1 = f'1.000*{l1.abbrev}'
+        ft2 = f'-1.000*{l1.abbrev}'
+
+        self.assertEqual(first = LF1.factor_title(times_sign = '*'),
+                         second = ft1)
+        self.assertEqual(first = LF2.factor_title(times_sign = '*'),
+                         second = ft2)
+
+        ft1 = f'1.00000×{l1.abbrev}'
+        ft2 = f'-1.00×{l1.abbrev}'
+
+        self.assertEqual(first = LF1.factor_title(precision = 5), second = ft1)
+        self.assertEqual(first = LF2.factor_title(precision = 2), second = ft2)
+
+        ft1 = f'1.000e+00×{l1.abbrev}'
+        ft2 = f'-1e+05×{l1.abbrev}'
+
+        self.assertEqual(first = LF1.factor_title(no_type = 'e'),
+                         second = ft1)
+
+        LF2.group_factor = 100000
+
+        self.assertEqual(first = LF2.factor_title(no_type = 'g'),
+                         second = ft2)
+        LF2.group_factor = 1
+
+        with self.assertRaises(ValueError):
+            LF1.factor_title(no_type = '%')
+
+        ft1 = f'1.000×{l1.abbrev}'
+        ft2 = f'1.000×{l1.abbrev}'
+
+        self.assertEqual(first = LF1.factor_title(abs_factor = True),
+                         second = ft1)
+        self.assertEqual(first = LF2.factor_title(abs_factor = True),
+                         second = ft2)
+
+        ft1 = f'2.345×{l1.abbrev}'
+        ft2 = f'6.789×{l1.abbrev}'
+
+        self.assertEqual(first = LF1.factor_title(factor_override = 2.345),
+                         second = ft1)
+        self.assertEqual(first = LF2.factor_title(factor_override = 6.789),
+                         second = ft2)
