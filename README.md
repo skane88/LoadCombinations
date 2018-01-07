@@ -2,7 +2,10 @@
 This package is intended to generate lists of load combinations for structural
 analysis.
 
-The following taxonomy is used for the arrangement of load combinations:
+It is also intended to be a learning project as I have not created a significant
+Python package before, so use at your own risk.
+
+The following approach is used to generate the combinations:
 
 1. ``Load``: The base element is a ``Load`` which corresponds to a specific
 load (i.e. Dead Load, or Wind Load)
@@ -25,5 +28,8 @@ load cases (Wux, Wuz, Wu-x, Wu-z), the load combinations returned may be:
     * 1.2G + 1.5Q + 1.0Wuz
     * 1.2G + 1.5Q + 1.0Wu-x
     * 1.2G + 1.5Q + 1.0Wu-z
-1. Finally, the ``Combination`` objects will be combined into a
-``CombinationSet`` to return all final results.
+
+To simplify the end user experience, it is intended to combine these steps into
+a single `LoadCombinations` object, and additionally`provide helper functions
+to create load combinations from Pandas dataframes, ``.csv`` files, strings 
+and similar methods.
