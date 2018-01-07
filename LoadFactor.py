@@ -264,8 +264,8 @@ class LoadFactor:
         :param decimals: The no. of decimals to use to format the factor.
         :param abs_factor: Use the absolute factor, or use a signed version of
             the factor.
-        :param factor_override: Override the generated factor with a different
-            value.
+        :param factor_override: Override the self.factor with a different
+            value. Use None to continue using self.factor.
         :return: Returns a description of the LoadFactor for use in the
             Combination.combination_title method.
         """

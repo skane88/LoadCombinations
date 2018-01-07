@@ -270,7 +270,7 @@ class TestLoadFactor(TestCase):
 
                 LF.add_info(key = k, value = v)
 
-    def test_generate_title(self):
+    def test_factor_title(self):
 
         l1 = Load(load_name = 'Test Load',
                   load_no = 1,
@@ -278,10 +278,16 @@ class TestLoadFactor(TestCase):
 
         LF1 = LoadFactor(load = l1)
 
-        print(LF1.generate_title())
+        print(LF1.factor_title())
 
         LF2 = LoadFactor(load = l1, base_factor = -1.0)
 
-        print(LF2.generate_title())
+        print(LF2.factor_title())
+
+        ft1 = f'1.000×{l1.abbrev}'
+        ft2 = f'-1.000×{l1.abbrev}'
+
+        self.assertEqual(first = LF1.factor_title(), second = ft1)
+        self.assertEqual(first = LF2.factor_title(), second = ft2)
 
         self.fail()
