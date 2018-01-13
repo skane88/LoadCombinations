@@ -395,9 +395,10 @@ class Combination:
     def combination_title(self, *,
                           abbreviate: bool = True,
                           combine_same_loads: bool = True,
-                          load_separator = ' + ',
+                          separator: Union[List[str], str] = [' + ', ' - '],
                           times_sign: str = '×',
-                          decimals: int = 3) -> str:
+                          precision: int = 3,
+                          no_type: str = 'f') -> str:
         """
         Generates a title for the combination based on the LoadFactors in it.
 
@@ -414,47 +415,14 @@ class Combination:
         load_list = self.list_loads_with_factors
         load_nos = sorted(load_list.keys())
 
-        factor_format = '{:-0.' + str(decimals) + 'f}'
-
-        def case_title(*, load: Load,
-                       abbreviate: bool) -> str:
-            """
-            Defines a helper function to determine the case_title string.
-
-            :param load: The Load being considered.
-            :param abbreviate: Is the abbreviated load name to be used?
-            :return: Returns the case_title string used to describe each load
-                and its factors in the combination title.
-            """
-
-            if abbreviate:
-                return load.abbrev
-            else:
-                return load.load_name
-
-        def load_string(*, title: str,
-                        case_factor: str,
-                        case_title: str,
-                        times_sign: str,
-                        load_separator: str) -> str:
-            """
-            Defines a brief internal function for building the load_string for
-            each load.
-
-            :param title: the title string, used to determine if a
-                load_separator is appended to the start of the return string.
-            :param case_factor: The case_factor
-            :param case_title: The case title.
-            :param times_sign: The times sign string.
-            :param load_separator: The load separation string.
-            :return: The string that describes each load and its factor.
-            """
-            ret_string = case_factor + times_sign + case_title
-
-            if len(title) != 0:
-                ret_string = load_separator + ret_string
-
-            return ret_string
+        if isinstance(separator, List):
+            multi_separator = True
+            pos_separator = separator[0]
+            neg_separator = separator[1]
+        else:
+            multi_separator = False
+            pos_separator = separator
+            neg_separator = separator
 
         for i in load_nos:
             data = load_list[i]
@@ -465,28 +433,78 @@ class Combination:
                 # then we need multiple elements for each load factor
 
                 for LF in data[2]:
-                    case_factor = factor_format.format(LF.factor)
 
-                    title += load_string(title = title,
-                                         case_factor = case_factor,
-                                         case_title = case_title(
-                                             load = data[1],
-                                             abbreviate = abbreviate),
-                                         times_sign = times_sign,
-                                         load_separator = load_separator)
+                    if len(title) == 0:
+                        title += LF.factor_title(abbreviate = abbreviate,
+                                                 times_sign = times_sign,
+                                                 precision = precision,
+                                                 no_type = no_type)
+                    else:
+
+                        if LF.factor < 0:
+                            if multi_separator:
+                                title += (neg_separator +
+                                          LF.factor_title(abs_factor = True,
+                                                          abbreviate = abbreviate,
+                                                          times_sign = times_sign,
+                                                          precision = precision,
+                                                          no_type = no_type))
+                            else:
+                                title += (neg_separator
+                                              + LF.factor_title(
+                                                abbreviate = abbreviate,
+                                                times_sign = times_sign,
+                                                precision = precision,
+                                                no_type = no_type))
+                        if LF.factor > 0:
+                            title += (pos_separator
+                                          + LF.factor_title(
+                                            abbreviate = abbreviate,
+                                            times_sign = times_sign,
+                                            precision = precision,
+                                            no_type = no_type))
 
             else:
                 # else we only have 1x name to make
+                LF = data[2][0]
+                factor = data[0]
 
-                case_factor = factor_format.format(data[0])
+                if len(title) == 0:
+                    title += LF.factor_title(abbreviate = abbreviate,
+                                             times_sign = times_sign,
+                                             precision = precision,
+                                             no_type = no_type,
+                                             factor_override = factor)
+                else:
+                    if factor < 0:
+                        if multi_separator:
+                            title += (neg_separator
+                                    + LF.factor_title(
+                                        abbreviate = abbreviate,
+                                        times_sign = times_sign,
+                                        precision = precision,
+                                        no_type = no_type,
+                                        factor_override = factor,
+                                        abs_factor = True
+                                    ))
+                        else:
+                            title += (neg_separator
+                                      + LF.factor_title(
+                                        abbreviate = abbreviate,
+                                        times_sign = times_sign,
+                                        precision = precision,
+                                        no_type = no_type,
+                                        factor_override = factor))
 
-                title += load_string(title = title,
-                                     case_factor = case_factor,
-                                     case_title = case_title(
-                                         load = data[1],
-                                         abbreviate = abbreviate),
-                                     times_sign = times_sign,
-                                     load_separator = load_separator)
+                    else:
+                        title += (pos_separator
+                                  + LF.factor_title(
+                                    abbreviate = abbreviate,
+                                    times_sign = times_sign,
+                                    precision = precision,
+                                    no_type = no_type,
+                                    factor_override = factor
+                                ))
 
         return title
 

@@ -691,7 +691,7 @@ class TestCombination(TestCase):
                           + f'1.000×{l3.abbrev}2p1'
                           + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.abbrev}')
 
-        self.assertEqual(first = C.combination_title(load_separator = '2p1'),
+        self.assertEqual(first = C.combination_title(separator = '2p1'),
                          second = expected_title)
 
         expected_title = (f'3.000-*-{l1.abbrev} + '
@@ -707,7 +707,7 @@ class TestCombination(TestCase):
                           + f'1.00000×{l3.abbrev} + '
                           + f'{0.3 * 1.7 * math.pi:0.5f}×{l4.abbrev}')
 
-        self.assertEqual(first = C.combination_title(decimals = 5),
+        self.assertEqual(first = C.combination_title(precision = 5),
                          second = expected_title)
 
     def test_list_load_factors(self):
