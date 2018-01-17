@@ -250,7 +250,7 @@ class LoadFactor:
 
     def factor_title(self, *, abbreviate: bool = True,
                      times_sign: str = '×',
-                     precision: int = 3,
+                     precision: int = 2,
                      no_type: str = 'f',
                      abs_factor: bool = False,
                      factor_override: float = None):
