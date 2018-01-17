@@ -10,7 +10,8 @@ from Load import RotatableLoad, ScalableLoad
 
 
 class TestExclusiveGroup(TestCase):
-    def test_basic(self):
+
+    def test_exclusiveGroup_basic(self):
         """
         Test basic functionality - can the class be instantiated and can the
         __str__ and __repr__ methods be used.
@@ -46,7 +47,7 @@ class TestExclusiveGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-    def test_generate_cases(self):
+    def test_exclusiveGroup_generate_cases(self):
         """
         Test the generate cases method.
         """

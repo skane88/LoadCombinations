@@ -7,7 +7,8 @@ from Load import Load
 
 
 class TestLoad(TestCase):
-    def test_basic(self):
+
+    def test_load_basic(self):
         """
         A basic unit test for the Load class. can Load objects be instantiated,
         and can their repr and str methods be used.
@@ -29,7 +30,7 @@ class TestLoad(TestCase):
         # are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))
 
-    def test_load(self):
+    def test_load_load(self):
         """
         Test the load getter & setter.
         """
@@ -48,7 +49,7 @@ class TestLoad(TestCase):
 
         self.assertEqual(first = l.load_name, second = load_title)
 
-    def test_load_no(self):
+    def test_load_load_no(self):
         """
         Test the load_no getter & setter.
         """
@@ -66,7 +67,7 @@ class TestLoad(TestCase):
 
         self.assertEqual(first = l.load_no, second = load_no)
 
-    def test_abbrev(self):
+    def test_load_abbrev(self):
         """
         Test the abbrev getter & setter.
         """

@@ -8,7 +8,7 @@ from Load import WindLoad
 
 class TestWindLoad(TestCase):
 
-    def test_basic(self):
+    def test_windLoad_basic(self):
         """
         A basic unit test for the WindLoad class. can Load objects be
         instantiated, and can their repr and str methods be used.
@@ -35,7 +35,7 @@ class TestWindLoad(TestCase):
         # are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))
 
-    def test_wind_speed(self):
+    def test_windLoad_wind_speed(self):
         """
         Test the wind_speed getter / setter
         """
@@ -58,7 +58,7 @@ class TestWindLoad(TestCase):
 
         self.assertEqual(first = l.wind_speed, second = wind_speed)
 
-    def test_scale_speed(self):
+    def test_windLoad_scale_speed(self):
         """
         Test the scale_speed method.
         """

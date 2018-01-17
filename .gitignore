@@ -102,6 +102,7 @@ ENV/
 /.vs
 *.pyproj
 *.sln
+*.playlist
 
 # VSCode items
 *.vscode

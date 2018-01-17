@@ -12,7 +12,7 @@ from exceptions import LoadExistsException, LoadNotPresentException
 
 class TestLoadGroup(TestCase):
 
-    def test_basic(self):
+    def test_loadGroup_basic(self):
         """
         Test basic functionality - can the class be instantiated and can the
         __str__ and __repr__ methods be used.
@@ -45,7 +45,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-    def test_group_name(self):
+    def test_loadGroup_group_name(self):
         """
         Test the group_name getter / setter.
         """
@@ -73,7 +73,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = LG.group_name, second = group_name)
 
-    def test_loads(self):
+    def test_loadGroup_loads(self):
         """
         Test the loads getter / setter
         """
@@ -102,7 +102,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = LG.loads, second = loads)
 
-    def test_abbrev(self):
+    def test_loadGroup_abbrev(self):
         """
         Test the abbrev getter / setter
         """
@@ -131,7 +131,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = LG.abbrev, second = abbrev)
 
-    def test_generate_cases(self):
+    def test_loadGroup_generate_cases(self):
         """
         Test the generate_groups method.
         """
@@ -173,8 +173,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
-
-    def test_add_load(self):
+    def test_loadGroup_add_load(self):
         """
         Test the add_load method.
         """
@@ -224,8 +223,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = LG.loads, second = loads)
 
-
-    def test_add_load_exception(self):
+    def test_loadGroup_add_load_exception(self):
         """
         Test the add_load method raises an exception when adding an already
         existing load.
@@ -250,7 +248,7 @@ class TestLoadGroup(TestCase):
 
         self.assertRaises(LoadExistsException, LG.add_load, l4)
 
-    def test_del_load(self):
+    def test_loadGroup_del_load(self):
         """
         Test the del_load method
         """
@@ -289,8 +287,7 @@ class TestLoadGroup(TestCase):
 
         self.assertEqual(first = LG.loads, second = {})
 
-
-    def test_del_load_exception(self):
+    def test_loadGroup_del_load_exception(self):
         """
         Test the del_load method raises an exception when deleting a
         non-existent load.
@@ -324,8 +321,7 @@ class TestLoadGroup(TestCase):
         self.assertRaises(LoadNotPresentException, LG.del_load,
                           abbrev = l1.abbrev)
 
-
-    def test_load_exists(self):
+    def test_loadGroup_load_exists(self):
         """
         Test the load_exists method.
         """

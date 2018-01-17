@@ -9,7 +9,7 @@ from Load import Load
 class TestCombination(TestCase):
 
     @expectedFailure
-    def test_basic(self):
+    def test_combination_basic(self):
         """
         Basic test for the class - can it even be instantiated?
         """
@@ -35,7 +35,7 @@ class TestCombination(TestCase):
 
         self.fail('Need to implement repr method')
 
-    def test_load_factors(self):
+    def test_combination_load_factors(self):
         """
         Test the load_factors getter / setter
         """
@@ -87,7 +87,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.load_factors, second = load_factors)
 
-    def test_add_load_factor(self):
+    def test_combination_add_load_factor(self):
         """
         Test the add_load_factor method.
         """
@@ -192,7 +192,7 @@ class TestCombination(TestCase):
         self.assertRaises(ValueError, C.add_load_factor, LF1_1)
         self.assertRaises(ValueError, C.add_load_factor, LF1_2)
 
-    def test_del_load(self):
+    def test_combination_del_load(self):
         """
         Test the del_load method.
         """
@@ -255,7 +255,7 @@ class TestCombination(TestCase):
 
         self.assertRaises(ValueError, C.del_load, 1)
 
-    def test_del_load_factor(self):
+    def test_combination_del_load_factor(self):
         """
         Test the del_load_factor() method.
         """
@@ -332,7 +332,7 @@ class TestCombination(TestCase):
 
         self.assertRaises(ValueError, C.del_load_factor, LF1_1)
 
-    def test_load_exists(self):
+    def test_combination_load_exists(self):
         """
         Test the load_exists() method
         """
@@ -393,7 +393,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.load_factors, second = {})
 
-    def test_load_factor_exists(self):
+    def test_combination_load_factor_exists(self):
         """
         Test the load_factor_exists method
         """
@@ -442,7 +442,7 @@ class TestCombination(TestCase):
         self.assertFalse(C.load_factor_exists(LF1_2))
         self.assertFalse(C.load_factor_exists(LF2_1))
 
-    def test_allow_duplicates(self):
+    def test_combination_allow_duplicates(self):
         """
         Test the allow_duplicates getter / setter
         """
@@ -515,7 +515,7 @@ class TestCombination(TestCase):
 
         self.assertTrue(C.allow_duplicates)
 
-    def test_load_case(self):
+    def test_combination_load_case(self):
         """
         Test the load_case getter / setter
         """
@@ -545,7 +545,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.load_case, second = case_name)
 
-    def test_load_case_abbrev(self):
+    def test_combination_load_case_abbrev(self):
         """
         Test the load_case_abbrev getter / setter
         """
@@ -575,7 +575,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.load_case_abbrev, second = case_abbrev)
 
-    def test_load_case_no(self):
+    def test_combination_load_case_no(self):
         """
         Test the load_case_no getter / setter
         """
@@ -605,7 +605,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.load_case_no, second = case_no)
 
-    def test_combination_title(self):
+    def test_combination_combination_title(self):
         """
         Test the combination_title method.
         """
@@ -710,7 +710,7 @@ class TestCombination(TestCase):
         self.assertEqual(first = C.combination_title(precision = 5),
                          second = expected_title)
 
-    def test_list_load_factors(self):
+    def test_combination_list_load_factors(self):
         """
         Test the list_load_factors method.
         """
@@ -758,7 +758,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.list_load_factors, second = load_factors)
 
-    def test_list_loads(self):
+    def test_combination_list_loads(self):
         """
         Test the list_loads method.
         """
@@ -806,7 +806,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.list_loads, second = load_list)
 
-    def test_list_loads_with_factors(self):
+    def test_combination_list_loads_with_factors(self):
         """
         Test the list_load_factors method.
         """
@@ -856,7 +856,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.list_loads_with_factors, second = out_list)
 
-    def test_count_load_factors(self):
+    def test_combination_count_load_factors(self):
         """
         Test the count_load_factors property.
         """
@@ -906,7 +906,7 @@ class TestCombination(TestCase):
 
         self.assertEqual(first = C.count_load_factors, second = count)
 
-    def test_count_load_factors_per_load(self):
+    def test_combination_count_load_factors_per_load(self):
         """
         Test the count_load_factors_per_load property.
         """

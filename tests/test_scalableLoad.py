@@ -7,7 +7,8 @@ from Load import ScalableLoad
 
 
 class TestScalableLoad(TestCase):
-    def test_basic(self):
+
+    def test_scalableLoad_basic(self):
         """
         A basic unit test for the ScalableLoad class. can Load objects be
         instantiated, and can their repr and str methods be used.
@@ -31,7 +32,7 @@ class TestScalableLoad(TestCase):
         # are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))
 
-    def test_load_value(self):
+    def test_scalableLoad_load_value(self):
         """
         Test the load_value getter / setter.
         """
@@ -52,7 +53,7 @@ class TestScalableLoad(TestCase):
 
         self.assertEqual(first = l.load_value, second = load_value)
 
-    def test_scale_factor(self):
+    def test_scalableLoad_scale_factor(self):
         """
         Test the scale_factor method.
         """

@@ -4,7 +4,7 @@ from LoadFactor import LoadFactor
 
 class TestLoadFactor(TestCase):
 
-    def test_basic(self):
+    def test_loadFactor_basic(self):
         """
         Carry out basic testing - can the object be instantiated and can the
         str() and repr() methods be used?
@@ -23,7 +23,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF, second = LF2)
 
-    def test_load(self):
+    def test_loadFactor_load(self):
         """
         Test the load getter / setter
         """
@@ -43,7 +43,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.load, second = l2)
 
-    def test_base_factor(self):
+    def test_loadFactor_base_factor(self):
         """
         Test the base_factor getter / setter
         """
@@ -64,7 +64,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.base_factor, second = base_factor)
 
-    def test_scale_factor(self):
+    def test_loadFactor_scale_factor(self):
         """
         Test the scale_factor getter / setter
         """
@@ -85,7 +85,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.scale_factor, second = scale_factor)
 
-    def test_rotational_factor(self):
+    def test_loadFactor_rotational_factor(self):
         """
         Test the rotational_factor getter / setter
         """
@@ -108,7 +108,7 @@ class TestLoadFactor(TestCase):
         self.assertEqual(first = LF.rotational_factor,
                          second = rotational_factor)
 
-    def test_symmetry_factor(self):
+    def test_loadFactor_symmetry_factor(self):
         """
         Test the symmetry_factor getter / setter
         """
@@ -140,7 +140,7 @@ class TestLoadFactor(TestCase):
             with self.assertRaises(ValueError):
                 LF.symmetry_factor = s
 
-    def test_group_factor(self):
+    def test_loadFactor_group_factor(self):
         """
         Test the group_factor getter / setter
         """
@@ -161,7 +161,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.group_factor, second = group_factor)
 
-    def test_factor(self):
+    def test_loadFactor_factor(self):
 
         l1 = Load(load_name = 'Test Load',
                   load_no = 1,
@@ -203,7 +203,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.factor, second = factor)
 
-    def test_info(self):
+    def test_loadFactor_info(self):
         """
         Test the info getter / setter
         """
@@ -230,7 +230,7 @@ class TestLoadFactor(TestCase):
 
         self.assertEqual(first = LF.info, second = info)
 
-    def test_add_info(self):
+    def test_loadFactor_add_info(self):
         """
         Test the add_info method.
         """
@@ -270,7 +270,7 @@ class TestLoadFactor(TestCase):
 
                 LF.add_info(key = k, value = v)
 
-    def test_factor_title(self):
+    def test_loadFactor_factor_title(self):
 
         l1 = Load(load_name = 'Test Load',
                   load_no = 1,

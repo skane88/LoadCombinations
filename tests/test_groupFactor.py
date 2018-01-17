@@ -5,7 +5,7 @@ from Load import Load
 
 class TestGroupFactor(TestCase):
 
-    def test_basic(self):
+    def test_groupFactor_basic(self):
         """
         Test whether the GroupFactor can be instantiated and whether str & repr
         methods work.
@@ -26,7 +26,7 @@ class TestGroupFactor(TestCase):
 
         self.assertEqual(first = str(GF), second = str(GF2))
 
-    def test_load_group(self):
+    def test_groupFactor_load_group(self):
         """
         Test the load_group getter and setter function
         """
@@ -50,7 +50,7 @@ class TestGroupFactor(TestCase):
 
         self.assertEqual(first = group_2, second = GF.load_group)
 
-    def test_group_factor(self):
+    def test_groupFactor_group_factor(self):
         """
         Test the group_factor getter & setter
         """

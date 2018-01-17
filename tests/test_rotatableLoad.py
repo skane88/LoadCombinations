@@ -8,7 +8,7 @@ from Load import RotatableLoad
 
 class TestRotatableLoad(TestCase):
 
-    def test_basic(self):
+    def test_rotatableLoad_basic(self):
         """
         A basic unit test for the RotatableLoad class. Can RotatableLoad objects
         be instantiated, and can their repr and str methods be used.
@@ -35,7 +35,7 @@ class TestRotatableLoad(TestCase):
         # are the strings of l and l2 the same?
         self.assertEqual(first = str(l), second = str(l2))
 
-    def test_angle(self):
+    def test_rotatableLoad_angle(self):
         """
         Test the angle getter / setter.
         """
@@ -67,7 +67,7 @@ class TestRotatableLoad(TestCase):
 
         self.assertEqual(first = l.angle, second = angle_exp)
 
-    def test_symmetrical(self):
+    def test_rotatableLoad_symmetrical(self):
         """
         Test the symmetrical getter / setter.
         """

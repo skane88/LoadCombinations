@@ -10,7 +10,7 @@ from GroupFactor import GroupFactor
 
 class TestLoadCase(TestCase):
 
-    def test_basic(self):
+    def test_loadCase_basic(self):
         """
         Tests whether the ``LoadGroup`` can be instantiated or not.
         """
@@ -58,7 +58,7 @@ class TestLoadCase(TestCase):
 
         self.assertEqual(first = str(LC), second = str(LC2))
 
-    def test_case_name(self):
+    def test_loadCase_case_name(self):
         """
         Test the case name getter / setter.
         """
@@ -95,7 +95,7 @@ class TestLoadCase(TestCase):
 
         self.assertEqual(first = case_name, second = LC.case_name)
 
-    def test_case_no(self):
+    def test_loadCase_case_no(self):
         """
         Test the case no getter / setter.
         """
@@ -132,7 +132,7 @@ class TestLoadCase(TestCase):
 
         self.assertEqual(first = case_no, second = LC.case_no)
 
-    def test_load_groups(self):
+    def test_loadCase_load_groups(self):
         """
         Test the load groups getter / setter.
         """
@@ -190,7 +190,7 @@ class TestLoadCase(TestCase):
 
         self.assertEqual(first = LGs, second = LC.load_groups)
 
-    def test_add_group(self):
+    def test_loadCase_add_group(self):
         """
         Test the ``add_group`` method.
         """
@@ -267,7 +267,7 @@ class TestLoadCase(TestCase):
         self.assertRaises(InvalidCombinationFactor, LC.add_group, (2.0, LG2))
         self.assertRaises(InvalidCombinationFactor, LC.add_group, (LG2, '2.0'))
 
-    def test_del_group(self):
+    def test_loadCase_del_group(self):
         """
         Test the ``del_group`` method.
         """
@@ -329,7 +329,7 @@ class TestLoadCase(TestCase):
         self.assertRaises(LoadGroupNotPresentException, LC.del_group,
                           load_group = LG2)
 
-    def test_group_exists(self):
+    def test_loadCase_group_exists(self):
         """
         Test the ``group_exists`` method.
         """
@@ -389,7 +389,7 @@ class TestLoadCase(TestCase):
         self.assertFalse(LC.group_exists(group_name = LG2.group_name))
         self.assertFalse(LC.group_exists(abbrev = LG2.abbrev))
 
-    def test_get_factor(self):
+    def test_loadCase_get_factor(self):
         """
         Test the ``get_factor`` method.
         """
@@ -438,7 +438,7 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = 2.0,
                          second = LC.get_factor(group_name = LG2.group_name))
 
-    def test_set_factor(self):
+    def test_loadCase_set_factor(self):
         """
         Test the ``set_factor`` method.
         """
@@ -485,7 +485,7 @@ class TestLoadCase(TestCase):
         self.assertEqual(first = 2.0, second = LC.get_factor(load_group = LG1))
         self.assertEqual(first = 3.0, second = LC.get_factor(load_group = LG2))
 
-    def test_abbrev(self):
+    def test_loadCase_abbrev(self):
         """
         Test the case abbrev getter / setter.
         """
@@ -522,7 +522,7 @@ class TestLoadCase(TestCase):
 
         self.assertEqual(first = abbrev, second = LC.abbrev)
 
-    def test_generate_cases(self):
+    def test_loadCase_generate_cases(self):
         """
         Test the generate_cases method.
         """

@@ -10,7 +10,8 @@ from Load import Load, RotatableLoad, ScalableLoad, WindLoad
 
 
 class TestFactoredGroup(TestCase):
-    def test_basic(self):
+
+    def test_factoredGroup_basic(self):
         """
         Test whether FactoredGroup objects can be instantiated, and the __str__
         and __repr__ methods.
@@ -46,7 +47,7 @@ class TestFactoredGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-    def test_factors(self):
+    def test_factoredGroup_factors(self):
         """
         Test the factors getter / setter
         """
@@ -78,7 +79,7 @@ class TestFactoredGroup(TestCase):
 
         self.assertEqual(first = LG.factors, second = factors)
 
-    def test_generate_cases(self):
+    def test_factoredGroup_generate_cases(self):
         """
         Test the generate_groups function that generates the return load
         combinations

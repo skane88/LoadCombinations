@@ -8,7 +8,7 @@ from HelperFuncs import sine_interp, wind_interp_85
 
 class TestWindGroup(TestCase):
 
-    def test_basic(self):
+    def test_windGroup_basic(self):
         """
         Test the initialisation and __str__ and __repr__ methods.
         """
@@ -49,8 +49,7 @@ class TestWindGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-
-    def test_scale_speed(self):
+    def test_windGroup_scale_speed(self):
         """
         Test the scale_speed method.
         """
@@ -87,8 +86,7 @@ class TestWindGroup(TestCase):
 
         self.assertEqual(first = LG.scale_speed, second = scale_speed)
 
-
-    def test_generate_cases_simple (self):
+    def test_windGroup_generate_cases_simple (self):
 
         l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 1,
                            wind_speed = 25.0, angle = 0.0, symmetrical = True,
@@ -217,8 +215,7 @@ class TestWindGroup(TestCase):
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
-
-    def test_generate_cases_rotated (self):
+    def test_windGroup_generate_cases_rotated (self):
 
         l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 1,
                       wind_speed = 25.0, angle = 0.0, symmetrical = True,
@@ -490,8 +487,7 @@ class TestWindGroup(TestCase):
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
-
-    def test_generate_cases_symmetric (self):
+    def test_windGroup_generate_cases_symmetric (self):
 
         l1 = WindLoad(load_name = 'W1 - Wind Load, 25m/s', load_no = 1,
                       wind_speed = 25.0, angle = 0.0, symmetrical = True,

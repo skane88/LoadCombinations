@@ -8,7 +8,7 @@ from HelperFuncs import wind_interp_85
 
 class test_helper_funcs(TestCase):
 
-    def test_linear_interp(self):
+    def test_helperFuncs_linear_interp(self):
 
         range = 10
         x = 2
@@ -42,7 +42,7 @@ class test_helper_funcs(TestCase):
         self.assertRaises(ValueError, linear_interp, range, x)
 
 
-    def test_sine_interp_90(self):
+    def test_helperFuncs_sine_interp_90(self):
         range = 90
         x = 15
 
@@ -75,7 +75,7 @@ class test_helper_funcs(TestCase):
         self.assertRaises(ValueError, sine_interp_90, range, x)
 
 
-    def test_sine_interp(self):
+    def test_helperFuncs_sine_interp(self):
         #first run the tests from before, as the 90degree range is expected
         #to be the same.
 
@@ -138,7 +138,7 @@ class test_helper_funcs(TestCase):
         self.assertAlmostEqual(first = results.right, second = RHS_exp)
 
 
-    def test_wind_interp_85(self):
+    def test_helperFuncs_wind_interp_85(self):
 
         # Test the function against values calculated in Excel.
 
@@ -167,16 +167,16 @@ class test_helper_funcs(TestCase):
 
 
     @expectedFailure
-    def test_req_angles_int(self):
+    def test_helperFuncs_req_angles_int(self):
 
         self.fail("Method req_angles_int not tested as not currently used.")
 
     @expectedFailure
-    def test_req_angles_list(self):
+    def test_helperFuncs_req_angles_list(self):
 
         self.fail("Method req_angles_list not tested as not currently used.")
 
     @expectedFailure
-    def test_req_angles_chooser(self):
+    def test_helperFuncs_req_angles_chooser(self):
 
         self.fail("Method req_angles_chooser not tested as not currently used.")

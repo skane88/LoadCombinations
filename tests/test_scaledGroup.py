@@ -10,7 +10,8 @@ from Load import ScalableLoad, RotatableLoad
 
 
 class TestScaledGroup(TestCase):
-    def test_basic(self):
+
+    def test_scaledGroup_basic(self):
         """
         Test that a ScalableLoad can be instantiated, and that the __str__ and
         __repr__ methods work.
@@ -46,7 +47,7 @@ class TestScaledGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-    def test_scale_to(self):
+    def test_scaledGroup_scale_to(self):
         """
         Test the scale_to getter / setter
         """
@@ -77,7 +78,7 @@ class TestScaledGroup(TestCase):
 
         self.assertEqual(first = LG.scale_to, second = scale_to)
 
-    def test_scale(self):
+    def test_scaledGroup_scale(self):
         """
         Test the scale getter / setter
         """
@@ -108,7 +109,7 @@ class TestScaledGroup(TestCase):
 
         self.assertEqual(first = LG.scale, second = scale)
 
-    def test_generate_cases(self):
+    def test_scaledGroup_generate_cases(self):
         """
         Test the generate_groups method.
         """
@@ -209,7 +210,7 @@ class TestScaledGroup(TestCase):
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
         
-    def test_scale_factors(self):
+    def test_scaledGroup_scale_factors(self):
         l1 = ScalableLoad(load_name = 'Q1 - 5kPa Live Load', load_no = 1,
                           load_value = 5, abbrev = 'Q1')
         l2 = ScalableLoad(load_name = 'Q2 - 2.5kPa Live Load 2', load_no = 2,

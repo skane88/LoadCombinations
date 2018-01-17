@@ -13,7 +13,7 @@ from LoadFactor import LoadFactor
 
 class TestRotationalGroup(TestCase):
 
-    def test_basic(self):
+    def test_RotationalGroup_basic(self):
         """
         Test the initialisation and __str__ and __repr__ methods.
         """
@@ -54,7 +54,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = str(LG), second = str(LG2))
 
-    def test_add_load(self):
+    def test_RotationalGroup_add_load(self):
         """
         Test the add_load method.
         """
@@ -101,8 +101,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.loads, second = loads)
 
-
-    def test_add_load_errors(self):
+    def test_RotationalGroup_add_load_errors(self):
         """
         Test the add_load method raises errors.
         """
@@ -148,7 +147,7 @@ class TestRotationalGroup(TestCase):
         # dictionary
         self.assertRaises(AngleExistsException, LG.add_load, l4)
 
-    def test_angles(self):
+    def test_RotationalGroup_angles(self):
         """
         Test the angles property
         """
@@ -186,7 +185,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.angles, second = angles)
 
-    def test_angles_with_symmetry(self):
+    def test_RotationalGroup_angles_with_symmetry(self):
         """
         Test the angles_with_symmetry property
         """
@@ -261,7 +260,7 @@ class TestRotationalGroup(TestCase):
         self.assertEqual(first = LG.angles_with_symmetry,
                          second = angles_with_symmetry)
 
-    def test_req_angles(self):
+    def test_RotationalGroup_req_angles(self):
         """
         Test the getter / setter
         """
@@ -301,8 +300,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.req_angles, second = req_angles)
 
-
-    def test_interp_func(self):
+    def test_RotationalGroup_interp_func(self):
         """
         Test the interp_func getter / setter
         """
@@ -338,7 +336,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.interp_func, second = linear_interp)
 
-    def test_nearest_angles(self):
+    def test_RotationalGroup_nearest_angles(self):
         """
         Test the nearest_angles method.
         """
@@ -392,8 +390,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.nearest_angles(angle), second = expected)
 
-
-    def test_nearest_angles_with_symmetry(self):
+    def test_RotationalGroup_nearest_angles_with_symmetry(self):
         """
         Test the nearest_angles method when the ``self.loads`` dictionary relies
         on symmetry to return a full list of angles.
@@ -445,8 +442,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = LG.nearest_angles(angle), second = expected)
 
-
-    def test_generate_cases_simple(self):
+    def test_RotationalGroup_generate_cases_simple(self):
         '''
         Test the generate_groups method which returns the output load
         combinations.
@@ -574,8 +570,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
-
-    def test_generate_cases_rotated(self):
+    def test_RotationalGroup_generate_cases_rotated(self):
         l1 = RotatableLoad(load_name = 'R1 - Rotating Load, 2.5 kPa',
                            load_no = 1, load_value = 2.5, angle = 0.0,
                            symmetrical = True, abbrev = 'R1')
@@ -836,8 +831,7 @@ class TestRotationalGroup(TestCase):
 
         self.assertEqual(first = tuple(LG.generate_groups()), second = LC)
 
-
-    def test_generate_cases_symmetric(self):
+    def test_RotationalGroup_generate_cases_symmetric(self):
         """
         Test the generate_groups function with loads that should test its ability
         to handle symmetric loads.
