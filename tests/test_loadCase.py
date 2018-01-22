@@ -564,7 +564,7 @@ class TestLoadCase(TestCase):
         group_name4 = 'Group 4'
         loads4 = [l4_1, l4_2, l4_3, l4_4]
         factors4 = (1.0,)
-        req_angles4 = (0.0,45.0,90.0)
+        req_angles4 = (0.0,45.0,90.0, 135.0)
         abbrev4 = 'Gp 4'
 
         LG1 = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
