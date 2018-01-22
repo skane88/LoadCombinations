@@ -648,7 +648,7 @@ class TestCombination(TestCase):
                         load_factors = load_factors,
                         allow_duplicates = allow_duplicates)
 
-        expected_title = '3.000×l1 + 1.000×l2 + 1.000×l3 + 1.000×l4'
+        expected_title = f'3.00×{l1.abbrev} + 1.00×{l2.abbrev} + 1.00×{l3.abbrev} + 1.00×{l4.abbrev}'
 
         self.assertEqual(first = C.combination_title(), second = expected_title)
 
@@ -665,39 +665,39 @@ class TestCombination(TestCase):
                         load_factors = load_factors,
                         allow_duplicates = allow_duplicates)
 
-        expected_title = '3.000×l1 + 1.000×l2 + 1.000×l3 + 1.602×l4'
+        expected_title = f'3.00×{l1.abbrev} + 1.00×{l2.abbrev} + 1.00×{l3.abbrev} + {0.3 * 1.7 * math.pi:0.2f}×{l4.abbrev}'
 
         self.assertEqual(first = C.combination_title(), second = expected_title)
 
-        expected_title = (f'3.000×{l1.load_name} + '
-                          + f'1.000×{l2.load_name} + '
-                          + f'1.000×{l3.load_name} + '
-                          + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.load_name}')
+        expected_title = (f'3.00×{l1.load_name} + '
+                          + f'1.00×{l2.load_name} + '
+                          + f'1.00×{l3.load_name} + '
+                          + f'{0.3 * 1.7 * math.pi:0.2f}×{l4.load_name}')
 
         self.assertEqual(first = C.combination_title(abbreviate = False),
                          second = expected_title)
 
-        expected_title = (f'1.000×{l1.abbrev} + '
-                          + f'2.000×{l1.abbrev} + '
-                          + f'1.000×{l2.abbrev} + '
-                          + f'1.000×{l3.abbrev} + '
-                          + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.abbrev}')
+        expected_title = (f'1.00×{l1.abbrev} + '
+                          + f'2.00×{l1.abbrev} + '
+                          + f'1.00×{l2.abbrev} + '
+                          + f'1.00×{l3.abbrev} + '
+                          + f'{0.3 * 1.7 * math.pi:0.2f}×{l4.abbrev}')
 
         self.assertEqual(first = C.combination_title(combine_same_loads = False),
                          second = expected_title)
 
-        expected_title = (f'3.000×{l1.abbrev}2p1'
-                          + f'1.000×{l2.abbrev}2p1'
-                          + f'1.000×{l3.abbrev}2p1'
-                          + f'{0.3 * 1.7 * math.pi:0.3f}×{l4.abbrev}')
+        expected_title = (f'3.00×{l1.abbrev}2p1'
+                          + f'1.00×{l2.abbrev}2p1'
+                          + f'1.00×{l3.abbrev}2p1'
+                          + f'{0.3 * 1.7 * math.pi:0.2f}×{l4.abbrev}')
 
         self.assertEqual(first = C.combination_title(separator = '2p1'),
                          second = expected_title)
 
-        expected_title = (f'3.000-*-{l1.abbrev} + '
-                          + f'1.000-*-{l2.abbrev} + '
-                          + f'1.000-*-{l3.abbrev} + '
-                          + f'{0.3 * 1.7 * math.pi:0.3f}-*-{l4.abbrev}')
+        expected_title = (f'3.00-*-{l1.abbrev} + '
+                          + f'1.00-*-{l2.abbrev} + '
+                          + f'1.00-*-{l3.abbrev} + '
+                          + f'{0.3 * 1.7 * math.pi:0.2f}-*-{l4.abbrev}')
 
         self.assertEqual(first = C.combination_title(times_sign = '-*-'),
                          second = expected_title)

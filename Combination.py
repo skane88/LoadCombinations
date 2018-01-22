@@ -397,7 +397,7 @@ class Combination:
                           combine_same_loads: bool = True,
                           separator: Union[List[str], str] = [' + ', ' - '],
                           times_sign: str = '×',
-                          precision: int = 3,
+                          precision: int = 2,
                           no_type: str = 'f') -> str:
         """
         Generates a title for the combination based on the LoadFactors in it.
