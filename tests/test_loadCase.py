@@ -589,7 +589,7 @@ class TestLoadCase(TestCase):
         abbrev4 = 'Gp 4'
 
         scale_factor = 25*25/69/69
-        rot_45 = wind_interp_85(90, 45)
+        rot_45 = wind_interp_85(90, 45).left
 
         LF4_1 = LoadFactor(load = l4_1, base_factor = 1.0,
                            scale_factor = scale_factor,
@@ -601,7 +601,7 @@ class TestLoadCase(TestCase):
                              rotational_factor = rot_45,
                              symmetry_factor = 1.0,
                              group_factor = 1.0)
-        LF4_2_2 = LoadFactor(load = l4_1,
+        LF4_2_2 = LoadFactor(load = l4_2,
                              scale_factor = scale_factor,
                              rotational_factor = rot_45,
                              symmetry_factor = 1.0,
@@ -653,40 +653,56 @@ class TestLoadCase(TestCase):
         print()
 
         C1 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_1])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_1, LF3_1, LF4_1])
         C2 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_1])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_2, LF3_1, LF4_1])
         C3 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_1])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_1, LF3_2, LF4_1])
         C4 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_1])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_2, LF3_2, LF4_1])
 
         C5 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_2_1, LF4_2_2])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_1, LF3_1, LF4_2_1, LF4_2_2])
         C6 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_2_1, LF4_2_2])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_2, LF3_1, LF4_2_1, LF4_2_2])
         C7 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_2_1, LF4_2_2])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_1, LF3_2, LF4_2_1, LF4_2_2])
         C8 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_2_1, LF4_2_2])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_2, LF3_2, LF4_2_1, LF4_2_2])
 
         C9 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_3])
+                         load_case_abbrev = abbrev,
+                         load_factors = [LF1, LF2_1, LF3_1, LF4_3])
         C10 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_3])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_2, LF3_1, LF4_3])
         C11 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_3])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_1, LF3_2, LF4_3])
         C12 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_3])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_2, LF3_2, LF4_3])
 
         C13 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_4_1, LF4_4_2])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_1, LF3_1, LF4_4_1, LF4_4_2])
         C14 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_4_1, LF4_4_2])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_2, LF3_1, LF4_4_1, LF4_4_2])
         C15 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_4_1, LF4_4_2])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_1, LF3_2, LF4_4_1, LF4_4_2])
         C16 = Combination(load_case_no = 1, load_case = case_name,
-                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_4_1, LF4_4_2])
+                          load_case_abbrev = abbrev,
+                          load_factors = [LF1, LF2_2, LF3_2, LF4_4_1, LF4_4_2])
 
         print(C1)
         print(C2)
@@ -704,5 +720,10 @@ class TestLoadCase(TestCase):
         print(C14)
         print(C15)
         print(C16)
+
+        expected = [C1, C2, C3, C4, C5, C6, C7, C8, C9, 10, C11, C12, C13, C14,
+                    C15, C16]
+
+        self.assertEqual(first = list(LC.generate_cases()), second = expected)
 
         self.fail()
