@@ -6,7 +6,10 @@ from LoadGroup import LoadGroup, FactoredGroup, ScaledGroup, WindGroup
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
+from LoadFactor import LoadFactor
 from GroupFactor import GroupFactor
+from HelperFuncs import wind_interp_85
+from Combination import Combination
 
 class TestLoadCase(TestCase):
 
@@ -551,21 +554,73 @@ class TestLoadCase(TestCase):
         loads = [l1]
         abbrev = 'Gp 1'
 
+        LF1 = LoadFactor(load = l1, base_factor = 1.0, scale_factor = 1.0,
+                         rotational_factor = 1.0, symmetry_factor = 1.0,
+                         group_factor = 1.0)
+
         group_name2 = 'Group 2'
         loads2 = [l2]
         factors2 = (-1.0, 1.0)
         abbrev2 = 'Gp 2'
+
+        LF2_1 = LoadFactor(load = l2, base_factor = -1.0, scale_factor = 1.0,
+                           rotational_factor = 1.0, symmetry_factor = 1.0,
+                           group_factor = 2.0)
+        LF2_2 = LoadFactor(load = l2, base_factor = 1.0, scale_factor = 1.0,
+                           rotational_factor = 1.0, symmetry_factor = 1.0,
+                           group_factor = 2.0)
 
         group_name3 = 'Group 3'
         loads3 = [l3]
         factors3 = (-1.0, 1.0)
         abbrev3 = 'Gp 3'
 
+        LF3_1 = LoadFactor(load = l3, base_factor = -1.0, scale_factor = 0.5,
+                           rotational_factor = 1.0, symmetry_factor = 1.0,
+                           group_factor = 1.0)
+        LF3_2 = LoadFactor(load = l3, base_factor = 1.0, scale_factor = 0.5,
+                           rotational_factor = 1.0, symmetry_factor = 1.0,
+                           group_factor = 1.0)
+
         group_name4 = 'Group 4'
         loads4 = [l4_1, l4_2, l4_3, l4_4]
         factors4 = (1.0,)
         req_angles4 = (0.0,45.0,90.0, 135.0)
         abbrev4 = 'Gp 4'
+
+        scale_factor = 25*25/69/69
+        rot_45 = wind_interp_85(90, 45)
+
+        LF4_1 = LoadFactor(load = l4_1, base_factor = 1.0,
+                           scale_factor = scale_factor,
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           group_factor = 1.0)
+        LF4_2_1 = LoadFactor(load = l4_1, base_factor = 1.0,
+                             scale_factor = scale_factor,
+                             rotational_factor = rot_45,
+                             symmetry_factor = 1.0,
+                             group_factor = 1.0)
+        LF4_2_2 = LoadFactor(load = l4_1,
+                             scale_factor = scale_factor,
+                             rotational_factor = rot_45,
+                             symmetry_factor = 1.0,
+                             group_factor = 1.0)
+        LF4_3 = LoadFactor(load = l4_2,
+                           scale_factor = scale_factor,
+                           rotational_factor = 1.0,
+                           symmetry_factor = 1.0,
+                           group_factor = 1.0,)
+        LF4_4_1 = LoadFactor(load = l4_2, base_factor = 1.0,
+                             scale_factor = scale_factor,
+                             rotational_factor = rot_45,
+                             symmetry_factor = 1.0,
+                             group_factor = 1.0)
+        LF4_4_2 = LoadFactor(load = l4_3, base_factor = 1.0,
+                             scale_factor = scale_factor,
+                             rotational_factor = rot_45,
+                             symmetry_factor = 1.0,
+                             group_factor = 1.0)
 
         LG1 = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
         LG2 = FactoredGroup(group_name = group_name2,
@@ -594,5 +649,60 @@ class TestLoadCase(TestCase):
 
         for i in LC.generate_cases():
             print(i)
+
+        print()
+
+        C1 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_1])
+        C2 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_1])
+        C3 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_1])
+        C4 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_1])
+
+        C5 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_2_1, LF4_2_2])
+        C6 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_2_1, LF4_2_2])
+        C7 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_2_1, LF4_2_2])
+        C8 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_2_1, LF4_2_2])
+
+        C9 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_3])
+        C10 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_3])
+        C11 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_3])
+        C12 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_3])
+
+        C13 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_1, LF4_4_1, LF4_4_2])
+        C14 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_1, LF4_4_1, LF4_4_2])
+        C15 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_1, LF3_2, LF4_4_1, LF4_4_2])
+        C16 = Combination(load_case_no = 1, load_case = case_name,
+                         load_case_abbrev = abbrev, load_factors = [LF1, LF2_2, LF3_2, LF4_4_1, LF4_4_2])
+
+        print(C1)
+        print(C2)
+        print(C3)
+        print(C4)
+        print(C5)
+        print(C6)
+        print(C7)
+        print(C8)
+        print(C9)
+        print(C10)
+        print(C11)
+        print(C12)
+        print(C13)
+        print(C14)
+        print(C15)
+        print(C16)
 
         self.fail()
