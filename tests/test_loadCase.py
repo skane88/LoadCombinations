@@ -577,10 +577,12 @@ class TestLoadCase(TestCase):
 
         LF3_1 = LoadFactor(load = l3, base_factor = -1.0, scale_factor = 0.5,
                            rotational_factor = 1.0, symmetry_factor = 1.0,
-                           group_factor = 1.0)
+                           group_factor = 1.0,
+                           info = {'scale_to': 5, 'is_scaled': True})
         LF3_2 = LoadFactor(load = l3, base_factor = 1.0, scale_factor = 0.5,
                            rotational_factor = 1.0, symmetry_factor = 1.0,
-                           group_factor = 1.0)
+                           group_factor = 1.0,
+                           info = {'scale_to': 5, 'is_scaled': True})
 
         group_name4 = 'Group 4'
         loads4 = [l4_1, l4_2, l4_3, l4_4]
@@ -595,32 +597,44 @@ class TestLoadCase(TestCase):
                            scale_factor = scale_factor,
                            rotational_factor = 1.0,
                            symmetry_factor = 1.0,
-                           group_factor = 1.0)
+                           group_factor = 1.0,
+                           info = {'angle': 0.0, 'symmetric': False,
+                                   'scale_to': 25, 'is_scaled': True})
         LF4_2_1 = LoadFactor(load = l4_1, base_factor = 1.0,
                              scale_factor = scale_factor,
                              rotational_factor = rot_45,
                              symmetry_factor = 1.0,
-                             group_factor = 1.0)
+                             group_factor = 1.0,
+                             info = {'angle': 45.0, 'symmetric': False,
+                                     'scale_to': 25, 'is_scaled': True})
         LF4_2_2 = LoadFactor(load = l4_2,
                              scale_factor = scale_factor,
                              rotational_factor = rot_45,
                              symmetry_factor = 1.0,
-                             group_factor = 1.0)
+                             group_factor = 1.0,
+                             info = {'angle': 45.0, 'symmetric': False,
+                                     'scale_to': 25, 'is_scaled': True})
         LF4_3 = LoadFactor(load = l4_2,
                            scale_factor = scale_factor,
                            rotational_factor = 1.0,
                            symmetry_factor = 1.0,
-                           group_factor = 1.0,)
+                           group_factor = 1.0,
+                           info = {'angle': 90.0, 'symmetric': False,
+                                   'scale_to': 25, 'is_scaled': True})
         LF4_4_1 = LoadFactor(load = l4_2, base_factor = 1.0,
                              scale_factor = scale_factor,
                              rotational_factor = rot_45,
                              symmetry_factor = 1.0,
-                             group_factor = 1.0)
+                             group_factor = 1.0,
+                             info = {'angle': 135.0, 'symmetric': False,
+                                     'scale_to': 25, 'is_scaled': True})
         LF4_4_2 = LoadFactor(load = l4_3, base_factor = 1.0,
                              scale_factor = scale_factor,
                              rotational_factor = rot_45,
                              symmetry_factor = 1.0,
-                             group_factor = 1.0)
+                             group_factor = 1.0,
+                             info = {'angle': 135.0, 'symmetric': False,
+                                     'scale_to': 25, 'is_scaled': True})
 
         LG1 = LoadGroup(group_name = group_name, loads = loads, abbrev = abbrev)
         LG2 = FactoredGroup(group_name = group_name2,
@@ -646,11 +660,6 @@ class TestLoadCase(TestCase):
 
         LC = LoadCase(case_name = case_name, case_no = case_no,
                       load_groups = LGs, abbrev = abbrev)
-
-        for i in LC.generate_cases():
-            print(i)
-
-        print()
 
         C1 = Combination(load_case_no = 1, load_case = case_name,
                          load_case_abbrev = abbrev,
@@ -704,26 +713,8 @@ class TestLoadCase(TestCase):
                           load_case_abbrev = abbrev,
                           load_factors = [LF1, LF2_2, LF3_2, LF4_4_1, LF4_4_2])
 
-        print(C1)
-        print(C2)
-        print(C3)
-        print(C4)
-        print(C5)
-        print(C6)
-        print(C7)
-        print(C8)
-        print(C9)
-        print(C10)
-        print(C11)
-        print(C12)
-        print(C13)
-        print(C14)
-        print(C15)
-        print(C16)
 
-        expected = [C1, C2, C3, C4, C5, C6, C7, C8, C9, 10, C11, C12, C13, C14,
+        expected = [C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14,
                     C15, C16]
 
         self.assertEqual(first = list(LC.generate_cases()), second = expected)
-
-        self.fail()

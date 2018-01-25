@@ -8,7 +8,6 @@ from Load import Load
 
 class TestCombination(TestCase):
 
-    @expectedFailure
     def test_combination_basic(self):
         """
         Basic test for the class - can it even be instantiated?
@@ -33,7 +32,9 @@ class TestCombination(TestCase):
 
         print(str(C))
 
-        self.fail('Need to implement repr method')
+        C2 = eval(repr(C))
+
+        self.assertEqual(first = C, second = C2)
 
     def test_combination_load_factors(self):
         """

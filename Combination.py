@@ -675,6 +675,20 @@ class Combination:
                 + f'{self.combination_title()}'
                 )
 
+    def __repr__(self):
+
+        # use the {type(self).__name__} call to get the exact class name. This
+        # should allow the __str__ method to be accepted for subclasses of
+        # LoadGroup without change.
+
+        return (f'{type(self).__name__}('
+                + f'load_case_no = {repr(self.load_case_no)}, '
+                + f'load_case = {repr(self.load_case)}, '
+                + f'load_case_abbrev = {repr(self.load_case_abbrev)}, '
+                + f'load_factors = {repr(self.load_factors)}, '
+                + f'allow_duplicates = {repr(self.allow_duplicates)}'
+                + f')')
+
     def __eq__(self, other):
         """
         Override the equality test.
