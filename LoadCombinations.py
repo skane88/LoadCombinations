@@ -402,9 +402,9 @@ class LoadCombinations():
 
         self._load_cases = {}
 
-        self.add_load_cases(load_cases)
+        self.add_case(load_cases)
 
-    def add_load_cases(self, load_cases):
+    def add_case(self, load_cases):
         """
 
         :param load_cases:
@@ -413,7 +413,7 @@ class LoadCombinations():
 
         raise NotImplementedError
 
-    def del_load_cases(self, load_case_no = None, load_case = None):
+    def del_case(self, load_case_no = None, load_case = None):
         """
 
         :param load_case_no:
