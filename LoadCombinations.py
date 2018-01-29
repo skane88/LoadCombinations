@@ -9,7 +9,8 @@ object for use by the end user.
 from typing import Union, Dict, List, Tuple
 from Load import Load
 from LoadGroup import LoadGroup
-from exceptions import LoadExistsException, LoadNotPresentException
+from exceptions import (LoadExistsException, LoadNotPresentException,
+                        InvalidCombinationFactor)
 
 class LoadCombinations():
     """
@@ -255,7 +256,7 @@ class LoadCombinations():
 
         else:
 
-            if not isinstance(load_group, GroupFactor):
+            if not isinstance(load_group, LoadGroup):
                 # raise error if the load_group object isn't a GroupFactor
                 # object.
 
