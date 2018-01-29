@@ -96,7 +96,7 @@ class LoadCase:
         self._case_no = case_no
 
     @property
-    def load_groups(self) -> Dict[str, GroupFactor]:
+    def load_groups(self) -> Dict[str, LoadGroup]:
         """
         Get / set the ``LoadCase`` ``load_groups``.
 
@@ -119,9 +119,9 @@ class LoadCase:
 
     @load_groups.setter
     def load_groups(self,
-                    load_groups: Union[Dict[str, GroupFactor],
-                                          List[GroupFactor],
-                                          GroupFactor]
+                    load_groups: Union[Dict[str, LoadGroup],
+                                          List[LoadGroup],
+                                          LoadGroup]
                     ):
         """
         Get / set the ``LoadCase`` ``load_groups``.
@@ -155,9 +155,9 @@ class LoadCase:
         self.add_group(load_groups)
 
     def add_group(self,
-                  load_group: Union[Dict[str, GroupFactor],
-                                          List[GroupFactor],
-                                          GroupFactor]
+                  load_group: Union[Dict[str, LoadGroup],
+                                          List[LoadGroup],
+                                          LoadGroup]
                   ):
         """
         Add a ``LoadGroup`` into the LoadCase.

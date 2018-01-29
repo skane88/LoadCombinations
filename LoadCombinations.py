@@ -8,6 +8,7 @@ object for use by the end user.
 
 from typing import Union, Dict, List, Tuple
 from Load import Load
+from LoadGroup import LoadGroup
 from exceptions import LoadExistsException, LoadNotPresentException
 
 class LoadCombinations():
@@ -213,34 +214,174 @@ class LoadCombinations():
 
         self._load_groups = {}
 
-        self.add_load_groups(load_groups)
+        # use the add_group method to add LoadGroups, to check for duplicates
+        # etc.
 
-    def add_load_groups(self, load_groups):
+        self.add_group(load_groups)
+
+    def add_group(self,
+                  load_group: Union[Dict[str, LoadGroup],
+                                          List[LoadGroup],
+                                          LoadGroup]):
+        """
+        Add a ``LoadGroup`` into the LoadCase.
+        :param load_group: The ``load_groups`` to add to the ``LoadCase``.
+            This should be a dictionary of the following format:
+
+            ``{group_name: GroupFactor}``
+
+            where ``GroupFactor`` is a ``GroupFactor`` object containing a
+            ``LoadGroup`` object and the factor to be applied to the
+            results from the ``LoadGroup.generate_groups`` method.
+            I.e. for a LoadCase which is 1.35 x Dead Load + 1.5 x Live Load
+            the load_groups would be:
+
+            ``{'Dead Load': (Dead Load LoadGroup, 1.35),
+               'Live Load': (Live Load LoadGroup, 1.50)}``.
+
+            Alternatively a List of ``[GroupFactor, ...]``
+            or a single ``GroupFactor`` can be provided.
         """
 
-        :param load_groups:
-        :return:
+        if isinstance(load_group, Dict):
+
+            for k, lg in load_group.items():
+                self.add_group(lg)
+
+        elif isinstance(load_group, List):
+
+            for lg in load_group:
+                self.add_group(lg)
+
+        else:
+
+            if not isinstance(load_group, GroupFactor):
+                # raise error if the load_group object isn't a GroupFactor
+                # object.
+
+                raise InvalidCombinationFactor(f'Expected load_group to be '
+                                               + f'a GroupFactor object. '
+                                               + f' Actual value: {load_group}.'
+                                               )
+
+            if not isinstance(load_group.load_group, LoadGroup) \
+                    or not isinstance(load_group.group_factor, float):
+                # next raise error if the first or last values are not
+                # a LoadGroup or a float
+
+                raise InvalidCombinationFactor(f'Expected load_group to be '
+                                               + f'a GroupFactor object. '
+                                               + f' Actual value: {load_group}.'
+                                               )
+
+
+            if self.group_exists(load_group = load_group.load_group) == False:
+
+                self._load_groups[load_group.load_group.group_name] = load_group
+
+            else:
+
+                raise LoadGroupExistsException(f'Attempted to add a LoadGroup'
+                                               + f' that already exists to the'
+                                               + f' LoadCase. LoadGroup:'
+                                               + f' {str(load_group.load_group)}'
+                                               + f', LoadCase.load_groups:'
+                                               + f' {str(self.load_groups)}.')
+
+    def del_group(self, *, group_name: str = None, abbrev: str = None,
+                  load_group: LoadGroup = None):
+        """
+        A method to delete a single ``LoadGroup`` from the ``self.load_groups``
+        property.
+
+        The ``LoadGroup`` to delete can be specified by either the
+        ``group_name`` or ``abbrev`` properties of the ``LoadGroup``, or a
+        ``LoadGroup`` object can be passed in directly.
+
+        It should be noted that if more than one parameter is given the search
+        will only be carried out based on the first provided parameter -
+        providing multiple parameters does not result in a search by multiple
+        parameters.
+
+        This method does not curently return information on the status of the
+        deletion operation. If it is necessary to know if the deletion was
+        successful or not the user should ensure they check for it directly.
+
+        :param group_name: The load_name of the load to delete.
+        :param abbrev:  The abbreviation of the load to delete.
+        :param load_group: A ``LoadGroup`` object to check for.
         """
 
-        raise NotImplementedError
+        group_present = self.group_exists(group_name = group_name,
+                                          abbrev = abbrev,
+                                          load_group = load_group)
 
-    def del_load_groups(self, load_group = None):
+        if group_present != False:
+            self._load_groups.pop(group_present)
+
+        else:
+            raise LoadGroupNotPresentException(f'Attempted to delete LoadGroup'
+                                               + f' which did not exist.')
+
+    def group_exists(self, *, group_name: str = None, abbrev: str = None,
+                     load_group: LoadGroup = None):
+        """"
+        This method searches the ``self.load_groups`` property of the
+        ``LoadCase`` to determine if a ``LoadGroup`` exists in it.
+        It will search by either the ``group_name`` or ``abbrev`` properties of
+        the ``LoadGroup``, or can search using a given ``LoadGroup`` object.
+
+        It should be noted that if  more than one parameter is given the search
+        will only be carried out based on the first provided parameter -
+        providing multiple parameters does not result in a search by multiple
+        parameters.
+
+        :param group_name: The load_name of the load to delete.
+        :param abbrev:  The abbreviation of the load to delete.
+        :param load_group: A ``LoadGroup`` object to check for.
+        :returns: Either the ``group_name`` of the load_group object (if found)
+            or ``False``.
         """
 
-        :param load_group:
-        :return:
-        """
+        # if the self._load_groups property is empty the load_group obviously
+        # cannot exist.
 
-        raise NotImplementedError
+        if len(self.load_groups) == 0:
+            return False
 
-    def load_group_exists(self, load_group):
-        """
+        # else need to search for the LoadGroup
 
-        :param load_group:
-        :return:
-        """
+        if group_name != None:
 
-        raise NotImplementedError
+            if group_name in self.load_groups:
+                return group_name
+            else:
+                return False
+
+        elif abbrev != None:
+            # if abbrev is provided, need to search all items:
+
+            for k, lg in self.load_groups.items():
+
+                if abbrev == lg.load_group.abbrev:
+                    return k
+
+            # else haven't found so return false
+            return False
+
+        elif load_group != None:
+
+            for k, lg in self.load_groups.items():
+
+                if load_group.group_name == k or lg.load_group == load_group:
+                    return k
+
+            # else haven't found it so return False
+            return False
+
+        else:
+            raise ValueError(f'To check if a LoadGroup exists a LoadGroup needs'
+                             + f' to be provided. No information provided.')
 
     @property
     def load_cases(self):
