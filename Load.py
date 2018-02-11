@@ -15,7 +15,7 @@ class Load:
     classes, but will be acceptable for simple load cases.
     """
 
-    def __init__(self, *, load_name: str, load_no, abbrev: str = ''):
+    def __init__(self, *, load_name: str, load_no: int, abbrev: str = ''):
         """
         Create a Load object.mro
 
