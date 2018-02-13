@@ -24,7 +24,7 @@ def BuildLoad(*, load_name: str, load_no: int, abbrev: str = '',
         'ScalableLoad'
     :param kwargs: Provide the additional arguments required by ``WindLoad``,
         ``RotatableLoad`` and ``ScalableLoad`` as named parameters.
-    :return: Returns a Load object.
+    :return: Returns a ``Load`` object.
     """
 
     if load_type == WindLoad or 'wind_speed' in kwargs:
@@ -40,6 +40,19 @@ def BuildLoad(*, load_name: str, load_no: int, abbrev: str = '',
         return Load(load_name = load_name, load_no = load_no, abbrev = abbrev)
 
 def LoadFromString(load_string: str) -> Load:
+    """
+    Returns a ``Load`` object when provided a string. It infers the correct
+    type of load based on the provided arguments.
+
+    :param load_string: A string of the following format:
+
+        'load_name: load_name_value, load_no: load_no_value...'
+
+        Each parameter required by the constructor of a ``Load`` object must
+        be provided, followed by a colon (:) followed by the actual value,
+        separated from the next parameter by a comma (,).
+    :return: Returns a ``Load`` object.
+    """
 
     kwargs = _string_parser(load_string)
 
@@ -61,6 +74,18 @@ def LoadFromString(load_string: str) -> Load:
     return LoadFromDict(kwargs)
 
 def LoadFromDict(load_dict: Dict[str, Union[str, float, int]]) -> Load:
+    """
+    Returns a ``Load`` object when provided a dict. It infers the correct
+    type of load based on the provided arguments.
+
+    :param load_dict: A dictionary of the following format:
+
+        {load_name: load_name_value, load_no: load_no_value...}
+
+        Each parameter required by the constructor of a ``Load`` object must
+        be provided.
+    :return: Returns a ``Load`` object.
+    """
 
     kwargs = load_dict
 
