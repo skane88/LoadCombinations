@@ -666,6 +666,27 @@ class Combination:
         raise Exception('Unknown error occured trying to determine the load '
                         + 'that corresponds to the maximum no. of load factors')
 
+    def Copy(self):
+        """
+        Copies a ``Combination`` object but does a slightly deeper copy than the
+        standard reference passing copy. This is required because the
+        ``LoadCase`` method copies ``Combination`` objects, and then appends new
+        ``LoadFactor`` obejcts to them. If the copy is a simple reference pass,
+        all original ``Combination`` objects are also updated.
+
+        Could also use copy.deepcopy() to achieve a similar effect, but this
+        method allows for ``Load`` objects to be updated after creating the
+        ``Combination`` objects and still maintain their information.
+        """
+
+        lf = {k: v for k, v in self.load_factors.items()}
+
+        return Combination(load_case_no = self.load_case_no,
+                           load_case = self.load_case,
+                           load_case_abbrev = self.load_case_abbrev,
+                           load_factors = lf,
+                           allow_duplicates =  self.allow_duplicates)
+
     def __str__(self):
         # use the {type(self).__name__} call to get the exact class name. This
         # should allow the __str__ method to be accepted for subclasses of

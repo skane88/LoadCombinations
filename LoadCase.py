@@ -6,7 +6,6 @@ LoadGroup objects and use them to output relevant load combinations within the
 case.
 """
 
-import copy
 from typing import Dict, List, Union, Tuple
 from LoadGroup import LoadGroup
 from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
@@ -413,6 +412,8 @@ class LoadCase:
             """
             Helper function that does a copy of a list of Combination objects.
 
+            This is needed as we add ``LoadFactors`` to the Combinations
+
             :param comb_list: The list to copy.
             :return: A copy of the list where each item is a shallow copy of the
                 original.
@@ -421,7 +422,7 @@ class LoadCase:
             ret_list = []
 
             for i in comb_list:
-                ret_list.append(copy.deepcopy(i))
+                ret_list.append(i.Copy())
 
             return ret_list
 
@@ -462,9 +463,7 @@ class LoadCase:
                     # comb_list object
 
                     for C in orig_list:
-                        comb = copy.deepcopy(C) # do a copy so that any existing
-                                            # internal references (such as
-                                            # shared loads etc.) are maintained
+                        comb = C.Copy()
 
                         # add the LoadFactor into the combination.
                         comb.add_load_factor(LF)
