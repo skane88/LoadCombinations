@@ -207,3 +207,14 @@ class TestBuildLoad(TestCase):
             test_load = LoadFromString(test_string)
 
             self.assertEqual(first = test_load, second = wind_load)
+
+    def test_buildGroup(self):
+        self.fail()
+
+    def test_groupFromString(self):
+        self.fail()
+
+    def test_groupFromDict(self):
+
+        self.fail()
+

@@ -6,11 +6,20 @@ and LoadCases from other input (i.e. text etc.)
 """
 
 from typing import Union, Dict, List, Tuple
+from enum import IntEnum, unique
 
 from Load import Load, ScalableLoad, RotatableLoad, WindLoad
+from LoadGroup import (LoadGroup, FactoredGroup, ScaledGroup, ExclusiveGroup,
+                       RotationalGroup, WindGroup)
+
+@unique
+class ScaledMode(IntEnum):
+    SCALED = 1
+    ERROR = 0
+    EXCLUSIVE = -1
 
 def BuildLoad(*, load_name: str, load_no: int, abbrev: str = '',
-              load_type = None, **kwargs) -> Load:
+              load_type: Load = None, **kwargs) -> Load:
     """
     Builds a ``Load`` object. The type of Load object can be specified directly
     in the ``load_type`` parameter or else is inferred by the arguments
@@ -95,6 +104,50 @@ def LoadFromDict(load_dict: Dict[str, Union[str, float, int]]) -> Load:
 
     return BuildLoad(load_name = load_name, load_no = load_no, abbrev = abbrev,
                      **kwargs)
+
+def BuildGroup(*, group_name: str,
+               loads: Union[Dict[int, Load], List[Load], Load],
+               abbrev: str, load_type: LoadGroup = None,
+               scaled_mode: int = ScaledMode.ERROR,
+               **kwargs) -> LoadGroup:
+
+    if load_type == WindGroup or 'scale_speed' in kwargs:
+        return WindGroup(group_name = group_name, loads = loads,
+                         abbrev = abbrev, **kwargs)
+    elif load_type == RotationalGroup or 'req_angles' in kwargs:
+        return RotationalGroup(group_name = group_name, loads = loads,
+                               abbrev = abbrev, **kwargs)
+    elif load_type == ExclusiveGroup:
+        return ExclusiveGroup(group_name = group_name, loads = loads,
+                              abbrev = abbrev, **kwargs)
+    elif load_type == ScaledGroup:
+        return ScaledGroup(group_name = group_name, loads = loads,
+                           abbrev = abbrev, **kwargs)
+    elif 'scale_to' in kwargs:
+        if scaled_mode == ScaledMode.SCALED:
+            return ScaledGroup(group_name = group_name, loads = loads,
+                               abbrev = abbrev, **kwargs)
+        elif scaled_mode == ScaledMode.EXCLUSIVE:
+            return ExclusiveGroup(group_name = group_name, loads = loads,
+                                  abbrev = abbrev, **kwargs)
+        else:
+            raise ValueError('Not possible to determine whether a ScaledGroup'
+                             + ' or ExclusiveGroup is required with the given'
+                             + ' arguments.')
+    elif load_type == FactoredGroup or 'factors' in kwargs:
+        return FactoredGroup(group_name = group_name, loads = loads,
+                             abbrev = abbrev, **kwargs)
+    else:
+        return LoadGroup(group_name = group_name, loads = loads,
+                         abbrev = abbrev)
+
+def GroupFromString() -> LoadGroup:
+
+    raise NotImplementedError
+
+def GroupFromDict() -> LoadGroup:
+
+    raise NotImplementedError
 
 def _string_parser(in_string: str) -> Dict[str, str]:
     """
