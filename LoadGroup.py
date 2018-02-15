@@ -331,7 +331,7 @@ class FactoredGroup(LoadGroup):
     """
 
     def __init__(self, *, group_name: str, loads: List[Load],
-                 factors: Tuple[float, ...] = (1.0,), abbrev: str = ''):
+                 factors: Tuple[float, ...], abbrev: str = ''):
         """
         Creates a LoadGroup object.
 
