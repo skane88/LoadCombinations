@@ -174,7 +174,8 @@ def GroupFromString(*, group_string: str,
             del(kwargs['scale_func'])
 
     if 'req_angles' in kwargs:
-        kwargs['req_angles'] = _tuple_from_string(kwargs['req_angles'], float)
+        kwargs['req_angles'] = _tuple_from_string(in_string = kwargs['req_angles'],
+                                                  typer = float)
 
     if 'factors' in kwargs:
         kwargs['factors'] = _tuple_from_string(in_string = kwargs['factors'],
