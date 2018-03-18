@@ -137,13 +137,13 @@ class LoadCombinations():
             ``False`` otherwise.
         """
 
-        # first count
+        # first count no. of args
         args = [load_no, load_name, abbrev, load]
-        sumnones = sum(x is not None for x in args)
+        sumargs = sum(x is not None for x in args)
 
-        if sumnones > 1:
+        if sumargs > 1:
             raise ValueError('Expected only 1x populated argument to look for.')
-        elif sumnones == 0:
+        elif sumargs == 0:
             raise ValueError('No Load provided to look for')
 
         # can shortcut this method if the self._loads method is empty.
@@ -229,13 +229,9 @@ class LoadCombinations():
 
         self.add_group(load_groups)
 
-    def add_group(self,
-                  load_group):
+    def add_group(self):
         """
-
         """
-
-
 
         raise NotImplementedError
 
@@ -246,12 +242,70 @@ class LoadCombinations():
 
         raise NotImplementedError
 
-    def group_exists(self):
-        """"
+    def group_exists(self,
+                     group_name: str = None,
+                     abbrev: str = None,
+                     load_group: LoadGroup = None) -> Union[bool, str]:
+        """
+        This method searches the ``self.load_groups`` property of the
+        ``LoadCombination`` to determine if a ``LoadGroup`` exists in it.
+        It will search by either the ``group_name`` or ``abbrev`` properties of
+        the ``LoadGroup``, or can search using a given ``LoadGroup`` object.
 
+        Only one parameter should be given otherwise an error is raised.
+
+        :param group_name: The load_name of the load to delete.
+        :param abbrev:  The abbreviation of the load to delete.
+        :param load_group: A ``LoadGroup`` object to check for.
+        :returns: Either the ``group_name`` of the load_group object (if found)
+            or ``False``.
         """
 
-        raise NotImplementedError
+        args = [group_name, abbrev, load_group]
+        sumargs = sum(x is not None for x in args)
+
+        if sumargs == 0:
+            raise ValueError('No LoadGroup is provided to search for.')
+        elif sumargs > 1:
+            raise ValueError('More than one parameter is provided to search for'
+                             + ' - provide only a single parameter.')
+
+        if len(self.load_groups) == 0:
+            return False
+
+        # else need to search for the LoadGroup
+
+        if group_name != None:
+
+            if group_name in self.load_groups:
+                return group_name
+            else:
+                return False
+
+        elif abbrev != None:
+            # if abbrev is provided, need to search all items:
+
+            for k, lg in self.load_groups.items():
+
+                if abbrev == lg.load_group.abbrev:
+                    return k
+
+            # else haven't found so return false
+            return False
+
+        elif load_group != None:
+
+            for k, lg in self.load_groups.items():
+
+                if load_group.group_name == k or lg.load_group == load_group:
+                    return k
+
+            # else haven't found it so return False
+            return False
+
+        else:
+            raise ValueError(f'To check if a LoadGroup exists a LoadGroup needs'
+                             + f' to be provided. No information provided.')
 
     @property
     def load_cases(self):
