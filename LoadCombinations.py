@@ -137,6 +137,15 @@ class LoadCombinations():
             ``False`` otherwise.
         """
 
+        # first count
+        args = [load_no, load_name, abbrev, load]
+        sumnones = sum(x is not None for x in args)
+
+        if sumnones > 1:
+            raise ValueError('Expected only 1x populated argument to look for.')
+        elif sumnones == 0:
+            raise ValueError('No Load provided to look for')
+
         # can shortcut this method if the self._loads method is empty.
         if len(self._loads) == 0:
             # by default the load cannot exist in an empty dictionary.
@@ -225,6 +234,8 @@ class LoadCombinations():
         """
 
         """
+
+
 
         raise NotImplementedError
 
