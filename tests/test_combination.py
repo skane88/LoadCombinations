@@ -956,3 +956,7 @@ class TestCombination(TestCase):
         count = {1: 4, 2: 1, 3: 2, 4: 1}
 
         self.assertEqual(first = C.count_load_factors_per_load, second = count)
+
+    def test_copy(self):
+
+        self.fail()
