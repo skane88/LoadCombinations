@@ -10,6 +10,7 @@ from typing import Union, Dict, List, Tuple
 from Load import Load
 from LoadGroup import LoadGroup
 from exceptions import (LoadExistsException, LoadNotPresentException,
+                        LoadGroupExistsException, LoadGroupNotPresentException,
                         InvalidCombinationFactor)
 
 class LoadCombinations():
@@ -229,18 +230,88 @@ class LoadCombinations():
 
         self.add_group(load_groups)
 
-    def add_group(self):
+    def add_group(self,
+                  load_group: Union[LoadGroup,
+                                    Dict[str, LoadGroup],
+                                    List[LoadGroup]]
+                  ):
         """
         """
 
-        raise NotImplementedError
+        if isinstance(load_group, List):
+            # if a list of groups, recursively add them individually
 
-    def del_group(self):
+            for lg in load_group:
+                self.add_group(lg)
+
+        if isinstance(load_group, Dict):
+            # if a dictionary of groups, recursively add them individually
+
+            for lg in load_group.values():
+                self.add_group(lg)
+
+        if not isinstance(load_group, LoadGroup):
+            # raise an error if not a LoadGroup
+
+            raise ValueError(f'Expected a LoadGroup object but instead received'
+                             + f' a {type(load_group)}')
+
+        # else we have a single load group
+
+        if self.group_exists(load_group = load_group):
+            # if the group already exists, raise an error
+
+            raise LoadGroupExistsException(f'Load group {load_group.group_name}'
+                                           + f' already exists.')
+
+        # finally add to the self._load_groups dictionary
+
+        # first check if the loads in the load_group already exist in the
+        # LoadCombination
+
+        for l in load_group.loads.values():
+
+            if not self.load_exists(load = l):
+                # if load doesn't exist, add to the self.loads dictionary
+                # so that any changes to the load reflect to all similar groups
+
+                self.add_load(load = l)
+
+        # finally add to the self._load_groups dictionary
+
+        self._load_groups[load_group.group_name] = load_group
+
+    def del_group(self, *, group_name: str = None, abbrev: str = None,
+                  load_group: LoadGroup = None):
+        """
+        A method to delete a single ``LoadGroup`` from the ``self.load_groups``
+        property.
+
+        The ``LoadGroup`` to delete can be specified by either the
+        ``group_name`` or ``abbrev`` properties of the ``LoadGroup``, or a
+        ``LoadGroup`` object can be passed in directly.
+
+        Only one parameter should be given otherwise an error is raised.
+
+        This method does not currently return information on the status of the
+        deletion operation. If it is necessary to know if the deletion was
+        successful or not the user should ensure they check for it directly.
+
+        :param group_name: The load_name of the load to delete.
+        :param abbrev:  The abbreviation of the load to delete.
+        :param load_group: A ``LoadGroup`` object to check for.
         """
 
-        """
+        group_present = self.group_exists(group_name = group_name,
+                                          abbrev = abbrev,
+                                          load_group = load_group)
 
-        raise NotImplementedError
+        if group_present != False:
+            self._load_groups.pop(group_present)
+
+        else:
+            raise LoadGroupNotPresentException(f'Attempted to delete LoadGroup'
+                                               + f' which did not exist.')
 
     def group_exists(self,
                      group_name: str = None,
