@@ -76,135 +76,80 @@ class LoadCombinations():
         else:
             #first check if the load exists in the self._loads dictionary
 
-            if self.load_exists(load = load) == False:
+            if not self.load_exists(load = load):
+
+                # next need to check if the load_no is already used by a
+                # non-identical load:
+
+                if load.load_no in self.loads:
+                    raise LoadExistsException(f'Attempted to add a load to the'
+                                              + f' LoadCombination and an '
+                                              + f'existing load shares the '
+                                              + f'same load_no'
+                                              )
+
                 self._loads[load.load_no] = load
             else:
                 raise LoadExistsException(f'Attempted to add a load to the '
-                                          + f'LoadGroup that already exists. '
+                                          + f'LoadCombination that already '
+                                          + f'exists. '
                                           + f'Load: {str(load)}, '
                                           + f'self.loads: {str(self._loads)}.')
 
-    def del_load(self, *, load_no: int = None, load_name: str = None,
-                    abbrev: str = None, load: Load = None):
+    def del_load(self, *, load_no: int = None, load: Load = None):
         """
         A method to delete a single load from the self.loads property.
 
         The load to delete can be specified by either the ``load_no``,
-        ``load_name`` or ``abbrev`` properties of the ``Load``, or a ``Load``
-        object can be passed in directly. It should be noted that if
-        more than one parameter is given the search will only be carried out
-        based on the first provided parameter - providing multiple parameters
-        does not result in a search by multiple parameters.
+        or a ``Load`` object can be passed in directly. If both are passed an
+        error is raised.
 
         This method does not curently return information on the status of the
         deletion operation. If it is necessary to know if the deletion was
         successful or not the user should ensure they check for it directly.
 
         :param load_no: The load_no of the load to delete.
-        :param load_name: The load_name of the load to delete.
-        :param abbrev:  The abbrev of the load to delete.
         :param load: A ``Load`` object to check for.
         """
 
         load_present = self.load_exists(load_no = load_no,
-                                        load_name = load_name,
-                                        abbrev = abbrev,
                                         load = load)
 
-        if load_present != False:
+        if load_present:
 
-            self._loads.pop(load_present)
+            if load_no == None:
+                load_no = load.load_no
+
+            self._loads.pop(load_no)
 
         else:
             raise LoadNotPresentException(f'To delete a Load a Load needs to be'
                                           + f'present. Load not present.')
 
-    def load_exists(self, *, load_no: int = None, load_name: str = None,
-                    abbrev: str = None, load: Load = None) -> Union[bool, int]:
+    def load_exists(self, *, load: Load) -> bool:
         """
         This method searches the self.loads property of the ``LoadGroup`` to
-        determine if a ``Load`` exists in it. It will search by either the
-        ``load_no``, ``load_name`` or ``abbrev`` properties of the ``Load``, or
-        can search using a given ``Load`` object. It should be noted that if
-        more than one parameter is given the search will only be carried out
-        based on the first provided parameter - providing multiple parameters
-        does not result in a search by multiple parameters.
+        determine if a ``Load`` exists in it.
 
-        :param load_no: The ``load_no`` of the load to check.
-        :param load_name: The ``load_name`` of the load to check.
-        :param abbrev: The ``abbrev`` of the load to check.
         :param load: A ``Load`` object to look for.
         :return: Returns the ``load_no`` of the load if the load is found,
             ``False`` otherwise.
         """
-
-        # first count no. of args
-        args = [load_no, load_name, abbrev, load]
-        sumargs = sum(x is not None for x in args)
-
-        if sumargs > 1:
-            raise ValueError('Expected only 1x populated argument to look for.')
-        elif sumargs == 0:
-            raise ValueError('No Load provided to look for')
 
         # can shortcut this method if the self._loads method is empty.
         if len(self._loads) == 0:
             # by default the load cannot exist in an empty dictionary.
             return False
 
-        if load_no != None:
-            # if provided the load no. the search is via the key of the
-            # self._load dictionary
-
-            if load_no in self._loads:
-                return load_no
+        if load.load_no in self.loads:
+            # if load_no is in loads, need to check if loads are identical
+            if load == self.loads[load.load_no]:
+                return load.load_no
             else:
                 return False
 
-        elif load_name != None:
-            # if provided with the load name, the search needs to go through all
-            # the items in the dictionary
-
-            for k, l in self._loads.items():
-
-                if load_name == l.load_name:
-                    return k
-
-            # if haven't found in the dictionary, return False.
-            return False
-
-        elif abbrev != None:
-            # similar with abbrev, the search needs to go through all the items
-            # in the dictionary
-
-            for k, l in self._loads.items():
-                if abbrev == l.abbrev:
-                    return k
-
-            # if haven't found in the dictionary, return False.
-            return False
-
-        elif load != None:
-            # if provided a load we have to search through all the items in the
-            # self._loads dictionary to check for it.
-
-            for k, l in self._loads.items():
-
-                # to avoid silently closing this method if loads share the same
-                # load_no we need to return the load_no if either of the
-                # following are true:
-                # the load_no is the same as an existing load_no OR
-                # the load is == to an existing load.
-
-                if load.load_no == k or load == l:
-                    return k
-
-            # if haven't found in the dictionary, return False.
-            return False
-
-        else:
-            raise ValueError(f'To check if a Load exists a Load needs to be'
-                             + f'provided. No load information provided.')
+        # if haven't found in the dictionary, return False.
+        return False
 
     @property
     def load_groups(self):
@@ -236,6 +181,9 @@ class LoadCombinations():
                                     List[LoadGroup]]
                   ):
         """
+        Adds a LoadGroup to the LoadCombination
+
+        :param load_group: The ``LoadGroup`` to add.
         """
 
         if isinstance(load_group, List):
@@ -269,6 +217,8 @@ class LoadCombinations():
         # first check if the loads in the load_group already exist in the
         # LoadCombination
 
+        overwrite = {}
+
         for l in load_group.loads.values():
 
             if not self.load_exists(load = l):
@@ -276,6 +226,20 @@ class LoadCombinations():
                 # so that any changes to the load reflect to all similar groups
 
                 self.add_load(load = l)
+            else:
+                # else if the load does exist, need to replace the load in the
+                # LoadGroup so that references are the same across the objects
+
+                if l is self.loads[l.load_no]:
+                    # they are the same object, so ignore
+                    pass
+
+                else:
+                    overwrite[l.load_no] = self.loads[l.load_no]
+
+        for load, v in overwrite.items():
+            # now actually replace the loads in LoadGroup:
+            load_group.loads[l] = v
 
         # finally add to the self._load_groups dictionary
 
@@ -315,24 +279,22 @@ class LoadCombinations():
 
     def group_exists(self,
                      group_name: str = None,
-                     abbrev: str = None,
                      load_group: LoadGroup = None) -> Union[bool, str]:
         """
         This method searches the ``self.load_groups`` property of the
         ``LoadCombination`` to determine if a ``LoadGroup`` exists in it.
-        It will search by either the ``group_name`` or ``abbrev`` properties of
+        It will search by either the ``group_name`` property of
         the ``LoadGroup``, or can search using a given ``LoadGroup`` object.
 
         Only one parameter should be given otherwise an error is raised.
 
         :param group_name: The load_name of the load to delete.
-        :param abbrev:  The abbreviation of the load to delete.
         :param load_group: A ``LoadGroup`` object to check for.
         :returns: Either the ``group_name`` of the load_group object (if found)
             or ``False``.
         """
 
-        args = [group_name, abbrev, load_group]
+        args = [group_name, load_group]
         sumargs = sum(x is not None for x in args)
 
         if sumargs == 0:
@@ -342,6 +304,7 @@ class LoadCombinations():
                              + ' - provide only a single parameter.')
 
         if len(self.load_groups) == 0:
+            # if load_groups is empty, the result is false by inspection
             return False
 
         # else need to search for the LoadGroup
@@ -353,23 +316,14 @@ class LoadCombinations():
             else:
                 return False
 
-        elif abbrev != None:
-            # if abbrev is provided, need to search all items:
-
-            for k, lg in self.load_groups.items():
-
-                if abbrev == lg.load_group.abbrev:
-                    return k
-
-            # else haven't found so return false
-            return False
-
         elif load_group != None:
 
-            for k, lg in self.load_groups.items():
+            if load_group.group_name in self.load_groups:
+                # if the load group may be in the load_group dictionary
+                # then check if it actually is
 
-                if load_group.group_name == k or lg.load_group == load_group:
-                    return k
+                if load_group == self.load_groups[load_group.group_name]:
+                    return load_group.group_name
 
             # else haven't found it so return False
             return False
