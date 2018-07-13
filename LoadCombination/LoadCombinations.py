@@ -18,15 +18,16 @@ class LoadCombinations():
     objects in a single object to simplify the user interface.
     """
 
-    def __init__(self, loads, load_groups, load_cases):
+    def __init__(self):
+        """
+        Initialise a LoadCombinations object. Initalise empty and use "Add"
+        methods etc. to add properties, at least until we know how this is going
+        to work.
         """
 
-        :param loads:
-        :param load_groups:
-        :param load_cases:
-        """
-
-        raise NotImplementedError
+        self._loads = None
+        self._load_groups = None
+        self._load_cases = None
 
     @property
     def loads(self):

@@ -14,20 +14,8 @@ class TestLoadCombination(TestCase):
         Basic test for the class - can it even be instantiated?
         """
 
-        l1 = Load(load_name='Test Load',
-                  load_no=1,
-                  abbrev='TL1')
+        LC = LoadCombinations()
 
-        LG1 = LoadGroup(group_name='Test Group',
-                        loads=l1,
-                        abbrev="TG")
+        print(LC)
 
-        LC1 = LoadCase(case_name='Case 1',
-                       case_no = 1,
-                       load_groups= GroupFactor(load_group = LG1,
-                                                group_factor=1.5)
-                       )
-
-
-
-        self.fail()
+        print(repr(LC))
