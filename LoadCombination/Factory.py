@@ -170,6 +170,15 @@ def group_from_string(*, group_string: str,
                       interp_func: Callable = None,
                       scale_func: Callable[[float, float], float] = None
                       ) -> LoadGroup:
+    """
+
+    :param group_string: A string containing the information required to build
+        the group.
+    :param loads:
+    :param interp_func:
+    :param scale_func:
+    :return:
+    """
 
     kwargs = _string_parser(group_string)
 
