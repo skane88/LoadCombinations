@@ -25,7 +25,7 @@ class LoadCombinations():
         to work.
         """
 
-        self._loads = None
+        self._loads = {}
         self._load_groups = None
         self._load_cases = None
 
