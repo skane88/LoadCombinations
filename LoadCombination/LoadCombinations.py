@@ -18,40 +18,48 @@ class LoadCombinations():
     objects in a single object to simplify the user interface.
     """
 
-    def __init__(self):
+    def __init__(self, *,
+                 loads: Union[Load, Dict[int, Load], List[Load]] = None):
         """
         Initialise a LoadCombinations object. Initalise empty and use "Add"
         methods etc. to add properties, at least until we know how this is going
         to work.
+
+        :param loads: The load to add. Can be a single ``Load`` object, a
+            ``Dict[int, Load]`` or a ``List[Load]``.
         """
 
-        self._loads = {}
+        self.loads = loads
+
         self._load_groups = None
         self._load_cases = None
 
     @property
     def loads(self):
         """
+        Gets the loads stored in the LoadCombination object.
 
-        :return:
+        :return: Returns a ``Dict[int, Load]`` of the loads, where ``int`` is
+            the ``load_no`` of the ``Load``.
         """
 
         return self._loads
 
     @loads.setter
-    def loads(self, loads):
+    def loads(self, loads: Union[Load, Dict[int, Load], List[Load]]):
         """
+        Sets the loads stored in the LoadCombination object.
 
-        :param loads:
-        :return:
+        :param loads: The load to add. Can be a single ``Load`` object, a
+            ``Dict[int, Load]`` or a ``List[Load]``.
         """
 
         self._loads = {}
 
-        self.add_load(loads)
+        if loads is not None:
+            self.add_load(loads)
 
-    def add_load(self, load: Union[Load, Dict[int, Load], List[Load]]
-                 ):
+    def add_load(self, load: Union[Load, Dict[int, Load], List[Load]]):
         """
         A method to add loads into the self.loads that make up the group,
         without having to overwrite the entire self.loads dictionary.
@@ -151,6 +159,26 @@ class LoadCombinations():
             return True
 
         # if haven't found in the dictionary, return False.
+        return False
+
+    def load_exists(self, *, load: Load) -> bool:
+        """
+        Checks if a load is already present and identical to the load being
+        checked.
+
+        Note that this should not be used to check for potential clashes as it
+        will miss cases where a load is present with the same load_no but is
+        otherwise different. load_no_exists should be used to check for clashes
+        of this nature.
+
+        :param load: The ``Load`` to check for.
+        :return: Returns ``True`` if the ``Load`` exists, false otherwise.
+        """
+
+        if self.load_no_exists(load=load):
+            if self.loads[load.load_no] == load:
+                return True
+
         return False
 
     @property

@@ -127,9 +127,58 @@ class TestLoadCombination(TestCase):
         self.assertRaises(LoadNotPresentException, LC.del_load, load=l3)
 
     def test_load_no_exists(self):
+        """
+        The the load_no_exists method.
+        """
 
-        self.fail()
+        l1 = Load(load_name='Load 1',
+                  load_no=1,
+                  abbrev='l1')
+
+        l2 = Load(load_name='Load 2',
+                  load_no=2,
+                  abbrev='l2')
+
+        l3 = Load(load_name='Load 3',
+                  load_no=3,
+                  abbrev='l3')
+
+        LC = LoadCombinations()
+
+        LC.add_load(l1)
+        LC.add_load(l2)
+
+        self.assertTrue(LC.load_no_exists(load_no=1))
+        self.assertTrue(LC.load_no_exists(load=l1))
+        self.assertFalse(LC.load_no_exists(load_no=3))
+        self.assertFalse(LC.load_no_exists(load=l3))
 
     def test_load_exists(self):
+        """
+        The the load_exists method.
+        """
 
-        self.fail()
+        l1 = Load(load_name='Load 1',
+                  load_no=1,
+                  abbrev='l1')
+
+        l2 = Load(load_name='Load 2',
+                  load_no=2,
+                  abbrev='l2')
+
+        l3 = Load(load_name='Load 3',
+                  load_no=3,
+                  abbrev='l3')
+
+        le = Load(load_name='Load Error',
+                  load_no=1,
+                  abbrev='LE')
+
+        LC = LoadCombinations()
+
+        LC.add_load(l1)
+        LC.add_load(l2)
+
+        self.assertTrue(LC.load_exists(load=l1))
+        self.assertFalse(LC.load_exists(load=le))
+        self.assertFalse(LC.load_exists(load=l3))

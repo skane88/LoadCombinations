@@ -18,8 +18,8 @@ class ScaledMode(IntEnum):
     ERROR = 0
     EXCLUSIVE = -1
 
-def BuildLoad(*, load_name: str, load_no: int, abbrev: str = '',
-              load_type: Load = None, **kwargs) -> Load:
+def build_load(*, load_name: str, load_no: int, abbrev: str = '',
+               load_type: Load = None, **kwargs) -> Load:
     """
     Builds a ``Load`` object. The type of Load object can be specified directly
     in the ``load_type`` parameter or else is inferred by the arguments
@@ -48,7 +48,7 @@ def BuildLoad(*, load_name: str, load_no: int, abbrev: str = '',
     else:
         return Load(load_name = load_name, load_no = load_no, abbrev = abbrev)
 
-def LoadFromString(load_string: str) -> Load:
+def load_from_string(load_string: str) -> Load:
     """
     Returns a ``Load`` object when provided a string. It infers the correct
     type of load based on the provided arguments.
@@ -77,9 +77,9 @@ def LoadFromString(load_string: str) -> Load:
 
     kwargs =  _dict_typer(kwargs, expected)
 
-    return LoadFromDict(kwargs)
+    return load_from_dict(kwargs)
 
-def LoadFromDict(load_dict: Dict[str, Union[str, float, int]]) -> Load:
+def load_from_dict(load_dict: Dict[str, Union[str, float, int]]) -> Load:
     """
     Returns a ``Load`` object when provided a dict. It infers the correct
     type of load based on the provided arguments.
@@ -99,50 +99,77 @@ def LoadFromDict(load_dict: Dict[str, Union[str, float, int]]) -> Load:
     load_no = kwargs.pop('load_no')
     abbrev = kwargs.pop('abbrev')
 
-    return BuildLoad(load_name = load_name, load_no = load_no, abbrev = abbrev,
+    return build_load(load_name = load_name, load_no = load_no, abbrev = abbrev,
                      **kwargs)
 
-def BuildGroup(*, group_name: str,
-               loads: Union[Dict[int, Load], List[Load], Load],
-               abbrev: str, load_type: LoadGroup = None,
-               scaled_mode: int = ScaledMode.ERROR,
-               **kwargs) -> LoadGroup:
+def build_group(*, group_name: str,
+                loads: Union[Dict[int, Load], List[Load], Load],
+                abbrev: str, group_type: LoadGroup = None,
+                exclusive: bool = False,
+                **kwargs) -> LoadGroup:
+    """
+    Returns a ``LoadGroup`` object given required input.
 
-    if load_type == WindGroup or 'scale_speed' in kwargs:
-        return WindGroup(group_name = group_name, loads = loads,
-                         abbrev = abbrev, **kwargs)
-    elif load_type == RotationalGroup or 'req_angles' in kwargs:
-        return RotationalGroup(group_name = group_name, loads = loads,
-                               abbrev = abbrev, **kwargs)
-    elif load_type == ExclusiveGroup:
-        return ExclusiveGroup(group_name = group_name, loads = loads,
-                              abbrev = abbrev, **kwargs)
-    elif load_type == ScaledGroup:
-        return ScaledGroup(group_name = group_name, loads = loads,
-                           abbrev = abbrev, **kwargs)
+    :param group_name: The name of the group.
+    :param loads: The loads for the group, added as either a ``Load``, a
+        ``List[Load]`` or a ``Dict[int, Load]`` where ``int`` is the ``load_no``
+        of the ``Load``s in the dictionary.
+    :param abbrev: The abbreviation for the group.
+    :param group_type: The group type to create, given as a ``LoadGroup`` class.
+    :param exclusive: Determine whether to create an ``ExclusiveGroup`` or not.
+        If ``True`` and ``ExclusiveGroup`` will be created. If ``False``, or an
+        ``ExclusiveGroup`` cannot otherwise be created it will be ignored.
+    :param kwargs: Other arguments as required to create the ``LoadGroup``.
+    :return: Returns a ``LoadGroup`` object.
+    """
+
+    if group_type == WindGroup or 'scale_speed' in kwargs:
+        return WindGroup(group_name=group_name,
+                         loads=loads,
+                         abbrev=abbrev,
+                         **kwargs)
+    elif group_type == RotationalGroup or 'req_angles' in kwargs:
+        return RotationalGroup(group_name=group_name,
+                               loads=loads,
+                               abbrev=abbrev,
+                               **kwargs)
+    elif group_type == ExclusiveGroup:
+        return ExclusiveGroup(group_name=group_name,
+                              loads=loads,
+                              abbrev=abbrev,
+                              **kwargs)
+    elif group_type == ScaledGroup:
+        return ScaledGroup(group_name=group_name,
+                           loads=loads,
+                           abbrev=abbrev,
+                           **kwargs)
     elif 'scale_to' in kwargs:
-        if scaled_mode == ScaledMode.SCALED:
-            return ScaledGroup(group_name = group_name, loads = loads,
-                               abbrev = abbrev, **kwargs)
-        elif scaled_mode == ScaledMode.EXCLUSIVE:
-            return ExclusiveGroup(group_name = group_name, loads = loads,
-                                  abbrev = abbrev, **kwargs)
-        else:
-            raise ValueError('Not possible to determine whether a ScaledGroup'
-                             + ' or ExclusiveGroup is required with the given'
-                             + ' arguments.')
-    elif load_type == FactoredGroup or 'factors' in kwargs:
-        return FactoredGroup(group_name = group_name, loads = loads,
-                             abbrev = abbrev, **kwargs)
-    else:
-        return LoadGroup(group_name = group_name, loads = loads,
-                         abbrev = abbrev)
+        if exclusive == False:
+            return ScaledGroup(group_name=group_name,
+                               loads=loads,
+                               abbrev=abbrev,
+                               **kwargs)
+        elif exclusive == True:
+            return ExclusiveGroup(group_name=group_name,
+                                  loads=loads,
+                                  abbrev=abbrev,
+                                  **kwargs)
 
-def GroupFromString(*, group_string: str,
-                    loads: Union[Dict[int, Load], List[Load], Load],
-                    interp_func: Callable = None,
-                    scale_func: Callable[[float, float], float] = None,
-                    ) -> LoadGroup:
+    elif group_type == FactoredGroup or 'factors' in kwargs:
+        return FactoredGroup(group_name=group_name,
+                             loads=loads,
+                             abbrev=abbrev,
+                             **kwargs)
+    else:
+        return LoadGroup(group_name=group_name,
+                         loads=loads,
+                         abbrev=abbrev)
+
+def group_from_string(*, group_string: str,
+                      loads: Union[Dict[int, Load], List[Load], Load],
+                      interp_func: Callable = None,
+                      scale_func: Callable[[float, float], float] = None
+                      ) -> LoadGroup:
 
     kwargs = _string_parser(group_string)
 
@@ -174,28 +201,46 @@ def GroupFromString(*, group_string: str,
             del(kwargs['scale_func'])
 
     if 'req_angles' in kwargs:
-        kwargs['req_angles'] = _tuple_from_string(in_string = kwargs['req_angles'],
-                                                  typer = float)
+        kwargs['req_angles'] = _tuple_from_string(in_string=kwargs['req_angles'],
+                                                  typer=float)
 
     if 'factors' in kwargs:
-        kwargs['factors'] = _tuple_from_string(in_string = kwargs['factors'],
-                                               typer = float)
+        kwargs['factors'] = _tuple_from_string(in_string=kwargs['factors'],
+                                               typer=float)
 
     # finally, the loads will have been brought in as a list or a tuple of loads
     # to be put into the group. Need to get a tuple of ints, and then use these
     # to build a list of loads.
 
-    load_list = _tuple_from_string(in_string = kwargs['loads'],
-                                   typer = int, include_lists = True)
+    load_list = _tuple_from_string(in_string=kwargs['loads'],
+                                   typer=int,
+                                   include_lists=True)
 
-    kwargs['loads'] = _get_loads(load_list = load_list, loads = loads)
+    kwargs['loads'] = _get_loads(load_list=load_list,
+                                 loads=loads)
 
     return GroupFromDict(**kwargs)
 
 def GroupFromDict(*,
-                  group_dict: Dict[str, Union[str, float, int, bool, Callable, Tuple[float, ...], List[Load]]],
-                  scaled_mode: int = ScaledMode.ERROR
+                  group_dict: Dict[str, Union[str,
+                                              float,
+                                              int,
+                                              bool,
+                                              Callable,
+                                              Tuple[float, ...],
+                                              List[Load]]],
+                  exclusive: bool = False
                   ) -> LoadGroup:
+    """
+    Create a ``LoadGroup`` from a dictionary of appropriate keywords and
+    arguments.
+
+    :param group_dict:
+    :param exclusive: Determine whether to create an ``ExclusiveGroup`` or not.
+        If ``True`` and ``ExclusiveGroup`` will be created. If ``False``, or an
+        ``ExclusiveGroup`` cannot otherwise be created it will be ignored.
+    :return:
+    """
 
     kwargs = group_dict
 
@@ -203,10 +248,10 @@ def GroupFromDict(*,
     loads = kwargs.pop('loads')
     abbrev = kwargs.pop('abbrev')
 
-    return BuildGroup(group_name = group_name,
-                      loads = loads,
-                      abbrev = abbrev,
-                      scaled_mode = scaled_mode,
+    return BuildGroup(group_name=group_name,
+                      loads=loads,
+                      abbrev=abbrev,
+                      exclusive=exclusive,
                       **kwargs)
 
 def _string_parser(in_string: str) -> Dict[str, str]:
