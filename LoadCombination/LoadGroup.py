@@ -6,11 +6,11 @@ appropriate list of loads through an iterator method.
 """
 
 from typing import Dict, List, Tuple, Union, Callable
-from Load import Load, ScalableLoad, RotatableLoad
-from HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
-from exceptions import LoadExistsException, LoadNotPresentException
-from exceptions import AngleExistsException
-from LoadFactor import LoadFactor
+from LoadCombination.Load import Load, ScalableLoad, RotatableLoad
+from LoadCombination.HelperFuncs import sine_interp_90, wind_interp_85, req_angles_list
+from LoadCombination.exceptions import LoadExistsException, LoadNotPresentException
+from LoadCombination.exceptions import AngleExistsException
+from LoadCombination.LoadFactor import LoadFactor
 
 # define a named tuple for returning results.
 

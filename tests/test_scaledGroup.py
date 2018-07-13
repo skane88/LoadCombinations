@@ -5,8 +5,8 @@ Test the ScaledGroup class.
 """
 
 from unittest import TestCase
-from LoadGroup import ScaledGroup, LoadFactor
-from Load import ScalableLoad, RotatableLoad
+from LoadCombination.LoadGroup import ScaledGroup, LoadFactor
+from LoadCombination.Load import ScalableLoad, RotatableLoad
 
 
 class TestScaledGroup(TestCase):

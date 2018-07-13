@@ -1,7 +1,7 @@
 from unittest import TestCase
-from GroupFactor import GroupFactor
-from LoadGroup import LoadGroup
-from Load import Load
+from LoadCombination.GroupFactor import GroupFactor
+from LoadCombination.LoadGroup import LoadGroup
+from LoadCombination.Load import Load
 
 class TestGroupFactor(TestCase):
 

@@ -5,11 +5,11 @@ Tests for the RotationalGroup class.
 """
 import math
 from unittest import TestCase
-from LoadGroup import RotationalGroup
-from Load import RotatableLoad
-from HelperFuncs import sine_interp, linear_interp
-from exceptions import LoadExistsException, AngleExistsException
-from LoadFactor import LoadFactor
+from LoadCombination.LoadGroup import RotationalGroup
+from LoadCombination.Load import RotatableLoad
+from LoadCombination.HelperFuncs import sine_interp, linear_interp
+from LoadCombination.exceptions import LoadExistsException, AngleExistsException
+from LoadCombination.LoadFactor import LoadFactor
 
 class TestRotationalGroup(TestCase):
 

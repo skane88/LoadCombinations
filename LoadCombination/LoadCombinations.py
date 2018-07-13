@@ -6,12 +6,11 @@ used to combine Loads, LoadGroups and LoadCases together into a single simple
 object for use by the end user.
 """
 
-from typing import Union, Dict, List, Tuple
-from Load import Load
-from LoadGroup import LoadGroup
-from exceptions import (LoadExistsException, LoadNotPresentException,
-                        LoadGroupExistsException, LoadGroupNotPresentException,
-                        InvalidCombinationFactor)
+from typing import Union, Dict, List
+from LoadCombination.Load import Load
+from LoadCombination.LoadGroup import LoadGroup
+from LoadCombination.exceptions import (LoadExistsException, LoadNotPresentException,
+                                        LoadGroupExistsException, LoadGroupNotPresentException)
 
 class LoadCombinations():
     """

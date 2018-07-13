@@ -3,7 +3,7 @@ Unittests for the RotatableLoad class.
 """
 
 from unittest import TestCase
-from Load import RotatableLoad
+from LoadCombination.Load import RotatableLoad
 
 
 class TestRotatableLoad(TestCase):

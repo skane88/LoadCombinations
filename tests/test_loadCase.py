@@ -1,15 +1,15 @@
 # coding=utf-8
 
 from unittest import TestCase
-from LoadCase import LoadCase
-from LoadGroup import LoadGroup, FactoredGroup, ScaledGroup, WindGroup
-from Load import Load, ScalableLoad, RotatableLoad, WindLoad
-from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
-                        InvalidCombinationFactor)
-from LoadFactor import LoadFactor
-from GroupFactor import GroupFactor
-from HelperFuncs import wind_interp_85
-from Combination import Combination
+from LoadCombination.LoadCase import LoadCase
+from LoadCombination.LoadGroup import LoadGroup, FactoredGroup, ScaledGroup, WindGroup
+from LoadCombination.Load import Load, ScalableLoad, RotatableLoad, WindLoad
+from LoadCombination.exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
+                                        InvalidCombinationFactor)
+from LoadCombination.LoadFactor import LoadFactor
+from LoadCombination.GroupFactor import GroupFactor
+from LoadCombination.HelperFuncs import wind_interp_85
+from LoadCombination.Combination import Combination
 
 class TestLoadCase(TestCase):
 

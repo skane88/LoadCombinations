@@ -5,7 +5,7 @@ This module contains a helper class that associates a ``LoadGroup`` with
 combination factors.
 """
 
-from LoadGroup import LoadGroup
+from LoadCombination.LoadGroup import LoadGroup
 
 class GroupFactor:
     """

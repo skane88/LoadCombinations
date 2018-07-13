@@ -6,13 +6,13 @@ LoadGroup objects and use them to output relevant load combinations within the
 case.
 """
 
-from typing import Dict, List, Union, Tuple
-from LoadGroup import LoadGroup
-from exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
-                        InvalidCombinationFactor)
-from GroupFactor import GroupFactor
-from Combination import Combination
-import itertools
+from typing import Dict, List, Union
+from LoadCombination.LoadGroup import LoadGroup
+from LoadCombination.exceptions import (LoadGroupExistsException, LoadGroupNotPresentException,
+                                        InvalidCombinationFactor)
+from LoadCombination.GroupFactor import GroupFactor
+from LoadCombination.Combination import Combination
+
 
 class LoadCase:
     """

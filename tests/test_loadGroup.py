@@ -5,9 +5,9 @@ Unit test for the LoadGroup class.
 """
 
 from unittest import TestCase
-from LoadGroup import LoadGroup, LoadFactor
-from Load import Load, RotatableLoad, ScalableLoad, WindLoad
-from exceptions import LoadExistsException, LoadNotPresentException
+from LoadCombination.LoadGroup import LoadGroup, LoadFactor
+from LoadCombination.Load import Load, RotatableLoad, ScalableLoad, WindLoad
+from LoadCombination.exceptions import LoadExistsException, LoadNotPresentException
 
 
 class TestLoadGroup(TestCase):

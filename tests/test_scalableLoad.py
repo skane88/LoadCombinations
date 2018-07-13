@@ -3,7 +3,7 @@ Unittests for the ScalableLoad class.
 """
 
 from unittest import TestCase
-from Load import ScalableLoad
+from LoadCombination.Load import ScalableLoad
 
 
 class TestScalableLoad(TestCase):

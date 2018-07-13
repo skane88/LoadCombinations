@@ -5,8 +5,8 @@ Tests the ExclusiveGroup class.
 """
 
 from unittest import TestCase
-from LoadGroup import ExclusiveGroup, LoadFactor
-from Load import RotatableLoad, ScalableLoad
+from LoadCombination.LoadGroup import ExclusiveGroup, LoadFactor
+from LoadCombination.Load import RotatableLoad, ScalableLoad
 
 
 class TestExclusiveGroup(TestCase):

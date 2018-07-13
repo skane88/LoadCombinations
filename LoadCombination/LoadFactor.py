@@ -6,7 +6,7 @@ factors.
 """
 
 from typing import Dict, Union
-from Load import Load
+from LoadCombination.Load import Load
 
 class LoadFactor:
     """

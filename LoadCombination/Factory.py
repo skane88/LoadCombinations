@@ -8,9 +8,9 @@ and LoadCases from other input (i.e. text etc.)
 from typing import Union, Dict, List, Tuple, Callable, Any
 from enum import IntEnum, unique
 
-from Load import Load, ScalableLoad, RotatableLoad, WindLoad
-from LoadGroup import (LoadGroup, FactoredGroup, ScaledGroup, ExclusiveGroup,
-                       RotationalGroup, WindGroup)
+from LoadCombination.Load import Load, ScalableLoad, RotatableLoad, WindLoad
+from LoadCombination.LoadGroup import (LoadGroup, FactoredGroup, ScaledGroup, ExclusiveGroup,
+                                       RotationalGroup, WindGroup)
 
 @unique
 class ScaledMode(IntEnum):

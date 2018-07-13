@@ -2,8 +2,8 @@
 
 import math
 from unittest import TestCase, expectedFailure
-from HelperFuncs import linear_interp, sine_interp_90, sine_interp
-from HelperFuncs import wind_interp_85
+from LoadCombination.HelperFuncs import linear_interp, sine_interp_90, sine_interp
+from LoadCombination.HelperFuncs import wind_interp_85
 
 
 class test_helper_funcs(TestCase):

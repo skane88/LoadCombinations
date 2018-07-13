@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-import Factory
-from Load import Load, WindLoad, RotatableLoad, ScalableLoad
+from LoadCombination import Factory
+from LoadCombination.Load import Load, WindLoad, RotatableLoad, ScalableLoad
 
 class TestBuildLoad(TestCase):
 

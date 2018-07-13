@@ -5,8 +5,8 @@ Unit tests for the FactoredGroup class.
 """
 
 from unittest import TestCase
-from LoadGroup import FactoredGroup, LoadFactor
-from Load import Load, RotatableLoad, ScalableLoad, WindLoad
+from LoadCombination.LoadGroup import FactoredGroup, LoadFactor
+from LoadCombination.Load import Load, RotatableLoad, ScalableLoad, WindLoad
 
 
 class TestFactoredGroup(TestCase):

@@ -2,9 +2,9 @@
 
 import math
 from unittest import TestCase
-from LoadGroup import WindGroup, LoadFactor
-from Load import WindLoad
-from HelperFuncs import sine_interp, wind_interp_85
+from LoadCombination.LoadGroup import WindGroup, LoadFactor
+from LoadCombination.Load import WindLoad
+from LoadCombination.HelperFuncs import wind_interp_85
 
 class TestWindGroup(TestCase):
 

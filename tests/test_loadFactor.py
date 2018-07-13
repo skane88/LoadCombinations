@@ -1,6 +1,6 @@
 from unittest import TestCase
-from Load import Load
-from LoadFactor import LoadFactor
+from LoadCombination.Load import Load
+from LoadCombination.LoadFactor import LoadFactor
 
 class TestLoadFactor(TestCase):
 

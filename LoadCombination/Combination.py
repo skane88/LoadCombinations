@@ -5,8 +5,8 @@ Contains a class to store the resulting load combinations.
 """
 
 from typing import Dict, List, Tuple, Union
-from LoadFactor import LoadFactor
-from Load import Load
+from LoadCombination.LoadFactor import LoadFactor
+from LoadCombination.Load import Load
 
 class Combination:
     """

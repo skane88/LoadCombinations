@@ -3,7 +3,7 @@ Unittest for the Load class.
 """
 
 from unittest import TestCase
-from Load import Load
+from LoadCombination.Load import Load
 
 
 class TestLoad(TestCase):

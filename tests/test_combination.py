@@ -1,10 +1,10 @@
 # coding=utf-8
 
 import math
-from unittest import TestCase, expectedFailure
-from Combination import Combination
-from LoadFactor import LoadFactor
-from Load import Load
+from unittest import TestCase
+from LoadCombination.Combination import Combination
+from LoadCombination.LoadFactor import LoadFactor
+from LoadCombination.Load import Load
 
 class TestCombination(TestCase):
 

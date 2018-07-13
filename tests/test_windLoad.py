@@ -3,7 +3,7 @@ Unittest for the WindLoad class.
 """
 
 from unittest import TestCase
-from Load import WindLoad
+from LoadCombination.Load import WindLoad
 
 
 class TestWindLoad(TestCase):
