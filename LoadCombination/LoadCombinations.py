@@ -76,7 +76,7 @@ class LoadCombinations():
         else:
             #first check if the load exists in the self._loads dictionary
 
-            if not self.load_exists(load = load):
+            if not self.load_no_exists(load = load):
 
                 # next need to check if the load_no is already used by a
                 # non-identical load:
@@ -112,8 +112,10 @@ class LoadCombinations():
         :param load: A ``Load`` object to check for.
         """
 
-        load_present = self.load_exists(load_no = load_no,
-                                        load = load)
+        if load_no is not None and load is not None:
+            raise Exception('Cannot pass in both load_no and load')
+
+        load_present = self.load_no_exists(load_no=load_no, load=load)
 
         if load_present:
 
@@ -126,7 +128,7 @@ class LoadCombinations():
             raise LoadNotPresentException(f'To delete a Load a Load needs to be'
                                           + f'present. Load not present.')
 
-    def load_exists(self, *, load: Load) -> bool:
+    def load_no_exists(self, *, load_no: int = None, load: Load = None) -> bool:
         """
         This method searches the self.loads property of the ``LoadGroup`` to
         determine if a ``Load`` exists in it.
@@ -141,12 +143,12 @@ class LoadCombinations():
             # by default the load cannot exist in an empty dictionary.
             return False
 
-        if load.load_no in self.loads:
-            # if load_no is in loads, need to check if loads are identical
-            if load == self.loads[load.load_no]:
-                return load.load_no
-            else:
-                return False
+        if load_no is None:
+            # if load_no is None, there is a load present
+            load_no = load.load_no
+
+        if load_no in self.loads:
+            return True
 
         # if haven't found in the dictionary, return False.
         return False

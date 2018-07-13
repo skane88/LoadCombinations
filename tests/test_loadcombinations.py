@@ -6,7 +6,8 @@ from LoadCombination.Load import Load
 from LoadCombination.LoadGroup import LoadGroup
 from LoadCombination.GroupFactor import GroupFactor
 from LoadCombination.LoadCase import LoadCase
-from LoadCombination.exceptions import LoadExistsException
+from LoadCombination.exceptions import (LoadExistsException,
+                                        LoadNotPresentException)
 
 class TestLoadCombination(TestCase):
 
@@ -105,5 +106,30 @@ class TestLoadCombination(TestCase):
 
         LC.add_load(l1)
         LC.add_load(l2)
+        LC.add_load(l3)
+
+        loads = {1: l1,
+                 2: l2}
+
+        LC.del_load(load_no=3)
+
+        self.assertEqual(first=loads, second=LC.loads)
+
+        loads = {1: l1}
+
+        LC.del_load(load=l2)
+
+        self.assertEqual(first=loads, second=LC.loads)
+
+        # Test for error if trying to delete load that isn't present
+
+        self.assertRaises(LoadNotPresentException, LC.del_load, load_no=3)
+        self.assertRaises(LoadNotPresentException, LC.del_load, load=l3)
+
+    def test_load_no_exists(self):
+
+        self.fail()
+
+    def test_load_exists(self):
 
         self.fail()
